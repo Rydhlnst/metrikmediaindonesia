@@ -3,16 +3,10 @@ import Image from "next/image";
 import { SITE_CONFIG } from "@/lib/constants";
 import { HeroSection } from "@/components/home/hero-section";
 import { getArticles } from "@/lib/payload-queries";
+import { getImageUrl } from "@/lib/utils";
 import { ArrowRight, Clock, Eye, BookmarkSimple } from "@phosphor-icons/react/dist/ssr";
 
 export const dynamic = "force-dynamic";
-
-function getImageUrl(image: any): string {
-  if (!image) return "https://picsum.photos/seed/placeholder/800/450";
-  if (typeof image === "string") return image;
-  if (image.url) return image.url;
-  return "https://picsum.photos/seed/placeholder/800/450";
-}
 
 function getTimeAgo(date: Date): string {
   const now = new Date();
