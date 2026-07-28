@@ -31,6 +31,6 @@ export default buildConfig({
     pool: {
       connectionString: databaseURL,
     },
-    push: false,
+    push: true,
   }),
 });

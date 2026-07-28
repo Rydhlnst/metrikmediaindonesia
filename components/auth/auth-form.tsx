@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { SITE_CONFIG } from "@/lib/constants";
-import { Eye, EyeOff, LogIn, Loader2, Mail, Lock, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, Loader2, Mail, Lock, ArrowRight } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
+import Blocks from "@/components/ui/blocks";
 
 interface AuthFormProps {
   mode: "login" | "register";
@@ -17,6 +18,8 @@ export function AuthForm({ mode }: AuthFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [activeDivs, setActiveDivs] = useState<Record<number, Set<number>>>({});
 
   // Login fields
   const [email, setEmail] = useState("");
@@ -26,6 +29,35 @@ export function AuthForm({ mode }: AuthFormProps) {
   const [name, setName] = useState("");
 
   const isLogin = mode === "login";
+
+  const animateBlocks = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+    const blockSize = containerWidth * 0.06;
+    const columns = Math.floor(containerWidth / blockSize);
+    const rows = Math.floor(containerHeight / blockSize);
+
+    const newActiveDivs: Record<number, Set<number>> = {};
+    const numActive = Math.floor(Math.random() * 8) + 4;
+
+    for (let i = 0; i < numActive; i++) {
+      const col = Math.floor(Math.random() * columns);
+      const row = Math.floor(Math.random() * rows);
+      if (!newActiveDivs[col]) newActiveDivs[col] = new Set();
+      newActiveDivs[col].add(row);
+    }
+
+    setActiveDivs(newActiveDivs);
+  }, []);
+
+  useEffect(() => {
+    animateBlocks();
+    const interval = setInterval(animateBlocks, 3000);
+    return () => clearInterval(interval);
+  }, [animateBlocks]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -235,14 +267,17 @@ export function AuthForm({ mode }: AuthFormProps) {
         </div>
       </section>
 
-      {/* Right - Image */}
-      <section className="relative hidden flex-1 items-center justify-center overflow-hidden bg-white lg:flex">
-        <img
-          src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop"
-          alt="Developer workspace"
-          className="absolute inset-0 h-full w-full object-cover"
+      {/* Right - Blocks Animation */}
+      <section
+        ref={containerRef}
+        className="relative hidden flex-1 items-center justify-center overflow-hidden bg-black lg:flex"
+      >
+        <Blocks
+          containerRef={containerRef}
+          activeDivs={activeDivs}
+          activeDivsClass="bg-primary/40 border-primary/20"
+          divClass="border-white/5"
         />
-        <div className="absolute inset-0 bg-black/20" />
         <div className="relative z-10 max-w-md text-center text-white">
           <h2 className="text-3xl font-bold font-serif">Metrik Media Indonesia</h2>
           <p className="mt-3 text-lg text-white/80">Portal Berita Terpercaya</p>
