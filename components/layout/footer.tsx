@@ -46,8 +46,8 @@ export function Footer() {
       {/* Links Grid */}
       <div className="border-t border-primary-foreground/20">
         <div className="container-responsive py-8 sm:py-10">
-          <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5 sm:gap-8">
-            {/* Berita */}
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+            {/* Left Column */}
             <div>
               <h4 className="mb-4 text-xs font-bold uppercase tracking-wider text-primary-foreground/70">
                 Berita
@@ -66,7 +66,7 @@ export function Footer() {
               </ul>
             </div>
 
-            {/* Perusahaan */}
+            {/* Right Column */}
             <div>
               <h4 className="mb-4 text-xs font-bold uppercase tracking-wider text-primary-foreground/70">
                 Perusahaan
@@ -82,68 +82,6 @@ export function Footer() {
                     </Link>
                   </li>
                 ))}
-              </ul>
-            </div>
-
-            {/* Layanan */}
-            <div>
-              <h4 className="mb-4 text-xs font-bold uppercase tracking-wider text-primary-foreground/70">
-                Layanan
-              </h4>
-              <ul className="space-y-2">
-                {NAVIGATION.footer.layanan.map((item) => (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className="text-sm text-primary-foreground/80 transition-colors hover:text-primary-foreground"
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Kategori */}
-            <div>
-              <h4 className="mb-4 text-xs font-bold uppercase tracking-wider text-primary-foreground/70">
-                Kategori
-              </h4>
-              <ul className="space-y-2">
-                {NAVIGATION.footer.berita.map((item) => (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className="text-sm text-primary-foreground/80 transition-colors hover:text-primary-foreground"
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Bantuan */}
-            <div>
-              <h4 className="mb-4 text-xs font-bold uppercase tracking-wider text-primary-foreground/70">
-                Bantuan
-              </h4>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="/hubungi-kami" className="text-sm text-primary-foreground/80 transition-colors hover:text-primary-foreground">
-                    Hubungi Kami
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/kebijakan-privasi" className="text-sm text-primary-foreground/80 transition-colors hover:text-primary-foreground">
-                    Kebijakan Privasi
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/syarat-ketentuan" className="text-sm text-primary-foreground/80 transition-colors hover:text-primary-foreground">
-                    Syarat & Ketentuan
-                  </Link>
-                </li>
               </ul>
             </div>
           </div>
