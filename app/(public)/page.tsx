@@ -5,6 +5,8 @@ import { HeroSection } from "@/components/home/hero-section";
 import { getArticles } from "@/lib/payload-queries";
 import { ArrowRight, Clock, Eye, BookmarkSimple } from "@phosphor-icons/react/dist/ssr";
 
+export const dynamic = "force-dynamic";
+
 function getImageUrl(image: any): string {
   if (!image) return "https://picsum.photos/seed/placeholder/800/450";
   if (typeof image === "string") return image;
