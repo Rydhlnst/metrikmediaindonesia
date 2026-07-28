@@ -1,12 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-
-function getImageUrl(image: any): string {
-  if (!image) return "https://picsum.photos/seed/placeholder/200/150";
-  if (typeof image === "string") return image;
-  if (image.url) return image.url;
-  return "https://picsum.photos/seed/placeholder/200/150";
-}
+import { getImageUrl } from "@/lib/utils";
 
 function getTimeAgo(date: Date): string {
   const now = new Date();

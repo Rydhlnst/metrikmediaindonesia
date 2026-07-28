@@ -4,16 +4,9 @@ import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Link from "next/link";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
+import { cn, getImageUrl } from "@/lib/utils";
 import { AvatarAuthor } from "@/components/shared/avatar-author";
 import { BookmarkSimple } from "@phosphor-icons/react/dist/ssr";
-
-function getImageUrl(image: any): string {
-  if (!image) return "https://picsum.photos/seed/placeholder/1200/675";
-  if (typeof image === "string") return image;
-  if (image.url) return image.url;
-  return "https://picsum.photos/seed/placeholder/1200/675";
-}
 
 interface HeroSectionProps {
   articles: any[];

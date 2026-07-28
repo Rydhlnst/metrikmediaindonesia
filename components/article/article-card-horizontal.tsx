@@ -1,15 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
+import { cn, getImageUrl } from "@/lib/utils";
 import { AvatarAuthor } from "@/components/shared/avatar-author";
 import { Clock } from "@phosphor-icons/react/dist/ssr";
-
-function getImageUrl(image: any): string {
-  if (!image) return "https://picsum.photos/seed/placeholder/144/90";
-  if (typeof image === "string") return image;
-  if (image.url) return image.url;
-  return "https://picsum.photos/seed/placeholder/144/90";
-}
 
 interface ArticleCardHorizontalProps {
   article: any;

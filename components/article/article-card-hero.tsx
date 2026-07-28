@@ -2,13 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { AvatarAuthor } from "@/components/shared/avatar-author";
 import { Clock } from "@phosphor-icons/react/dist/ssr";
-
-function getImageUrl(image: any): string {
-  if (!image) return "https://picsum.photos/seed/placeholder/1200/675";
-  if (typeof image === "string") return image;
-  if (image.url) return image.url;
-  return "https://picsum.photos/seed/placeholder/1200/675";
-}
+import { getImageUrl } from "@/lib/utils";
 
 function getTimeAgo(date: Date): string {
   const now = new Date();
