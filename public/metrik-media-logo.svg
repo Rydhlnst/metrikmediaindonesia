@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#D4AF37"/>
+      <stop offset="50%" style="stop-color:#F4E4BC"/>
+      <stop offset="100%" style="stop-color:#B8860B"/>
+    </linearGradient>
+    <linearGradient id="darkGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#B8860B"/>
+      <stop offset="100%" style="stop-color:#8B6914"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Outer Circle -->
+  <circle cx="100" cy="100" r="90" stroke="url(#goldGradient)" stroke-width="4" fill="none"/>
+  
+  <!-- Inner geometric pattern - M shape with chart bars -->
+  <g transform="translate(40, 35)">
+    <!-- Bar chart bars -->
+    <rect x="20" y="70" width="12" height="35" fill="url(#goldGradient)"/>
+    <rect x="40" y="50" width="12" height="55" fill="url(#goldGradient)"/>
+    <rect x="60" y="30" width="12" height="75" fill="url(#goldGradient)"/>
+    <rect x="80" y="10" width="12" height="95" fill="url(#goldGradient)"/>
+    
+    <!-- Upward trending arrow -->
+    <path d="M25 75 L50 55 L70 35 L95 12" stroke="url(#goldGradient)" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <polygon points="95,12 85,15 92,22" fill="url(#goldGradient)"/>
+    
+    <!-- Grid lines -->
+    <line x1="15" y1="110" x2="105" y2="110" stroke="url(#goldGradient)" stroke-width="1" opacity="0.4"/>
+    <line x1="15" y1="80" x2="105" y2="80" stroke="url(#goldGradient)" stroke-width="1" opacity="0.4"/>
+    <line x1="15" y1="50" x2="105" y2="50" stroke="url(#goldGradient)" stroke-width="1" opacity="0.4"/>
+    <line x1="15" y1="20" x2="105" y2="20" stroke="url(#goldGradient)" stroke-width="1" opacity="0.4"/>
+  </g>
+  
+  <!-- PT text -->
+  <text x="100" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="url(#goldGradient)">PT</text>
+  
+  <!-- METRIK MEDIA text -->
+  <text x="100" y="155" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="url(#goldGradient)" letter-spacing="2">METRIK MEDIA</text>
+  
+  <!-- INDONESIA text -->
+  <text x="100" y="175" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="url(#goldGradient)" letter-spacing="4">INDONESIA</text>
+  
+  <!-- Decorative dots -->
+  <circle cx="55" cy="165" r="3" fill="url(#goldGradient)"/>
+  <circle cx="145" cy="165" r="3" fill="url(#goldGradient)"/>
+</svg>

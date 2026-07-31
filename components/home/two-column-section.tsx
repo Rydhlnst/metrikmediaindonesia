@@ -21,7 +21,7 @@ export function TwoColumnSection({ articles }: TwoColumnSectionProps) {
   if (!articles || articles.length === 0) return null;
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2">
+    <div className="grid gap-6 sm:grid-cols-3">
       {articles.map((article: any) => {
         const categorySlug = typeof article.category === "object" ? article.category?.slug : "berita";
         const authorName = typeof article.author === "object" ? article.author?.name : "";

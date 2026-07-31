@@ -17,7 +17,7 @@ export function LatestNewsGrid({ articles }: LatestNewsGridProps) {
       <SectionHeader title="Berita Terkini" href="/terkini" />
 
       {/* Featured + Grid */}
-      <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-4 grid gap-6 sm:grid-cols-3">
         {featured && <ArticleCard article={featured} />}
         {gridArticles.map((article) => (
           <ArticleCard key={article.id} article={article} />
@@ -26,7 +26,7 @@ export function LatestNewsGrid({ articles }: LatestNewsGridProps) {
 
       {/* List */}
       {listArticles.length > 0 && (
-        <div className="mt-6 grid gap-6 sm:grid-cols-2">
+        <div className="mt-6 grid gap-6 sm:grid-cols-3">
           {listArticles.map((article) => (
             <ArticleCardHorizontal key={article.id} article={article} />
           ))}

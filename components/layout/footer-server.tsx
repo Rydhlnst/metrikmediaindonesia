@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { SITE_CONFIG } from "@/lib/constants";
 
 const kategoriLinks = [
@@ -26,12 +27,19 @@ export function FooterServer() {
   return (
     <footer className="bg-black text-white pb-16 lg:pb-0">
       {/* Main Footer */}
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mx-auto px-4 py-12 sm:px-6 lg:px-8" style={{ maxWidth: "1440px" }}>
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
           {/* Brand */}
-          <div className="lg:col-span-2">
+          <div>
             <Link href="/" className="inline-block">
-              <span className="text-2xl font-bold tracking-tight font-serif">{SITE_CONFIG.shortName}</span>
+              <div className="relative h-12 w-12">
+                <Image
+                  src="/logo-metrik.png"
+                  alt="Metrik Media"
+                  fill
+                  className="object-contain"
+                />
+              </div>
             </Link>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-gray-400">
               {SITE_CONFIG.tagline}. Menyajikan berita terkini, terpercaya, dan akurat dari seluruh Indonesia.
@@ -88,7 +96,7 @@ export function FooterServer() {
 
       {/* Bottom Bar */}
       <div className="border-t border-gray-800">
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mx-auto px-4 py-6 sm:px-6 lg:px-8" style={{ maxWidth: "1440px" }}>
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <p className="text-xs text-gray-500">
               &copy; {new Date().getFullYear()} {SITE_CONFIG.name}. All rights reserved.

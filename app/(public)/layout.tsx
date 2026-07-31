@@ -8,15 +8,17 @@ export default function PublicLayout({
 }) {
   return (
     <div className="min-h-screen bg-background">
-      {/* Desktop sidebar offset */}
-      <div className="lg:ml-[240px]">
-        <HeaderServer />
-        {/* pt for fixed mobile header: h-14 + h-11 = 100px, desktop: h-12 = 48px */}
-        <main className="min-h-screen pt-[100px] pb-16 lg:pt-12 lg:pb-0">
+      <HeaderServer />
+      {/* 
+        Mobile header: h-12 + h-10 = 88px 
+        Desktop header: h-14 + ~48px (row2) = ~104px 
+      */}
+      <main className="min-h-screen pt-[96px] pb-16 lg:pt-[104px] lg:pb-0">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8" style={{ maxWidth: "1440px" }}>
           {children}
-        </main>
-        <FooterServer />
-      </div>
+        </div>
+      </main>
+      <FooterServer />
     </div>
   );
 }

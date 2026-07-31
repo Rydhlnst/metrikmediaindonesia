@@ -65,7 +65,7 @@ export default function AboutPage() {
       </div>
 
       {/* Story */}
-      <div className="mt-12 grid gap-12 lg:grid-cols-2">
+      <div className="mt-12 grid gap-12 lg:grid-cols-3">
         <div>
           <h2 className="text-xl font-bold">Cerita Kami</h2>
           <div className="mt-4 space-y-4 text-sm leading-relaxed text-muted-foreground">
@@ -86,7 +86,7 @@ export default function AboutPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-3 gap-6">
           <div className="border border-border p-6">
             <span className="text-3xl font-bold text-brand">50+</span>
             <p className="mt-1 text-sm text-muted-foreground">Jurnalis & Tim</p>

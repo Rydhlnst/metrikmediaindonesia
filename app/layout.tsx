@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Playfair_Display } from "next/font/google";
-import { ThemeProvider } from "next-themes";
 import { SITE_CONFIG } from "@/lib/constants";
 import "./globals.css";
 
@@ -46,16 +45,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" suppressHydrationWarning className={`${jakarta.variable} ${playfair.variable}`}>
+    <html lang="id" className={`${jakarta.variable} ${playfair.variable}`}>
       <body className="min-h-screen bg-background font-sans antialiased">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+        {children}
       </body>
     </html>
   );

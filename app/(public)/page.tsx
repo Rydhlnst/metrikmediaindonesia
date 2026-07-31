@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { SITE_CONFIG } from "@/lib/constants";
 import { HeroSection } from "@/components/home/hero-section";
+import { CoverOverlay } from "@/components/home/cover-overlay";
 import { getArticles } from "@/lib/payload-queries";
 import { getImageUrl } from "@/lib/utils";
 import { ArrowRight, Clock, Eye, BookmarkSimple } from "@phosphor-icons/react/dist/ssr";
@@ -125,10 +126,13 @@ export default async function HomePage() {
   const sosialArticles = articles.filter((a: any) => typeof a.category === "object" && a.category?.slug === "sosial-dan-budaya").slice(0, 4);
 
   return (
-    <div className="p-4 sm:p-6">
-      <HeroSection articles={articles} />
+    <>
+      <CoverOverlay />
+      
+      <div className="p-4 sm:p-6">
+        <HeroSection articles={articles} />
 
-      <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3">
         {sideArticles.map((article: any) => (
           <ArticleCardWide key={article.id} article={article} />
         ))}
@@ -147,7 +151,7 @@ export default async function HomePage() {
 
       <div className="my-6 border-t border-border" />
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
         {moreArticles.map((article: any) => (
           <ArticleCardWide key={article.id} article={article} />
         ))}
@@ -218,6 +222,7 @@ export default async function HomePage() {
           </div>
         </section>
       )}
-    </div>
+      </div>
+    </>
   );
 }

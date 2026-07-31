@@ -82,7 +82,7 @@ export default function SavedPage() {
       </div>
 
       {savedArticles.length > 0 ? (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-6 sm:grid-cols-3 lg:grid-cols-5">
           {savedArticles.map((article) => (
             <ArticleCard key={article.id} article={article} />
           ))}

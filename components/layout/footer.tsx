@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { NAVIGATION, SITE_CONFIG } from "@/lib/constants";
 import { EnvelopeSimple } from "@phosphor-icons/react/dist/ssr";
 
@@ -10,13 +11,18 @@ export function Footer() {
   return (
     <footer className="bg-primary text-primary-foreground">
       {/* Newsletter Section */}
-      <div className="container-responsive py-8 sm:py-10">
+      <div className="mx-auto px-4 py-8 sm:px-6 sm:py-10 lg:px-8" style={{ maxWidth: "1440px" }}>
         <div className="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-center">
           <div>
             <Link href="/" className="mb-2 flex items-center gap-2">
-              <span className="text-lg font-black tracking-tight">
-                {SITE_CONFIG.shortName}
-              </span>
+              <div className="relative h-10 w-10">
+                <Image
+                  src="/logo-metrik.png"
+                  alt="Metrik Media"
+                  fill
+                  className="object-contain"
+                />
+              </div>
             </Link>
             <h3 className="text-lg font-bold sm:text-xl">
               Latest Headlines: Breaking News and Updates
@@ -45,7 +51,7 @@ export function Footer() {
 
       {/* Links Grid */}
       <div className="border-t border-primary-foreground/20">
-        <div className="container-responsive py-8 sm:py-10">
+        <div className="mx-auto px-4 py-8 sm:px-6 sm:py-10 lg:px-8" style={{ maxWidth: "1440px" }}>
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
             {/* Left Column */}
             <div>
@@ -90,7 +96,7 @@ export function Footer() {
 
       {/* Bottom Bar */}
       <div className="border-t border-primary-foreground/20">
-        <div className="container-responsive py-4 sm:py-5">
+        <div className="mx-auto px-4 py-4 sm:px-6 sm:py-5 lg:px-8" style={{ maxWidth: "1440px" }}>
           <p className="text-xs text-primary-foreground/50">
             &copy; {currentYear} {SITE_CONFIG.name}. All rights reserved. Powered by {SITE_CONFIG.company}.
           </p>

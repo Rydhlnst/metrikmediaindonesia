@@ -96,7 +96,7 @@ function SearchRecommendations() {
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
           Telusuri Berdasarkan Kategori
         </h2>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-3 gap-3">
           {CATEGORIES.map((cat) => (
             <Link
               key={cat.slug}
@@ -163,7 +163,7 @@ function SearchRecommendations() {
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
           Berita Terkini
         </h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-3">
           {articles.slice(0, 6).map((article) => (
             <ArticleCard key={article.id} article={article} />
           ))}
@@ -197,7 +197,7 @@ function SearchResults() {
           </p>
 
           {results.length > 0 ? (
-            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-6 grid gap-6 sm:grid-cols-3 lg:grid-cols-5">
               {results.map((article) => (
                 <ArticleCard key={article.id} article={article} />
               ))}

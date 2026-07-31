@@ -6,31 +6,24 @@ import { cn } from "@/lib/utils";
 import { SITE_CONFIG } from "@/lib/constants";
 import { AvatarAuthor } from "@/components/shared/avatar-author";
 import {
-  House,
-  Sparkle,
-  UserPlus,
   MagnifyingGlass,
-  ChartLineUp,
-  Trophy,
-  GraduationCap,
-  Buildings,
+  BookmarkSimple,
+  UserCircle,
   X,
   SignIn,
   SignOut,
+  House,
+  Newspaper,
+  Info,
+  Envelope,
 } from "@phosphor-icons/react/dist/ssr";
 
-const mainNav = [
+const secondaryNav = [
   { label: "Beranda", href: "/", icon: House },
   { label: "Pencarian", href: "/pencarian", icon: MagnifyingGlass },
-  { label: "Tentang Kami", href: "/tentang-kami", icon: Sparkle },
-  { label: "Hubungi Kami", href: "/hubungi-kami", icon: UserPlus },
-];
-
-const categories = [
-  { label: "Bisnis", slug: "bisnis", icon: ChartLineUp },
-  { label: "Olahraga", slug: "olahraga", icon: Trophy },
-  { label: "Pendidikan", slug: "pendidikan", icon: GraduationCap },
-  { label: "Sosial & Budaya", slug: "sosial-dan-budaya", icon: Buildings },
+  { label: "Artikel Tersimpan", href: "/saved", icon: BookmarkSimple },
+  { label: "Tentang Kami", href: "/tentang-kami", icon: Info },
+  { label: "Hubungi Kami", href: "/hubungi-kami", icon: Envelope },
 ];
 
 interface SidebarProps {
@@ -59,18 +52,18 @@ export function Sidebar({ user, isOpen, onClose, onSignOut }: SidebarProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-[280px] flex-col bg-white dark:bg-background transition-transform duration-300 lg:w-[240px] lg:translate-x-0 lg:border-r lg:border-border",
+          "fixed inset-y-0 left-0 z-50 flex w-[280px] flex-col bg-white dark:bg-background transition-transform duration-300",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        {/* Header with title centered + close */}
-        <div className="flex h-14 items-center justify-between border-b border-border px-4 lg:h-12">
+        {/* Header */}
+        <div className="flex h-12 items-center justify-between border-b border-border px-4">
           <Link href="/" className="flex items-center gap-2" onClick={handleNavClick}>
-            <span className="text-lg font-bold tracking-tight font-serif">
+            <span className="text-lg font-bold tracking-tight">
               {SITE_CONFIG.shortName}
             </span>
           </Link>
-          <button onClick={onClose} className="flex size-8 items-center justify-center hover:bg-muted lg:hidden">
+          <button onClick={onClose} className="flex size-8 items-center justify-center hover:bg-muted">
             <X className="size-5" />
           </button>
         </div>
@@ -99,15 +92,15 @@ export function Sidebar({ user, isOpen, onClose, onSignOut }: SidebarProps) {
               className="flex items-center justify-center gap-2 border border-border px-4 py-3 text-sm font-medium transition-colors hover:bg-muted"
             >
               <SignIn className="size-5" />
-              Sign In
+              Masuk
             </Link>
           )}
         </div>
 
-        {/* Main Navigation */}
+        {/* Navigation */}
         <nav className="flex-1 overflow-y-auto px-3 py-4">
           <div className="space-y-1">
-            {mainNav.map((item) => {
+            {secondaryNav.map((item) => {
               const isActive = pathname === item.href;
               return (
                 <Link
@@ -123,33 +116,6 @@ export function Sidebar({ user, isOpen, onClose, onSignOut }: SidebarProps) {
                 >
                   <item.icon className="size-5" weight={isActive ? "fill" : "regular"} />
                   {item.label}
-                </Link>
-              );
-            })}
-          </div>
-
-          <div className="my-5 border-t border-border" />
-
-          <p className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-            Categories
-          </p>
-          <div className="space-y-1">
-            {categories.map((cat) => {
-              const isActive = pathname === `/${cat.slug}`;
-              return (
-                <Link
-                  key={cat.slug}
-                  href={`/${cat.slug}`}
-                  onClick={handleNavClick}
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-3 text-sm font-medium transition-colors",
-                    isActive
-                      ? "bg-muted text-foreground"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                  )}
-                >
-                  <cat.icon className="size-5" weight={isActive ? "fill" : "regular"} />
-                  {cat.label}
                 </Link>
               );
             })}
