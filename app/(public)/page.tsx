@@ -1,9 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
-import { SITE_CONFIG } from "@/lib/constants";
 import { HeroSection } from "@/components/home/hero-section";
 import { CoverOverlay } from "@/components/home/cover-overlay";
-import { getArticles } from "@/lib/payload-queries";
+import { TrendingTabs } from "@/components/home/trending-tabs";
+import { LiveFromHome } from "@/components/home/live-from-home";
+import { TopikTerkini } from "@/components/home/topik-terkini";
+import { CategorySectionLarge } from "@/components/home/category-section-large";
+import { getArticles, getTrendingArticles } from "@/lib/payload-queries";
 import { getImageUrl } from "@/lib/utils";
 import { ArrowRight, Clock, Eye, BookmarkSimple } from "@phosphor-icons/react/dist/ssr";
 
@@ -99,7 +102,7 @@ function ArticleCardWide({ article }: { article: any }) {
         </button>
       </div>
       <div className="flex flex-col gap-1 pt-3">
-        <span className="text-[11px] font-medium text-brand">{categoryName}</span>
+        <span className="text-[11px] font-medium text-[#a68a0a]">{categoryName}</span>
         <h3 className="text-base font-semibold leading-snug line-clamp-2">{article.title}</h3>
         <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
           <span>{authorName}</span>
@@ -112,18 +115,33 @@ function ArticleCardWide({ article }: { article: any }) {
 }
 
 export default async function HomePage() {
-  const [latestRes] = await Promise.all([getArticles({ limit: 12 })]);
+  const [latestRes, trendingRes] = await Promise.all([
+    getArticles({ limit: 30 }),
+    getTrendingArticles(10),
+  ]);
   const articles = latestRes.docs;
+  const trendingArticles = trendingRes.docs;
 
   const topArticles = articles.slice(0, 3);
-  const sideArticles = articles.slice(3, 6);
-  const moreArticles = articles.slice(6, 9);
+  const moreArticles = articles.slice(9, 12);
   const latestArticles = articles.slice(0, 5);
+  const liveArticles = articles.slice(12, 18);
 
   const bisnisArticles = articles.filter((a: any) => typeof a.category === "object" && a.category?.slug === "bisnis").slice(0, 4);
   const olahragaArticles = articles.filter((a: any) => typeof a.category === "object" && a.category?.slug === "olahraga").slice(0, 4);
   const pendidikanArticles = articles.filter((a: any) => typeof a.category === "object" && a.category?.slug === "pendidikan").slice(0, 4);
   const sosialArticles = articles.filter((a: any) => typeof a.category === "object" && a.category?.slug === "sosial-dan-budaya").slice(0, 4);
+
+  const topics = [
+    { name: "Korupsi", slug: "korupsi" },
+    { name: "Politik", slug: "politik" },
+    { name: "Ekonomi", slug: "ekonomi" },
+    { name: "Olahraga", slug: "olahraga" },
+    { name: "Teknologi", slug: "teknologi" },
+    { name: "Pendidikan", slug: "pendidikan" },
+    { name: "Kesehatan", slug: "kesehatan" },
+    { name: "Hukum", slug: "hukum" },
+  ];
 
   return (
     <>
@@ -132,96 +150,94 @@ export default async function HomePage() {
       <div className="p-4 sm:p-6">
         <HeroSection articles={articles} />
 
-      <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3">
-        {sideArticles.map((article: any) => (
-          <ArticleCardWide key={article.id} article={article} />
-        ))}
-      </div>
-
-      <div className="my-6 border-t border-border" />
-
-      <section>
-        <SectionHeader title="Top Stories" href="/pencarian" />
-        <div className="mt-4 divide-y divide-border">
-          {topArticles.map((article: any) => (
-            <ArticleListItem key={article.id} article={article} />
-          ))}
+        {/* Trending Tabs - Below Hero */}
+        <div className="mt-8">
+          <TrendingTabs articles={trendingArticles} />
         </div>
-      </section>
 
-      <div className="my-6 border-t border-border" />
-
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-        {moreArticles.map((article: any) => (
-          <ArticleCardWide key={article.id} article={article} />
-        ))}
-      </div>
-
-      <div className="my-6 border-t border-border" />
-
-      <section>
-        <SectionHeader title="Latest" href="/pencarian" />
-        <div className="mt-4 divide-y divide-border">
-          {latestArticles.map((article: any) => (
-            <ArticleListItem key={article.id} article={article} />
-          ))}
+        {/* Live From Home Section */}
+        <div className="mt-8">
+          <LiveFromHome articles={liveArticles} />
         </div>
-      </section>
 
-      <div className="my-6 border-t border-border" />
+        {/* Topik Terkini */}
+        <div className="mt-8">
+          <TopikTerkini topics={topics} />
+        </div>
 
-      {bisnisArticles.length > 0 && (
-        <>
-          <section>
-            <SectionHeader title="Bisnis" href="/bisnis" />
+        <div className="my-8 border-t border-border" />
+
+        {/* Category Sections - Tempo Style */}
+        <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
+          <div className="space-y-8">
+            {/* Bisnis Section */}
+            <CategorySectionLarge
+              title="Bisnis"
+              categorySlug="bisnis"
+              articles={bisnisArticles}
+            />
+
+            {/* Olahraga Section */}
+            <CategorySectionLarge
+              title="Olahraga"
+              categorySlug="olahraga"
+              articles={olahragaArticles}
+            />
+          </div>
+
+          {/* Sidebar - Top Stories */}
+          <div className="border-l border-border pl-6">
+            <SectionHeader title="Top Stories" href="/pencarian" />
             <div className="mt-4 divide-y divide-border">
-              {bisnisArticles.map((article: any) => (
+              {topArticles.map((article: any) => (
                 <ArticleListItem key={article.id} article={article} />
               ))}
             </div>
-          </section>
-          <div className="my-6 border-t border-border" />
-        </>
-      )}
+          </div>
+        </div>
 
-      {olahragaArticles.length > 0 && (
-        <>
-          <section>
-            <SectionHeader title="Olahraga" href="/olahraga" />
+        <div className="my-8 border-t border-border" />
+
+        {/* Pendidikan & Sosial Section */}
+        <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
+          <div className="space-y-8">
+            {/* Pendidikan Section */}
+            <CategorySectionLarge
+              title="Pendidikan"
+              categorySlug="pendidikan"
+              articles={pendidikanArticles}
+            />
+
+            {/* Sosial & Budaya Section */}
+            <CategorySectionLarge
+              title="Sosial & Budaya"
+              categorySlug="sosial-dan-budaya"
+              articles={sosialArticles}
+            />
+          </div>
+
+          {/* Sidebar - Latest */}
+          <div className="border-l border-border pl-6">
+            <SectionHeader title="Latest" href="/pencarian" />
             <div className="mt-4 divide-y divide-border">
-              {olahragaArticles.map((article: any) => (
+              {latestArticles.map((article: any) => (
                 <ArticleListItem key={article.id} article={article} />
               ))}
             </div>
-          </section>
-          <div className="my-6 border-t border-border" />
-        </>
-      )}
+          </div>
+        </div>
 
-      {pendidikanArticles.length > 0 && (
-        <>
-          <section>
-            <SectionHeader title="Pendidikan" href="/pendidikan" />
-            <div className="mt-4 divide-y divide-border">
-              {pendidikanArticles.map((article: any) => (
-                <ArticleListItem key={article.id} article={article} />
-              ))}
-            </div>
-          </section>
-          <div className="my-6 border-t border-border" />
-        </>
-      )}
+        <div className="my-8 border-t border-border" />
 
-      {sosialArticles.length > 0 && (
+        {/* More Articles Grid */}
         <section>
-          <SectionHeader title="Sosial & Budaya" href="/sosial-dan-budaya" />
-          <div className="mt-4 divide-y divide-border">
-            {sosialArticles.map((article: any) => (
-              <ArticleListItem key={article.id} article={article} />
+          <SectionHeader title="Berita Terkini" href="/pencarian" />
+          <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {moreArticles.map((article: any) => (
+              <ArticleCardWide key={article.id} article={article} />
             ))}
           </div>
         </section>
-      )}
       </div>
     </>
   );

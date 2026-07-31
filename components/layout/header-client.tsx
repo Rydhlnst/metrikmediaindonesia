@@ -131,7 +131,8 @@ export function HeaderClient() {
       {/* ========== DESKTOP HEADER (Tempo-style) ========== */}
       <header className="fixed top-0 left-0 right-0 z-30 hidden bg-white lg:block">
         {/* Row 1: Logo + Langganan + User + Search/Menu */}
-        <div className="mx-auto flex h-14 items-center border-b border-border px-6" style={{ maxWidth: "1440px" }}>
+        <div className="border-b border-border">
+          <div className="mx-auto flex h-14 items-center px-6" style={{ maxWidth: "1440px" }}>
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center gap-3">
             <div className="relative h-10 w-10">
@@ -183,9 +184,10 @@ export function HeaderClient() {
             </button>
           </div>
         </div>
+        </div>
 
         {/* Row 2: Category Navigation */}
-        <div className="border-b border-border">
+        <div className="bg-muted border-b border-border">
           <div className="mx-auto flex items-center px-6" style={{ maxWidth: "1440px" }}>
             {categoryNav.map((item) => {
               const isActive = pathname === item.href;
