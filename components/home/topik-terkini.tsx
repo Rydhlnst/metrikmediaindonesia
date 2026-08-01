@@ -10,24 +10,24 @@ export function TopikTerkini({ topics }: TopikTerkiniProps) {
 
   return (
     <div>
-      <div className="flex items-center justify-between border-b-2 border-foreground pb-3">
-        <h2 className="text-lg font-semibold">Topik Terkini</h2>
+      <div className="flex items-center justify-between border-b-2 border-brand pb-2.5">
+        <h2 className="text-[14px] font-bold uppercase tracking-wider">Topik Terkini</h2>
         <Link
           href="/pencarian"
-          className="flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground"
+          className="flex items-center gap-1 text-[11px] font-medium text-gray-500 hover:text-foreground transition-colors"
         >
-          Show all <ArrowRight className="size-3.5" />
+          Lihat Semua <ArrowRight className="size-3" />
         </Link>
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-3 flex flex-wrap gap-2">
         {topics.map((topic) => (
           <Link
             key={topic.slug}
             href={`/pencarian?search=${encodeURIComponent(topic.name)}`}
-            className="rounded-full border border-border px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
+            className="border border-gray-200 px-3.5 py-1.5 text-[12px] font-medium text-gray-600 transition-colors hover:border-brand hover:text-brand hover:bg-red-50/50"
           >
-            {topic.name}
+            #{topic.name}
           </Link>
         ))}
       </div>

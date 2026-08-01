@@ -18,16 +18,16 @@ export function NewsletterSignup() {
   };
 
   return (
-    <div className="border border-border bg-white dark:bg-background p-5">
-      <div className="mb-3 flex items-center gap-2">
-        <EnvelopeSimple className="size-4" weight="bold" />
-        <h3 className="text-sm font-bold uppercase tracking-wider">Newsletter</h3>
+    <div className="border border-gray-200 bg-white p-4">
+      <div className="mb-2 flex items-center gap-2">
+        <EnvelopeSimple className="size-4 text-brand" weight="bold" />
+        <h3 className="text-[12px] font-bold uppercase tracking-wider">Newsletter</h3>
       </div>
-      <p className="mb-4 text-xs leading-relaxed text-muted-foreground">
+      <p className="mb-3 text-[11px] leading-relaxed text-gray-500">
         Dapatkan berita terkini langsung ke email Anda. Gratis dan tanpa spam.
       </p>
       {submitted ? (
-        <div className="py-2 text-center text-sm font-medium">
+        <div className="py-2 text-center text-[12px] font-medium text-brand">
           Terima kasih telah berlangganan!
         </div>
       ) : (
@@ -38,9 +38,9 @@ export function NewsletterSignup() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="flex-1 border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:border-brand"
+            className="flex-1 border border-gray-200 bg-gray-50 px-3 py-2 text-[11px] text-foreground placeholder:text-gray-400 outline-none focus:border-brand"
           />
-          <Button type="submit" size="icon" className="size-8 shrink-0 bg-brand text-brand-foreground hover:bg-brand/90">
+          <Button type="submit" size="icon" className="size-8 shrink-0 bg-brand text-white hover:bg-red-700">
             <PaperPlaneRight className="size-3.5" weight="fill" />
           </Button>
         </form>

@@ -54,22 +54,22 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           { name: cat.name, url: `${SITE_CONFIG.url}/${cat.slug}` },
         ]}
       />
-      <div className="container-responsive py-6">
+      <div className="container-responsive py-5">
         <Breadcrumb items={[{ label: cat.name }]} />
         <div className="mt-4">
-          <div className="border-b-2 border-brand pb-3">
-            <h1 className="text-2xl font-bold uppercase tracking-tight">{cat.name}</h1>
+          <div className="border-b-2 border-brand pb-2.5">
+            <h1 className="text-[18px] font-bold uppercase tracking-wider">{cat.name}</h1>
           </div>
         </div>
         {articles.length > 0 ? (
-          <div className="mt-6 grid gap-6 sm:grid-cols-3 lg:grid-cols-5">
+          <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {articles.map((article) => (
               <ArticleCard key={article.id} article={article} />
             ))}
           </div>
         ) : (
           <div className="py-20 text-center">
-            <p className="text-muted-foreground">Belum ada berita di kategori ini.</p>
+            <p className="text-gray-400 text-[13px]">Belum ada berita di kategori ini.</p>
           </div>
         )}
       </div>

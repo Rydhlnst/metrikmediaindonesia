@@ -13,8 +13,8 @@ export default function PublicLayout({
         Mobile header: h-12 + h-10 = 88px 
         Desktop header: h-14 + ~48px (row2) = ~104px 
       */}
-      <main className="min-h-screen pt-[96px] pb-16 lg:pt-[104px] lg:pb-0">
-        <div className="mx-auto px-4 sm:px-6 lg:px-8" style={{ maxWidth: "1440px" }}>
+      <main className="min-h-screen pt-[84px] pb-16 lg:pt-[120px] lg:pb-0">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8" style={{ maxWidth: "1280px" }}>
           {children}
         </div>
       </main>

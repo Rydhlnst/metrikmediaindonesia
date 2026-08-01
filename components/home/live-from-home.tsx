@@ -19,19 +19,19 @@ export function LiveFromHome({ articles }: LiveFromHomeProps) {
 
   return (
     <div>
-      <div className="flex items-center justify-between border-b-2 border-foreground pb-3">
-        <h2 className="text-lg font-semibold">Live From Home</h2>
+      <div className="flex items-center justify-between border-b-2 border-brand pb-2.5">
+        <h2 className="text-[14px] font-bold uppercase tracking-wider">Live From Home</h2>
         <Link
           href="/pencarian"
-          className="flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground"
+          className="flex items-center gap-1 text-[11px] font-medium text-gray-500 hover:text-foreground transition-colors"
         >
-          Show all <ArrowRight className="size-3.5" />
+          Lihat Semua <ArrowRight className="size-3" />
         </Link>
       </div>
 
       {/* Horizontal Scroll Container */}
-      <div className="mt-4 -mx-4 overflow-x-auto px-4 sm:-mx-6 sm:px-6 scrollbar-hide">
-        <div className="flex gap-4">
+      <div className="mt-3 -mx-4 overflow-x-auto px-4 sm:-mx-6 sm:px-6 scrollbar-hide">
+        <div className="flex gap-3">
           {displayArticles.map((article: any) => {
             const categorySlug = getCategorySlug(article);
 
@@ -39,18 +39,18 @@ export function LiveFromHome({ articles }: LiveFromHomeProps) {
               <Link
                 key={article.id}
                 href={`/${categorySlug}/${article.slug}`}
-                className="group relative aspect-[4/3] w-48 shrink-0 overflow-hidden bg-muted sm:w-56"
+                className="group relative aspect-[4/3] w-44 shrink-0 overflow-hidden bg-gray-100 sm:w-52"
               >
                 <Image
                   src={getImageUrl(article.featuredImage)}
                   alt={article.title}
                   fill
-                  sizes="224px"
+                  sizes="208px"
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-3">
-                  <h3 className="text-[13px] font-semibold leading-snug text-white line-clamp-2">
+                  <h3 className="text-[12px] font-semibold leading-snug text-white line-clamp-2">
                     {article.title}
                   </h3>
                 </div>

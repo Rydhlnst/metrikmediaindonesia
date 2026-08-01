@@ -41,10 +41,10 @@ export function CoverOverlay() {
             priority
           />
         </div>
-        <h1 className="mt-6 text-2xl font-bold tracking-wide text-[#a68a0a] sm:text-3xl">
+        <h1 className="mt-6 text-2xl font-bold tracking-wide text-white sm:text-3xl">
           METRIK MEDIA INDONESIA
         </h1>
-        <p className="mt-2 text-sm tracking-widest text-[#a68a0a]/70">
+        <p className="mt-2 text-sm tracking-widest text-white/50">
           DATA DRIVEN &middot; STRATEGIC &middot; GROWTH
         </p>
       </div>

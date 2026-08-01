@@ -25,14 +25,14 @@ const socialLinks = [
 
 export function FooterServer() {
   return (
-    <footer className="bg-black text-white pb-16 lg:pb-0">
+    <footer className="bg-gray-950 text-white pb-16 lg:pb-0">
       {/* Main Footer */}
-      <div className="mx-auto px-4 py-12 sm:px-6 lg:px-8" style={{ maxWidth: "1440px" }}>
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mx-auto px-4 py-10 sm:px-6 lg:px-8" style={{ maxWidth: "1280px" }}>
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
-          <div>
-            <Link href="/" className="inline-block">
-              <div className="relative h-12 w-12">
+          <div className="lg:col-span-1">
+            <Link href="/" className="inline-flex items-center gap-2.5">
+              <div className="relative h-8 w-8">
                 <Image
                   src="/logo-metrik.png"
                   alt="Metrik Media"
@@ -40,18 +40,26 @@ export function FooterServer() {
                   className="object-contain"
                 />
               </div>
+              <div className="flex flex-col">
+                <span className="text-[13px] font-bold tracking-tight leading-none">
+                  {SITE_CONFIG.shortName}
+                </span>
+                <span className="text-[8px] font-medium tracking-[0.15em] text-gray-500 uppercase">
+                  {SITE_CONFIG.tagline}
+                </span>
+              </div>
             </Link>
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-gray-400">
-              {SITE_CONFIG.tagline}. Menyajikan berita terkini, terpercaya, dan akurat dari seluruh Indonesia.
+            <p className="mt-3 max-w-xs text-[12px] leading-relaxed text-gray-400">
+              Menyajikan berita terkini, terpercaya, dan akurat dari seluruh Indonesia.
             </p>
-            <div className="mt-6 flex items-center gap-3">
+            <div className="mt-4 flex items-center gap-2">
               {socialLinks.map((social) => (
                 <a
                   key={social.label}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex size-10 items-center justify-center border border-gray-700 text-gray-400 transition-colors hover:border-white hover:text-white"
+                  className="flex size-8 items-center justify-center text-gray-500 transition-colors hover:text-white"
                   aria-label={social.label}
                 >
                   <SocialIcon label={social.label} />
@@ -62,13 +70,13 @@ export function FooterServer() {
 
           {/* Kategori */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
+            <h3 className="text-[11px] font-bold uppercase tracking-wider text-gray-300">
               Kategori
             </h3>
-            <ul className="mt-4 space-y-3">
+            <ul className="mt-3 space-y-2">
               {kategoriLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-gray-400 transition-colors hover:text-white">
+                  <Link href={link.href} className="text-[12px] text-gray-400 transition-colors hover:text-white">
                     {link.label}
                   </Link>
                 </li>
@@ -78,30 +86,50 @@ export function FooterServer() {
 
           {/* Perusahaan */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
+            <h3 className="text-[11px] font-bold uppercase tracking-wider text-gray-300">
               Perusahaan
             </h3>
-            <ul className="mt-4 space-y-3">
+            <ul className="mt-3 space-y-2">
               {perusahaanLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-gray-400 transition-colors hover:text-white">
+                  <Link href={link.href} className="text-[12px] text-gray-400 transition-colors hover:text-white">
                     {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
+
+          {/* Newsletter */}
+          <div>
+            <h3 className="text-[11px] font-bold uppercase tracking-wider text-gray-300">
+              Ikuti Kami
+            </h3>
+            <p className="mt-3 text-[12px] leading-relaxed text-gray-400">
+              Dapatkan berita terkini langsung ke email Anda.
+            </p>
+            <div className="mt-3 flex gap-2">
+              <input
+                type="email"
+                placeholder="Email Anda"
+                className="flex-1 border border-gray-700 bg-gray-900 px-3 py-1.5 text-[11px] text-white placeholder:text-gray-500 outline-none focus:border-brand"
+              />
+              <button className="bg-brand px-3 py-1.5 text-[11px] font-semibold text-white transition-colors hover:bg-red-700">
+                Kirim
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Bottom Bar */}
       <div className="border-t border-gray-800">
-        <div className="mx-auto px-4 py-6 sm:px-6 lg:px-8" style={{ maxWidth: "1440px" }}>
-          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <p className="text-xs text-gray-500">
+        <div className="mx-auto px-4 py-4 sm:px-6 lg:px-8" style={{ maxWidth: "1280px" }}>
+          <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
+            <p className="text-[10px] text-gray-500">
               &copy; {new Date().getFullYear()} {SITE_CONFIG.name}. All rights reserved.
             </p>
-            <div className="flex items-center gap-6 text-xs text-gray-500">
+            <div className="flex items-center gap-4 text-[10px] text-gray-500">
               <Link href="/tentang-kami" className="transition-colors hover:text-white">Kebijakan Privasi</Link>
               <Link href="/tentang-kami" className="transition-colors hover:text-white">Syarat & Ketentuan</Link>
               <Link href="/hubungi-kami" className="transition-colors hover:text-white">Kontak</Link>

@@ -1,12 +1,24 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getImageUrl } from "@/lib/utils";
-import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
+import { ArrowRight, Clock } from "@phosphor-icons/react/dist/ssr";
 
 interface CategorySectionLargeProps {
   title: string;
   categorySlug: string;
   articles: any[];
+}
+
+function getTimeAgo(dateStr: string): string {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diff = now.getTime() - date.getTime();
+  const minutes = Math.floor(diff / 60000);
+  if (minutes < 60) return `${minutes} menit lalu`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} jam lalu`;
+  const days = Math.floor(hours / 24);
+  return `${days} hari lalu`;
 }
 
 export function CategorySectionLarge({ title, categorySlug, articles }: CategorySectionLargeProps) {
@@ -22,24 +34,24 @@ export function CategorySectionLarge({ title, categorySlug, articles }: Category
 
   return (
     <div>
-      <div className="flex items-center justify-between border-b-2 border-foreground pb-3">
-        <h2 className="text-lg font-semibold">{title}</h2>
+      <div className="flex items-center justify-between border-b-2 border-brand pb-2.5">
+        <h2 className="text-[14px] font-bold uppercase tracking-wider">{title}</h2>
         <Link
           href={`/${categorySlug}`}
-          className="flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground"
+          className="flex items-center gap-1 text-[11px] font-medium text-gray-500 hover:text-foreground transition-colors"
         >
-          Show all <ArrowRight className="size-3.5" />
+          Lihat Semua <ArrowRight className="size-3" />
         </Link>
       </div>
 
-      <div className="mt-4 grid gap-6 sm:grid-cols-[1fr_1fr] lg:grid-cols-[1fr_320px]">
+      <div className="mt-4 grid gap-5 sm:grid-cols-[1fr_1fr] lg:grid-cols-[1fr_280px]">
         {/* Main Article */}
         {mainArticle && (
           <Link
             href={`/${getArticleCategorySlug(mainArticle)}/${mainArticle.slug}`}
             className="group"
           >
-            <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
+            <div className="relative aspect-[16/10] w-full overflow-hidden bg-gray-100">
               <Image
                 src={getImageUrl(mainArticle.featuredImage)}
                 alt={mainArticle.title}
@@ -48,39 +60,43 @@ export function CategorySectionLarge({ title, categorySlug, articles }: Category
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
               />
             </div>
-            <div className="mt-3 flex flex-col gap-1">
-              <span className="text-[11px] font-medium text-[#a68a0a]">
+            <div className="mt-2.5 flex flex-col gap-1">
+              <span className="text-[9px] font-bold uppercase tracking-wider text-brand">
                 {getArticleCategoryName(mainArticle)}
               </span>
-              <h3 className="text-base font-semibold leading-snug line-clamp-2">
+              <h3 className="text-[15px] font-bold leading-snug line-clamp-2 group-hover:text-brand transition-colors">
                 {mainArticle.title}
               </h3>
+              <div className="mt-0.5 flex items-center gap-1.5 text-[10px] text-gray-400">
+                <Clock className="size-2.5" />
+                <span>{getTimeAgo(mainArticle.publishedAt || new Date().toISOString())}</span>
+              </div>
             </div>
           </Link>
         )}
 
         {/* Side Articles */}
-        <div className="divide-y divide-border">
+        <div className="divide-y divide-gray-100">
           {sideArticles.map((article: any) => (
             <Link
               key={article.id}
               href={`/${getArticleCategorySlug(article)}/${article.slug}`}
-              className="group flex gap-3 py-3 first:pt-0 last:pb-0"
+              className="group flex gap-3 py-2.5 first:pt-0 last:pb-0"
             >
-              <div className="relative h-16 w-20 shrink-0 overflow-hidden bg-muted">
+              <div className="relative h-14 w-[72px] shrink-0 overflow-hidden bg-gray-100">
                 <Image
                   src={getImageUrl(article.featuredImage)}
                   alt={article.title}
                   fill
-                  sizes="80px"
+                  sizes="72px"
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
               <div className="flex flex-1 min-w-0 flex-col justify-center">
-                <span className="text-[10px] font-medium text-[#a68a0a]">
+                <span className="text-[9px] font-bold uppercase tracking-wider text-brand">
                   {getArticleCategoryName(article)}
                 </span>
-                <h3 className="mt-0.5 text-[13px] font-semibold leading-snug line-clamp-2 text-foreground">
+                <h3 className="mt-0.5 text-[12px] font-semibold leading-snug line-clamp-2 text-foreground group-hover:text-brand transition-colors">
                   {article.title}
                 </h3>
               </div>

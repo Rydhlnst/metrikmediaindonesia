@@ -16,19 +16,19 @@ function getTimeAgo(date: Date): string {
   const now = new Date();
   const diff = now.getTime() - date.getTime();
   const minutes = Math.floor(diff / 60000);
-  if (minutes < 60) return `${minutes} min ago`;
+  if (minutes < 60) return `${minutes} menit lalu`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} hours ago`;
+  if (hours < 24) return `${hours} jam lalu`;
   const days = Math.floor(hours / 24);
-  return `${days} days ago`;
+  return `${days} hari lalu`;
 }
 
 function SectionHeader({ title, href }: { title: string; href: string }) {
   return (
-    <div className="flex items-center justify-between border-b-2 border-foreground pb-3">
-      <h2 className="text-lg font-semibold">{title}</h2>
-      <Link href={href} className="flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground">
-        Show all <ArrowRight className="size-3.5" />
+    <div className="flex items-center justify-between border-b-2 border-brand pb-2.5">
+      <h2 className="text-[14px] font-bold uppercase tracking-wider">{title}</h2>
+      <Link href={href} className="flex items-center gap-1 text-[11px] font-medium text-gray-500 hover:text-foreground transition-colors">
+        Lihat Semua <ArrowRight className="size-3" />
       </Link>
     </div>
   );
@@ -43,34 +43,26 @@ function ArticleListItem({ article }: { article: any }) {
   return (
     <Link
       href={`/${categorySlug}/${article.slug}`}
-      className="group flex gap-4 py-4"
+      className="group flex gap-3 py-2.5 first:pt-0"
     >
-      <div className="relative aspect-[4/3] w-24 shrink-0 overflow-hidden bg-muted sm:w-28">
+      <div className="relative aspect-[4/3] w-20 shrink-0 overflow-hidden bg-gray-100 sm:w-24">
         <Image
           src={getImageUrl(article.featuredImage)}
           alt={article.title}
           fill
-          sizes="112px"
+          sizes="96px"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
       </div>
       <div className="flex flex-1 min-w-0 flex-col justify-center">
-        <h3 className="text-[15px] font-semibold leading-snug line-clamp-2">
+        <span className="text-[9px] font-bold uppercase tracking-wider text-brand">{categoryName}</span>
+        <h3 className="mt-0.5 text-[13px] font-semibold leading-snug line-clamp-2 group-hover:text-brand transition-colors">
           {article.title}
         </h3>
-        <div className="mt-1.5 flex items-center gap-2 text-[11px] text-muted-foreground">
-          <span>{authorName}</span>
-          <span>·</span>
-          <span>{categoryName}</span>
-        </div>
-        <div className="mt-1.5 flex items-center gap-3 text-[11px] text-muted-foreground">
+        <div className="mt-1 flex items-center gap-2 text-[10px] text-gray-400">
           <span className="flex items-center gap-1">
-            <Clock className="size-3" />
+            <Clock className="size-2.5" />
             {getTimeAgo(publishedDate)}
-          </span>
-          <span className="flex items-center gap-1">
-            <Eye className="size-3" />
-            {(article.viewCount || 0).toLocaleString()}
           </span>
         </div>
       </div>
@@ -89,24 +81,24 @@ function ArticleCardWide({ article }: { article: any }) {
       href={`/${categorySlug}/${article.slug}`}
       className="group flex flex-col"
     >
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-gray-100">
         <Image
           src={getImageUrl(article.featuredImage)}
           alt={article.title}
           fill
-          sizes="(max-width: 640px) 100vw, 50vw"
+          sizes="(max-width: 640px) 100vw, 33vw"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        <button className="absolute right-2 top-2 flex size-7 items-center justify-center bg-black/30 text-white backdrop-blur-sm">
-          <BookmarkSimple className="size-4" />
+        <button className="absolute right-2 top-2 flex size-7 items-center justify-center bg-black/30 text-white backdrop-blur-sm transition-colors hover:bg-brand">
+          <BookmarkSimple className="size-3.5" />
         </button>
       </div>
-      <div className="flex flex-col gap-1 pt-3">
-        <span className="text-[11px] font-medium text-[#a68a0a]">{categoryName}</span>
-        <h3 className="text-base font-semibold leading-snug line-clamp-2">{article.title}</h3>
-        <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+      <div className="flex flex-col gap-1 pt-2.5">
+        <span className="text-[9px] font-bold uppercase tracking-wider text-brand">{categoryName}</span>
+        <h3 className="text-[14px] font-semibold leading-snug line-clamp-2 group-hover:text-brand transition-colors">{article.title}</h3>
+        <div className="flex items-center gap-2 text-[10px] text-gray-400">
           <span>{authorName}</span>
-          <span>·</span>
+          <span className="text-gray-300">|</span>
           <span>{getTimeAgo(publishedDate)}</span>
         </div>
       </div>
@@ -146,16 +138,16 @@ export default async function HomePage() {
   return (
     <>
       <CoverOverlay />
-      
-      <div className="p-4 sm:p-6">
+
+      <div className="py-5 sm:py-6">
         <HeroSection articles={articles} />
 
-        {/* Trending Tabs - Below Hero */}
+        {/* Trending Tabs */}
         <div className="mt-8">
           <TrendingTabs articles={trendingArticles} />
         </div>
 
-        {/* Live From Home Section */}
+        {/* Live From Home */}
         <div className="mt-8">
           <LiveFromHome articles={liveArticles} />
         </div>
@@ -165,19 +157,16 @@ export default async function HomePage() {
           <TopikTerkini topics={topics} />
         </div>
 
-        <div className="my-8 border-t border-border" />
+        <div className="my-8 h-px bg-gray-200" />
 
-        {/* Category Sections - Tempo Style */}
-        <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
+        {/* Category Sections */}
+        <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
           <div className="space-y-8">
-            {/* Bisnis Section */}
             <CategorySectionLarge
               title="Bisnis"
               categorySlug="bisnis"
               articles={bisnisArticles}
             />
-
-            {/* Olahraga Section */}
             <CategorySectionLarge
               title="Olahraga"
               categorySlug="olahraga"
@@ -185,10 +174,9 @@ export default async function HomePage() {
             />
           </div>
 
-          {/* Sidebar - Top Stories */}
-          <div className="border-l border-border pl-6">
+          <div className="border-l border-gray-200 pl-5">
             <SectionHeader title="Top Stories" href="/pencarian" />
-            <div className="mt-4 divide-y divide-border">
+            <div className="mt-3 divide-y divide-gray-100">
               {topArticles.map((article: any) => (
                 <ArticleListItem key={article.id} article={article} />
               ))}
@@ -196,19 +184,16 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <div className="my-8 border-t border-border" />
+        <div className="my-8 h-px bg-gray-200" />
 
-        {/* Pendidikan & Sosial Section */}
-        <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
+        {/* Pendidikan & Sosial */}
+        <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
           <div className="space-y-8">
-            {/* Pendidikan Section */}
             <CategorySectionLarge
               title="Pendidikan"
               categorySlug="pendidikan"
               articles={pendidikanArticles}
             />
-
-            {/* Sosial & Budaya Section */}
             <CategorySectionLarge
               title="Sosial & Budaya"
               categorySlug="sosial-dan-budaya"
@@ -216,10 +201,9 @@ export default async function HomePage() {
             />
           </div>
 
-          {/* Sidebar - Latest */}
-          <div className="border-l border-border pl-6">
-            <SectionHeader title="Latest" href="/pencarian" />
-            <div className="mt-4 divide-y divide-border">
+          <div className="border-l border-gray-200 pl-5">
+            <SectionHeader title="Terbaru" href="/pencarian" />
+            <div className="mt-3 divide-y divide-gray-100">
               {latestArticles.map((article: any) => (
                 <ArticleListItem key={article.id} article={article} />
               ))}
@@ -227,12 +211,12 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <div className="my-8 border-t border-border" />
+        <div className="my-8 h-px bg-gray-200" />
 
         {/* More Articles Grid */}
         <section>
           <SectionHeader title="Berita Terkini" href="/pencarian" />
-          <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {moreArticles.map((article: any) => (
               <ArticleCardWide key={article.id} article={article} />
             ))}

@@ -5,6 +5,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import Link from "next/link";
 import Image from "next/image";
 import { cn, getImageUrl } from "@/lib/utils";
+import { Clock } from "@phosphor-icons/react/dist/ssr";
 
 interface HeroSectionProps {
   articles: any[];
@@ -31,7 +32,7 @@ export function HeroSection({ articles }: HeroSectionProps) {
 
     const interval = setInterval(() => {
       emblaApi.scrollNext();
-    }, 4000);
+    }, 5000);
 
     return () => {
       emblaApi.off("select", onSelect);
@@ -46,6 +47,18 @@ export function HeroSection({ articles }: HeroSectionProps) {
   const getCategoryName = (article: any) =>
     typeof article.category === "object" ? article.category?.name : "";
 
+  const getTimeAgo = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const minutes = Math.floor(diff / 60000);
+    if (minutes < 60) return `${minutes} menit lalu`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours} jam lalu`;
+    const days = Math.floor(hours / 24);
+    return `${days} hari lalu`;
+  };
+
   return (
     <div className="w-full">
       {/* ========== MOBILE CAROUSEL ========== */}
@@ -54,17 +67,13 @@ export function HeroSection({ articles }: HeroSectionProps) {
           <div className="flex">
             {displayArticles.map((article: any, index: number) => {
               const categorySlug = getCategorySlug(article);
-              const dateStr = new Date(article.publishedAt || Date.now()).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              });
+              const categoryName = getCategoryName(article);
 
               return (
                 <div key={article.id} className="min-w-0 flex-[0_0_100%]">
                   <Link
                     href={`/${categorySlug}/${article.slug}`}
-                    className="group relative block aspect-video w-full overflow-hidden bg-muted"
+                    className="group relative block aspect-[16/10] w-full overflow-hidden bg-gray-100"
                   >
                     <Image
                       src={getImageUrl(article.featuredImage)}
@@ -74,12 +83,18 @@ export function HeroSection({ articles }: HeroSectionProps) {
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                       priority={index === 0}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-4">
-                      <div className="mb-2 text-xs text-white/70">{dateStr}</div>
-                      <h1 className="text-lg font-semibold leading-tight text-white line-clamp-2">
+                      <span className="mb-1.5 inline-block text-[10px] font-bold uppercase tracking-wider text-red-400">
+                        {categoryName}
+                      </span>
+                      <h1 className="text-lg font-bold leading-tight text-white line-clamp-2">
                         {article.title}
                       </h1>
+                      <div className="mt-1.5 flex items-center gap-2 text-[10px] text-white/60">
+                        <Clock className="size-3" />
+                        <span>{getTimeAgo(article.publishedAt || new Date().toISOString())}</span>
+                      </div>
                     </div>
                   </Link>
                 </div>
@@ -100,15 +115,15 @@ export function HeroSection({ articles }: HeroSectionProps) {
         </div>
       </div>
 
-      {/* ========== DESKTOP LAYOUT (Tempo-style) ========== */}
-      <div className="hidden gap-8 sm:grid sm:grid-cols-[1fr_320px] lg:grid-cols-[1fr_380px]">
+      {/* ========== DESKTOP LAYOUT ========== */}
+      <div className="hidden gap-6 sm:grid sm:grid-cols-[1fr_300px] lg:grid-cols-[1fr_340px]">
         {/* Left: Main Featured + Sub Articles */}
         <div>
           {/* Main Featured Article */}
           {mainArticle && (
             <Link
               href={`/${getCategorySlug(mainArticle)}/${mainArticle.slug}`}
-              className="group relative block aspect-[16/10] w-full overflow-hidden bg-muted"
+              className="group relative block aspect-[16/9] w-full overflow-hidden bg-gray-100"
             >
               <Image
                 src={getImageUrl(mainArticle.featuredImage)}
@@ -118,24 +133,34 @@ export function HeroSection({ articles }: HeroSectionProps) {
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                 priority
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
-                <h1 className="text-xl font-bold leading-tight text-white line-clamp-2 sm:text-2xl lg:text-3xl">
+                <span className="mb-2 inline-block text-[10px] font-bold uppercase tracking-wider text-red-400">
+                  {getCategoryName(mainArticle)}
+                </span>
+                <h1 className="text-xl font-bold leading-tight text-white line-clamp-2 sm:text-2xl lg:text-[28px] lg:leading-[1.2]">
                   {mainArticle.title}
                 </h1>
+                <div className="mt-2 flex items-center gap-2 text-[11px] text-white/60">
+                  <Clock className="size-3" />
+                  <span>{getTimeAgo(mainArticle.publishedAt || new Date().toISOString())}</span>
+                </div>
               </div>
             </Link>
           )}
 
           {/* Sub Articles Row */}
-          <div className="mt-4 grid grid-cols-3 gap-4">
+          <div className="mt-3 grid grid-cols-3 gap-4">
             {subArticles.map((article: any) => (
               <Link
                 key={article.id}
                 href={`/${getCategorySlug(article)}/${article.slug}`}
-                className="group"
+                className="group border-t-2 border-gray-200 pt-3 transition-colors hover:border-brand"
               >
-                <h3 className="text-[13px] font-semibold leading-snug line-clamp-3 text-foreground group-hover:text-[#a68a0a] transition-colors">
+                <span className="text-[9px] font-bold uppercase tracking-wider text-brand">
+                  {getCategoryName(article)}
+                </span>
+                <h3 className="mt-1 text-[13px] font-semibold leading-snug line-clamp-3 text-foreground group-hover:text-brand transition-colors">
                   {article.title}
                 </h3>
               </Link>
@@ -143,12 +168,14 @@ export function HeroSection({ articles }: HeroSectionProps) {
           </div>
         </div>
 
-        {/* Right: Artikel Terbaru Sidebar */}
-        <div className="border-l border-border pl-6">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">
-            Artikel Terbaru
-          </h2>
-          <div className="mt-4 divide-y divide-border">
+        {/* Right: Latest Articles Sidebar */}
+        <div className="border-l border-gray-200 pl-5">
+          <div className="border-b-2 border-brand pb-2.5">
+            <h2 className="text-[13px] font-bold uppercase tracking-wider text-foreground">
+              Terbaru
+            </h2>
+          </div>
+          <div className="mt-3 divide-y divide-gray-100">
             {sideArticles.map((article: any) => {
               const categorySlug = getCategorySlug(article);
               const categoryName = getCategoryName(article);
@@ -156,22 +183,22 @@ export function HeroSection({ articles }: HeroSectionProps) {
                 <Link
                   key={article.id}
                   href={`/${categorySlug}/${article.slug}`}
-                  className="group flex gap-3 py-3 first:pt-0 last:pb-0"
+                  className="group flex gap-3 py-2.5 first:pt-0 last:pb-0"
                 >
-                  <div className="relative h-16 w-20 shrink-0 overflow-hidden bg-muted">
+                  <div className="relative h-14 w-[72px] shrink-0 overflow-hidden bg-gray-100">
                     <Image
                       src={getImageUrl(article.featuredImage)}
                       alt={article.title}
                       fill
-                      sizes="80px"
+                      sizes="72px"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
                   <div className="flex flex-1 min-w-0 flex-col justify-center">
-                    <span className="text-[10px] font-medium text-[#a68a0a]">
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-brand">
                       {categoryName}
                     </span>
-                    <h3 className="mt-0.5 text-[13px] font-semibold leading-snug line-clamp-2 text-foreground">
+                    <h3 className="mt-0.5 text-[12px] font-semibold leading-snug line-clamp-2 text-foreground group-hover:text-brand transition-colors">
                       {article.title}
                     </h3>
                   </div>

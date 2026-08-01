@@ -10,17 +10,19 @@ interface SectionHeaderProps {
 
 export function SectionHeader({ title, href, className }: SectionHeaderProps) {
   return (
-    <div className={cn("flex items-center justify-between", className)}>
-      <h2 className="text-lg font-semibold">{title}</h2>
-      {href && (
-        <Link
-          href={href}
-          className="flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-        >
-          Show all
-          <ArrowRight className="size-3.5" />
-        </Link>
-      )}
+    <div className={cn("border-b-2 border-brand pb-2.5", className)}>
+      <div className="flex items-center justify-between">
+        <h2 className="text-[14px] font-bold uppercase tracking-wider">{title}</h2>
+        {href && (
+          <Link
+            href={href}
+            className="flex items-center gap-1 text-[11px] font-medium text-gray-500 transition-colors hover:text-foreground"
+          >
+            Lihat Semua
+            <ArrowRight className="size-3" />
+          </Link>
+        )}
+      </div>
     </div>
   );
 }
