@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getImageUrl } from "@/lib/utils";
-import { getCategorySlug } from "@/lib/article-helpers";
+import { getCategorySlug, getCategoryName, getTimeAgo } from "@/lib/article-helpers";
 import { SectionHeader } from "@/components/shared/section-header";
 
 interface LiveFromHomeProps {
@@ -17,26 +17,34 @@ export function LiveFromHome({ articles }: LiveFromHomeProps) {
   return (
     <div>
       <SectionHeader title="Live From Home" href="/pencarian" />
-      <div className="mt-3 -mx-4 overflow-x-auto px-4 sm:-mx-6 sm:px-6 scrollbar-hide">
-        <div className="flex gap-3">
+      <div className="mt-4 -mx-4 overflow-x-auto px-4 sm:-mx-6 sm:px-6 scrollbar-hide">
+        <div className="flex gap-3 pb-2">
           {displayArticles.map((article: any) => (
             <Link
               key={article.id}
               href={`/${getCategorySlug(article)}/${article.slug}`}
-              className="group relative aspect-[4/3] w-44 shrink-0 overflow-hidden bg-gray-100 sm:w-52"
+              className="group relative aspect-[3/4] w-40 shrink-0 overflow-hidden rounded-2xl bg-gray-100 sm:w-48"
             >
               <Image
                 src={getImageUrl(article.featuredImage)}
                 alt={article.title}
                 fill
-                sizes="208px"
+                sizes="192px"
                 className="object-cover card-image-zoom"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+              <div className="absolute top-2 left-2">
+                <span className="inline-flex items-center rounded-full bg-brand px-2.5 py-0.5 text-[11px] font-semibold text-gray-900">
+                  {getCategoryName(article)}
+                </span>
+              </div>
               <div className="absolute bottom-0 left-0 right-0 p-3">
-                <h3 className="text-[12px] font-semibold leading-snug text-white line-clamp-2">
+                <h3 className="text-sm font-semibold leading-snug text-white line-clamp-2">
                   {article.title}
                 </h3>
+                <span className="mt-1 block text-[11px] text-white/60">
+                  {getTimeAgo(article.publishedAt || new Date().toISOString())}
+                </span>
               </div>
             </Link>
           ))}

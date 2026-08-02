@@ -12,22 +12,21 @@ interface SectionHeaderProps {
 
 export function SectionHeader({ title, href, icon, className }: SectionHeaderProps) {
   return (
-    <div className={cn("border-b-2 border-brand pb-2.5", className)}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          {icon}
-          <h2 className="text-[14px] font-bold uppercase tracking-wider">{title}</h2>
-        </div>
-        {href && (
-          <Link
-            href={href}
-            className="flex items-center gap-1 text-[11px] font-medium text-gray-500 transition-colors hover:text-foreground link-underline"
-          >
-            Lihat Semua
-            <ArrowRight className="size-3" />
-          </Link>
-        )}
+    <div className={cn("flex items-center justify-between", className)}>
+      <div className="flex items-center gap-2.5">
+        <span className="h-6 w-1 rounded-full bg-brand" />
+        <h2 className="text-base font-bold tracking-tight">{title}</h2>
+        {icon}
       </div>
+      {href && (
+        <Link
+          href={href}
+          className="flex items-center gap-1 text-sm font-medium text-gray-500 transition-colors hover:text-foreground"
+        >
+          View all
+          <ArrowRight className="size-4" />
+        </Link>
+      )}
     </div>
   );
 }

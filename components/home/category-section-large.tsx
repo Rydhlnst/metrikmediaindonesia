@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { ArticleCard } from "@/components/article/article-card";
 import { SectionHeader } from "@/components/shared/section-header";
 
@@ -17,9 +16,9 @@ export function CategorySectionLarge({ title, categorySlug, articles }: Category
   return (
     <div>
       <SectionHeader title={title} href={`/${categorySlug}`} />
-      <div className="mt-4 grid gap-5 sm:grid-cols-[1fr_1fr] lg:grid-cols-[1fr_280px]">
+      <div className="mt-4 grid gap-4 sm:grid-cols-[1fr_1fr] lg:grid-cols-[1fr_280px]">
         <ArticleCard article={mainArticle} variant="featured" showViews />
-        <div className="divide-y divide-gray-100">
+        <div className="flex flex-col divide-y divide-gray-100 rounded-2xl">
           {sideArticles.map((article: any) => (
             <ArticleCard key={article.id} article={article} variant="horizontal" />
           ))}

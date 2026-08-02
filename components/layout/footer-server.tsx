@@ -25,41 +25,35 @@ const socialLinks = [
 
 export function FooterServer() {
   return (
-    <footer className="bg-gray-950 text-white pb-16 sm:pb-0">
-      {/* Main Footer */}
-      <div className="mx-auto px-4 py-10 sm:px-6 lg:px-8" style={{ maxWidth: "1280px" }}>
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+    <footer className="bg-gray-950 text-white pb-20 sm:pb-0">
+      <div className="mx-auto px-4 py-12 sm:px-6 lg:px-8" style={{ maxWidth: "1320px" }}>
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link href="/" className="inline-flex items-center gap-2.5">
-              <div className="relative h-8 w-8">
-                <Image
-                  src="/logo-metrik.png"
-                  alt="Metrik Media"
-                  fill
-                  className="object-contain"
-                />
+            <Link href="/" className="inline-flex items-center gap-3">
+              <div className="relative h-9 w-9">
+                <Image src="/logo-metrik.png" alt="Metrik Media" fill className="object-contain" />
               </div>
               <div className="flex flex-col">
-                <span className="text-[13px] font-bold tracking-tight leading-none">
+                <span className="text-sm font-bold tracking-tight leading-none">
                   {SITE_CONFIG.shortName}
                 </span>
-                <span className="text-[8px] font-medium tracking-[0.15em] text-gray-500 uppercase">
+                <span className="text-[10px] font-medium tracking-[0.1em] text-gray-500 uppercase">
                   {SITE_CONFIG.tagline}
                 </span>
               </div>
             </Link>
-            <p className="mt-3 max-w-xs text-[12px] leading-relaxed text-gray-400">
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-gray-400">
               Menyajikan berita terkini, terpercaya, dan akurat dari seluruh Indonesia.
             </p>
-            <div className="mt-4 flex items-center gap-2">
+            <div className="mt-5 flex items-center gap-2">
               {socialLinks.map((social) => (
                 <a
                   key={social.label}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex size-8 items-center justify-center text-gray-500 transition-colors hover:text-white"
+                  className="flex size-9 items-center justify-center rounded-full text-gray-500 transition-colors hover:bg-white/10 hover:text-white"
                   aria-label={social.label}
                 >
                   <SocialIcon label={social.label} />
@@ -70,13 +64,13 @@ export function FooterServer() {
 
           {/* Kategori */}
           <div>
-            <h3 className="text-[11px] font-bold uppercase tracking-wider text-gray-300">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-gray-300">
               Kategori
             </h3>
-            <ul className="mt-3 space-y-2">
+            <ul className="mt-4 space-y-3">
               {kategoriLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-[12px] text-gray-400 transition-colors hover:text-white">
+                  <Link href={link.href} className="text-sm text-gray-400 transition-colors hover:text-white">
                     {link.label}
                   </Link>
                 </li>
@@ -86,13 +80,13 @@ export function FooterServer() {
 
           {/* Perusahaan */}
           <div>
-            <h3 className="text-[11px] font-bold uppercase tracking-wider text-gray-300">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-gray-300">
               Perusahaan
             </h3>
-            <ul className="mt-3 space-y-2">
+            <ul className="mt-4 space-y-3">
               {perusahaanLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-[12px] text-gray-400 transition-colors hover:text-white">
+                  <Link href={link.href} className="text-sm text-gray-400 transition-colors hover:text-white">
                     {link.label}
                   </Link>
                 </li>
@@ -102,19 +96,19 @@ export function FooterServer() {
 
           {/* Newsletter */}
           <div>
-            <h3 className="text-[11px] font-bold uppercase tracking-wider text-gray-300">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-gray-300">
               Ikuti Kami
             </h3>
-            <p className="mt-3 text-[12px] leading-relaxed text-gray-400">
+            <p className="mt-4 text-sm leading-relaxed text-gray-400">
               Dapatkan berita terkini langsung ke email Anda.
             </p>
-            <div className="mt-3 flex gap-2">
+            <div className="mt-4 flex gap-2">
               <input
                 type="email"
                 placeholder="Email Anda"
-                className="flex-1 border border-gray-700 bg-gray-900 px-3 py-1.5 text-[11px] text-white placeholder:text-gray-500 outline-none focus:border-brand"
+                className="flex-1 rounded-xl border border-gray-700 bg-gray-900 px-4 py-2.5 text-sm text-white placeholder:text-gray-500 outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
               />
-              <button className="bg-brand px-3 py-1.5 text-[11px] font-semibold text-gray-900 transition-colors hover:bg-amber-400">
+              <button className="shrink-0 rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-gray-900 transition-colors hover:bg-amber-400">
                 Kirim
               </button>
             </div>
@@ -124,16 +118,14 @@ export function FooterServer() {
 
       {/* Bottom Bar */}
       <div className="border-t border-gray-800">
-        <div className="mx-auto px-4 py-4 sm:px-6 lg:px-8" style={{ maxWidth: "1280px" }}>
-          <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
-            <p className="text-[10px] text-gray-500">
-              &copy; {new Date().getFullYear()} {SITE_CONFIG.name}. All rights reserved.
-            </p>
-            <div className="flex items-center gap-4 text-[10px] text-gray-500">
-              <Link href="/tentang-kami" className="transition-colors hover:text-white">Kebijakan Privasi</Link>
-              <Link href="/tentang-kami" className="transition-colors hover:text-white">Syarat & Ketentuan</Link>
-              <Link href="/hubungi-kami" className="transition-colors hover:text-white">Kontak</Link>
-            </div>
+        <div className="mx-auto flex flex-col items-center justify-between gap-3 px-4 py-5 sm:flex-row sm:px-6 lg:px-8" style={{ maxWidth: "1320px" }}>
+          <p className="text-xs text-gray-500">
+            &copy; {new Date().getFullYear()} {SITE_CONFIG.name}. All rights reserved.
+          </p>
+          <div className="flex items-center gap-5 text-xs text-gray-500">
+            <Link href="/tentang-kami" className="transition-colors hover:text-white">Kebijakan Privasi</Link>
+            <Link href="/tentang-kami" className="transition-colors hover:text-white">Syarat & Ketentuan</Link>
+            <Link href="/hubungi-kami" className="transition-colors hover:text-white">Kontak</Link>
           </div>
         </div>
       </div>
@@ -170,7 +162,7 @@ function SocialIcon({ label }: { label: string }) {
     case "LinkedIn":
       return (
         <svg className="size-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path fillRule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clipRule="evenodd" />
+          <path fillRule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.763-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clipRule="evenodd" />
         </svg>
       );
     default:

@@ -78,10 +78,7 @@ export function ReadingProgress() {
   }, []);
 
   return (
-    <div
-      className="reading-progress"
-      style={{ width: `${progress}%` }}
-    />
+    <div className="reading-progress" style={{ width: `${progress}%` }} />
   );
 }
 
@@ -89,11 +86,11 @@ export function LiveBadge({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 bg-brand px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-gray-900",
+        "inline-flex items-center gap-1.5 rounded-full bg-brand px-3 py-1 text-xs font-semibold text-gray-900",
         className
       )}
     >
-      <span className="size-1.5 rounded-full bg-white animate-live-pulse" />
+      <span className="size-1.5 rounded-full bg-green-500 animate-live-pulse" />
       Live
     </span>
   );
@@ -101,8 +98,8 @@ export function LiveBadge({ className }: { className?: string }) {
 
 export function UpdatedAgo({ minutes = 5 }: { minutes?: number }) {
   return (
-    <span className="inline-flex items-center gap-1 text-[10px] text-gray-400">
-      <span className="size-1 rounded-full bg-green-500 animate-live-pulse" />
+    <span className="inline-flex items-center gap-1.5 text-xs text-gray-400">
+      <span className="size-1.5 rounded-full bg-green-500 animate-live-pulse" />
       Diperbarui {minutes} menit lalu
     </span>
   );

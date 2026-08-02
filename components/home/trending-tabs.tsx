@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { getCategorySlug, getCategoryName, formatViews } from "@/lib/article-helpers";
+import Image from "next/image";
+import { cn, getImageUrl } from "@/lib/utils";
+import { getCategorySlug, getCategoryName, getTimeAgo, formatViews } from "@/lib/article-helpers";
 import { SectionHeader } from "@/components/shared/section-header";
-import { ArticleCard } from "@/components/article/article-card";
-import { Eye } from "@phosphor-icons/react/dist/ssr";
+import { Clock, Eye, TrendUp } from "@phosphor-icons/react/dist/ssr";
 
 interface TrendingTabsProps {
   articles: any[];
@@ -20,7 +20,7 @@ const tabs = [
 
 export function TrendingTabs({ articles }: TrendingTabsProps) {
   const [activeTab, setActiveTab] = useState("daily");
-  const displayArticles = articles.slice(0, 8);
+  const displayArticles = articles.slice(0, 5);
 
   if (!displayArticles || displayArticles.length === 0) return null;
 
@@ -28,38 +28,67 @@ export function TrendingTabs({ articles }: TrendingTabsProps) {
     <div>
       <SectionHeader
         title="Artikel Terpopuler"
-        icon={(
-          <svg className="size-4 text-brand-text" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/>
-          </svg>
-        )}
+        icon={<TrendUp className="size-5 text-brand-text" weight="bold" />}
       />
 
-      <div className="mt-3 flex gap-0 border-b border-gray-200">
+      {/* Tabs */}
+      <div className="mt-4 flex gap-2">
         {tabs.map((tab) => (
           <button
             key={tab.value}
             onClick={() => setActiveTab(tab.value)}
             className={cn(
-              "relative px-4 py-2 text-[12px] font-semibold tracking-wide transition-colors",
-              activeTab === tab.value ? "text-brand-text" : "text-gray-400 hover:text-foreground"
+              "rounded-full px-4 py-2 text-sm font-medium transition-all",
+              activeTab === tab.value
+                ? "bg-brand text-gray-900 font-semibold shadow-sm"
+                : "bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700"
             )}
           >
-            {tab.label.toUpperCase()}
-            {activeTab === tab.value && <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-brand" />}
+            {tab.label}
           </button>
         ))}
       </div>
 
-      <div className="mt-2 divide-y divide-gray-100">
+      {/* Trending Cards */}
+      <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
         {displayArticles.map((article: any, index: number) => (
-          <ArticleCard
+          <Link
             key={article.id}
-            article={article}
-            variant="horizontal"
-            rank={index}
-            showViews
-          />
+            href={`/${getCategorySlug(article)}/${article.slug}`}
+            className="group flex gap-4 rounded-2xl p-3 transition-all hover:bg-gray-50"
+          >
+            <div className="relative h-20 w-24 shrink-0 overflow-hidden rounded-xl bg-gray-100 sm:h-24 sm:w-28">
+              <Image
+                src={getImageUrl(article.featuredImage)}
+                alt={article.title}
+                fill
+                sizes="112px"
+                className="object-cover card-image-zoom"
+              />
+              {index < 3 && (
+                <div className="absolute top-1.5 left-1.5 flex size-7 items-center justify-center rounded-full bg-brand text-xs font-bold text-gray-900">
+                  {index + 1}
+                </div>
+              )}
+            </div>
+            <div className="flex flex-1 min-w-0 flex-col justify-center gap-1">
+              <span className="text-xs font-semibold text-brand-text">{getCategoryName(article)}</span>
+              <h3 className="text-[15px] font-semibold leading-snug line-clamp-2 text-foreground group-hover:text-brand-text transition-colors">
+                {article.title}
+              </h3>
+              <div className="flex items-center gap-2 text-xs text-gray-400">
+                <span className="flex items-center gap-1">
+                  <Clock className="size-3" />
+                  {getTimeAgo(article.publishedAt || new Date().toISOString())}
+                </span>
+                <span>·</span>
+                <span className="flex items-center gap-1">
+                  <Eye className="size-3" />
+                  {formatViews(article.viewCount || 0)}
+                </span>
+              </div>
+            </div>
+          </Link>
         ))}
       </div>
     </div>

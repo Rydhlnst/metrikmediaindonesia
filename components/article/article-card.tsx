@@ -36,45 +36,50 @@ export function ArticleCard({
     return (
       <Link
         href={`/${categorySlug}/${article.slug}`}
-        className={cn("group flex gap-3 py-2.5 first:pt-0 last:pb-0", className)}
+        className={cn("group flex gap-3.5 py-3 first:pt-0 last:pb-0", className)}
       >
         {rank !== undefined && (
           <span
             className={cn(
-              "flex shrink-0 items-start pt-1 text-[18px] font-bold ranking-number",
-              rank < 3 ? "text-brand-text" : "text-gray-200"
+              "flex shrink-0 items-start text-lg font-bold ranking-number",
+              rank < 3 ? "text-brand-text" : "text-gray-300"
             )}
             style={{ fontFamily: "var(--font-playfair)" }}
           >
             {String(rank + 1).padStart(2, "0")}
           </span>
         )}
-        <div className="relative h-14 w-[72px] shrink-0 overflow-hidden bg-gray-100">
+        <div className="relative h-[72px] w-[100px] shrink-0 overflow-hidden rounded-xl bg-gray-100">
           <Image
             src={getImageUrl(article.featuredImage)}
             alt={article.title}
             fill
-            sizes="72px"
+            sizes="100px"
             className="object-cover card-image-zoom"
           />
         </div>
-        <div className="flex flex-1 min-w-0 flex-col justify-center">
-          <span className="text-[9px] font-bold uppercase tracking-wider text-brand-text">
+        <div className="flex flex-1 min-w-0 flex-col justify-center gap-1">
+          <span className="text-xs font-semibold text-brand-text">
             {categoryName}
           </span>
-          <h3 className="mt-0.5 text-[12px] font-semibold leading-snug line-clamp-2 text-foreground group-hover:text-brand-text transition-colors">
+          <h3 className="text-[15px] font-semibold leading-snug line-clamp-2 text-foreground group-hover:text-brand-text transition-colors">
             {article.title}
           </h3>
-          <div className="mt-0.5 flex items-center gap-2 text-[9px] text-gray-400">
+          <div className="flex items-center gap-2 text-xs text-gray-400">
+            {authorName && <span>{authorName}</span>}
+            {authorName && <span>·</span>}
             <span className="flex items-center gap-1">
-              <Clock className="size-2" />
+              <Clock className="size-3" />
               {getTimeAgo(publishedDate)}
             </span>
             {showViews && (
-              <span className="flex items-center gap-1">
-                <Eye className="size-2" />
-                {formatViews(article.viewCount || 0)}
-              </span>
+              <>
+                <span>·</span>
+                <span className="flex items-center gap-1">
+                  <Eye className="size-3" />
+                  {formatViews(article.viewCount || 0)}
+                </span>
+              </>
             )}
           </div>
         </div>
@@ -86,7 +91,7 @@ export function ArticleCard({
     return (
       <Link
         href={`/${categorySlug}/${article.slug}`}
-        className={cn("group card-hover-lift", className)}
+        className={cn("group card-modern overflow-hidden", className)}
       >
         <div className="relative aspect-[16/10] w-full overflow-hidden bg-gray-100">
           <Image
@@ -97,39 +102,35 @@ export function ArticleCard({
             className="object-cover card-image-zoom"
             priority={priority}
           />
-          {showBookmark && (
-            <button className="absolute right-2 top-2 flex size-7 items-center justify-center bg-black/30 text-white backdrop-blur-sm transition-all hover:bg-brand hover:text-gray-900 hover:scale-110">
-              <BookmarkSimple className="size-3.5" />
-            </button>
-          )}
-        </div>
-        <div className="mt-2.5 flex flex-col gap-1">
-          <span className="text-[9px] font-bold uppercase tracking-wider text-brand-text">
-            {categoryName}
-          </span>
-          <h3
-            className="text-[15px] font-bold leading-snug line-clamp-2 group-hover:text-brand-text transition-colors"
-            style={{ fontFamily: "var(--font-playfair)" }}
-          >
-            {article.title}
-          </h3>
-          {showExcerpt && article.excerpt && (
-            <p className="mt-1 text-[12px] leading-relaxed text-gray-500 line-clamp-2">
-              {article.excerpt}
-            </p>
-          )}
-          <div className="mt-0.5 flex items-center gap-3 text-[10px] text-gray-400">
-            {authorName && <span>{authorName}</span>}
-            <span className="flex items-center gap-1">
-              <Clock className="size-2.5" />
-              {getTimeAgo(publishedDate)}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+          <div className="absolute top-3 left-3 flex items-center gap-2">
+            <span className="inline-flex items-center rounded-full bg-brand px-3 py-1 text-xs font-semibold text-gray-900">
+              {categoryName}
             </span>
-            {showViews && (
-              <span className="flex items-center gap-1">
-                <Eye className="size-2.5" />
-                {formatViews(article.viewCount || 0)}
-              </span>
+            {showBookmark && (
+              <button className="flex size-8 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-brand hover:text-gray-900">
+                <BookmarkSimple className="size-4" />
+              </button>
             )}
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 p-4">
+            <h3
+              className="text-lg font-bold leading-snug text-white line-clamp-2"
+              style={{ fontFamily: "var(--font-playfair)" }}
+            >
+              {article.title}
+            </h3>
+            <div className="mt-2 flex items-center gap-2 text-xs text-white/70">
+              {authorName && <span>{authorName}</span>}
+              <span>·</span>
+              <span>{getTimeAgo(publishedDate)}</span>
+              {showViews && (
+                <>
+                  <span>·</span>
+                  <span>{formatViews(article.viewCount || 0)} views</span>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </Link>
@@ -137,15 +138,14 @@ export function ArticleCard({
   }
 
   // Default: vertical
-  const imageAspect = size === "lg" ? "aspect-[16/10]" : "aspect-[4/3]";
-  const titleSize = size === "lg" ? "text-base" : size === "sm" ? "text-[12px]" : "text-[13px]";
+  const titleSize = size === "lg" ? "text-lg" : size === "sm" ? "text-[15px]" : "text-[15px]";
 
   return (
     <Link
       href={`/${categorySlug}/${article.slug}`}
-      className={cn("group flex flex-col transition-all duration-300", className)}
+      className={cn("group card-modern overflow-hidden", className)}
     >
-      <div className={cn("relative overflow-hidden bg-gray-100", imageAspect)}>
+      <div className={cn("relative overflow-hidden bg-gray-100", size === "lg" ? "aspect-[16/10]" : "aspect-[16/10]")}>
         <Image
           src={getImageUrl(article.featuredImage)}
           alt={article.title}
@@ -155,33 +155,38 @@ export function ArticleCard({
           priority={priority}
         />
         {showBookmark && (
-          <button className="absolute right-2 top-2 flex size-7 items-center justify-center bg-black/30 text-white backdrop-blur-sm transition-all hover:bg-brand hover:scale-110">
-            <BookmarkSimple className="size-3.5" />
+          <button className="absolute right-2 top-2 flex size-8 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-brand hover:text-gray-900">
+            <BookmarkSimple className="size-4" />
           </button>
         )}
       </div>
-      <div className="flex flex-1 flex-col gap-1 pt-2.5">
-        <div className="flex items-center gap-2">
-          <span className="text-[9px] font-bold uppercase tracking-wider text-brand-text">{categoryName}</span>
-          <span className="text-gray-300">|</span>
-          <span className="text-[10px] text-gray-400">{getTimeAgo(publishedDate)}</span>
-        </div>
+      <div className="flex flex-1 flex-col gap-1.5 p-4">
+        <span className="text-xs font-semibold text-brand-text">{categoryName}</span>
         <h3 className={cn("font-semibold leading-snug line-clamp-2 group-hover:text-brand-text transition-colors", titleSize)}>
           {article.title}
         </h3>
         {showExcerpt && article.excerpt && (
-          <p className="text-[11px] leading-relaxed text-gray-500 line-clamp-2 mt-0.5">
+          <p className="text-sm leading-relaxed text-gray-500 line-clamp-2">
             {article.excerpt}
           </p>
         )}
-        {showViews && (
-          <div className="flex items-center gap-2 text-[10px] text-gray-400 mt-0.5">
-            <span className="flex items-center gap-1">
-              <Eye className="size-2.5" />
-              {formatViews(article.viewCount || 0)}
-            </span>
-          </div>
-        )}
+        <div className="mt-1 flex items-center gap-2 text-xs text-gray-400">
+          {authorName && <span>{authorName}</span>}
+          <span>·</span>
+          <span className="flex items-center gap-1">
+            <Clock className="size-3" />
+            {getTimeAgo(publishedDate)}
+          </span>
+          {showViews && (
+            <>
+              <span>·</span>
+              <span className="flex items-center gap-1">
+                <Eye className="size-3" />
+                {formatViews(article.viewCount || 0)}
+              </span>
+            </>
+          )}
+        </div>
       </div>
     </Link>
   );

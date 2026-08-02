@@ -1,9 +1,10 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { CATEGORIES, SITE_CONFIG } from "@/lib/constants";
 import { getArticlesByCategory } from "@/lib/mock-data";
 import { ArticleCard } from "@/components/article/article-card";
-import { Breadcrumb } from "@/components/shared/breadcrumb";
 import { WebsiteJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
+import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
 import type { Metadata } from "next";
 
 interface CategoryPageProps {
@@ -54,22 +55,29 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           { name: cat.name, url: `${SITE_CONFIG.url}/${cat.slug}` },
         ]}
       />
-      <div className="py-5">
-        <Breadcrumb items={[{ label: cat.name }]} />
-        <div className="mt-4">
-          <div className="border-b-2 border-brand pb-2.5">
-            <h1 className="text-[18px] font-bold uppercase tracking-wider">{cat.name}</h1>
-          </div>
+      <div className="py-6">
+        <Link
+          href="/"
+          className="mb-4 inline-flex items-center gap-2 text-sm font-medium text-gray-500 transition-colors hover:text-foreground"
+        >
+          <ArrowLeft className="size-4" />
+          Beranda
+        </Link>
+
+        <div className="flex items-center gap-3">
+          <span className="h-8 w-1.5 rounded-full bg-brand" />
+          <h1 className="text-2xl font-bold tracking-tight">{cat.name}</h1>
         </div>
+
         {articles.length > 0 ? (
-          <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {articles.map((article) => (
               <ArticleCard key={article.id} article={article} />
             ))}
           </div>
         ) : (
           <div className="py-20 text-center">
-            <p className="text-gray-400 text-[13px]">Belum ada berita di kategori ini.</p>
+            <p className="text-gray-400 text-sm">Belum ada berita di kategori ini.</p>
           </div>
         )}
       </div>

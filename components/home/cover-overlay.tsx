@@ -21,18 +21,16 @@ export function CoverOverlay() {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#1a1a1a]">
-      {/* Close button */}
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0a0a0a]">
       <button
         onClick={handleClose}
-        className="absolute right-6 top-6 text-sm text-white/50 transition-colors hover:text-white/80"
+        className="absolute right-6 top-6 rounded-full bg-white/10 px-4 py-2 text-sm text-white/60 backdrop-blur-sm transition-all hover:bg-white/20 hover:text-white"
       >
         Lewati &rarr;
       </button>
 
-      {/* Logo */}
-      <div className="flex flex-col items-center">
-        <div className="relative h-40 w-40 sm:h-52 sm:w-52">
+      <div className="flex flex-col items-center px-6 text-center">
+        <div className="relative h-32 w-32 sm:h-44 sm:w-44">
           <Image
             src="/logo-metrik.png"
             alt="PT Metrik Media Indonesia"
@@ -41,20 +39,21 @@ export function CoverOverlay() {
             priority
           />
         </div>
-        <h1 className="mt-6 text-2xl font-bold tracking-wide text-white sm:text-3xl">
+        <h1 className="mt-8 text-3xl font-bold tracking-tight text-white sm:text-4xl">
           METRIK MEDIA INDONESIA
         </h1>
-        <p className="mt-2 text-sm tracking-widest text-white/50">
-          DATA DRIVEN &middot; STRATEGIC &middot; GROWTH
+        <p className="mt-3 text-sm tracking-widest text-white/40 uppercase">
+          Data Driven &middot; Strategic &middot; Growth
         </p>
+        <button
+          onClick={handleClose}
+          className="mt-8 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-gray-900 transition-all hover:bg-amber-400 hover:shadow-brand"
+        >
+          Mulai Membaca
+        </button>
       </div>
 
-      {/* Click anywhere to close */}
-      <button
-        onClick={handleClose}
-        className="absolute inset-0 -z-10"
-        aria-label="Close"
-      />
+      <button onClick={handleClose} className="absolute inset-0 -z-10" aria-label="Close" />
     </div>
   );
 }

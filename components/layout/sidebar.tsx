@@ -15,13 +15,15 @@ import {
   Info,
   Envelope,
   Newspaper,
-  CaretRight,
+  TrendUp,
+  UserCircle,
+  Clock,
 } from "@phosphor-icons/react/dist/ssr";
 
 const mainNav = [
   { label: "Beranda", href: "/", icon: House },
   { label: "Bisnis", href: "/bisnis", icon: Newspaper },
-  { label: "Olahraga", href: "/olahraga", icon: Newspaper },
+  { label: "Olahraga", href: "/olahraga", icon: TrendUp },
   { label: "Pendidikan", href: "/pendidikan", icon: Newspaper },
   { label: "Sosial & Budaya", href: "/sosial-dan-budaya", icon: Newspaper },
 ];
@@ -29,8 +31,8 @@ const mainNav = [
 const secondaryNav = [
   { label: "Pencarian", href: "/pencarian", icon: MagnifyingGlass },
   { label: "Artikel Tersimpan", href: "/saved", icon: BookmarkSimple },
-  { label: "Tentang Kami", href: "/tentang-kami", icon: Info },
-  { label: "Hubungi Kami", href: "/hubungi-kami", icon: Envelope },
+  { label: "Riwayat", href: "/profile", icon: Clock },
+  { label: "Profil", href: "/profile", icon: UserCircle },
 ];
 
 interface SidebarProps {
@@ -47,16 +49,16 @@ export function Sidebar({ user, isOpen, onClose, onSignOut }: SidebarProps) {
 
   return (
     <>
-      {/* Full screen overlay */}
+      {/* Overlay */}
       <div
         className={cn(
-          "fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm transition-all duration-300",
+          "fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm transition-all duration-300",
           isOpen ? "opacity-100" : "pointer-events-none opacity-0"
         )}
         onClick={onClose}
       />
 
-      {/* Full height sidebar panel */}
+      {/* Panel */}
       <aside
         className={cn(
           "fixed inset-y-0 right-0 z-[70] flex w-full max-w-sm flex-col bg-white transition-transform duration-300 ease-out sm:w-[380px]",
@@ -64,28 +66,16 @@ export function Sidebar({ user, isOpen, onClose, onSignOut }: SidebarProps) {
         )}
       >
         {/* Header */}
-        <div className="flex h-14 items-center justify-between border-b border-gray-100 px-5">
-          <Link href="/" className="flex items-center gap-2.5" onClick={handleNavClick}>
+        <div className="flex h-16 items-center justify-between border-b border-gray-100 px-5">
+          <Link href="/" className="flex items-center gap-3" onClick={handleNavClick}>
             <div className="relative h-8 w-8">
-              <Image
-                src="/logo-metrik.png"
-                alt={SITE_CONFIG.shortName}
-                fill
-                className="object-contain"
-              />
+              <Image src="/logo-metrik.png" alt={SITE_CONFIG.shortName} fill className="object-contain" />
             </div>
-            <div className="flex flex-col">
-              <span className="text-[13px] font-bold tracking-tight leading-none">
-                {SITE_CONFIG.shortName}
-              </span>
-              <span className="text-[8px] font-medium tracking-[0.15em] text-gray-400 uppercase">
-                {SITE_CONFIG.tagline}
-              </span>
-            </div>
+            <span className="text-base font-bold tracking-tight">{SITE_CONFIG.shortName}</span>
           </Link>
           <button
             onClick={onClose}
-            className="flex size-9 items-center justify-center text-gray-400 hover:text-foreground transition-colors"
+            className="flex size-10 items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-foreground transition-colors"
           >
             <X className="size-5" />
           </button>
@@ -95,12 +85,12 @@ export function Sidebar({ user, isOpen, onClose, onSignOut }: SidebarProps) {
         {user ? (
           <div className="border-b border-gray-100 px-5 py-4">
             <div className="flex items-center gap-3">
-              <div className="flex size-10 items-center justify-center rounded-full bg-brand text-gray-900 text-sm font-bold">
+              <div className="flex size-11 items-center justify-center rounded-full bg-brand text-sm font-bold text-gray-900">
                 {user.name?.charAt(0)?.toUpperCase() || "U"}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-semibold truncate">{user.name}</p>
-                <p className="text-[11px] text-gray-400 truncate">{user.email}</p>
+                <p className="text-sm font-semibold truncate">{user.name}</p>
+                <p className="text-xs text-gray-400 truncate">{user.email}</p>
               </div>
             </div>
           </div>
@@ -109,7 +99,7 @@ export function Sidebar({ user, isOpen, onClose, onSignOut }: SidebarProps) {
             <Link
               href="/login"
               onClick={handleNavClick}
-              className="flex items-center justify-center gap-2 bg-brand px-4 py-2.5 text-[12px] font-semibold text-gray-900 transition-colors hover:bg-amber-400"
+              className="flex items-center justify-center gap-2 rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-gray-900 transition-colors hover:bg-amber-400"
             >
               <SignIn className="size-4" />
               Masuk / Daftar
@@ -118,12 +108,8 @@ export function Sidebar({ user, isOpen, onClose, onSignOut }: SidebarProps) {
         )}
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto">
-          {/* Main Categories */}
-          <div className="px-3 pt-4 pb-2">
-            <p className="px-3 text-[9px] font-bold uppercase tracking-wider text-gray-400 mb-1">
-              Kategori
-            </p>
+        <nav className="flex-1 overflow-y-auto px-3 py-4">
+          <div className="space-y-0.5">
             {mainNav.map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -132,32 +118,25 @@ export function Sidebar({ user, isOpen, onClose, onSignOut }: SidebarProps) {
                   href={item.href}
                   onClick={handleNavClick}
                   className={cn(
-                    "flex items-center justify-between px-3 py-3 text-[13px] font-medium transition-colors rounded-md",
+                    "flex items-center gap-3 px-3 py-3 text-sm font-medium transition-all rounded-xl",
                     isActive
-                      ? "bg-amber-50 text-brand-text"
-                      : "text-gray-700 hover:bg-gray-50 hover:text-foreground"
+                      ? "bg-brand/15 text-brand-text font-semibold"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-foreground"
                   )}
                 >
-                  <div className="flex items-center gap-3">
-                    <item.icon
-                      className={cn("size-[18px]", isActive ? "text-brand-text" : "text-gray-400")}
-                      weight={isActive ? "fill" : "regular"}
-                    />
-                    {item.label}
-                  </div>
-                  <CaretRight className={cn("size-3.5", isActive ? "text-brand-text" : "text-gray-300")} />
+                  <item.icon
+                    className={cn("size-5 shrink-0", isActive ? "text-brand-text" : "text-gray-400")}
+                    weight={isActive ? "fill" : "regular"}
+                  />
+                  {item.label}
                 </Link>
               );
             })}
           </div>
 
-          <div className="mx-5 h-px bg-gray-100" />
+          <div className="mx-3 my-4 h-px bg-gray-100" />
 
-          {/* Secondary Nav */}
-          <div className="px-3 pt-2 pb-4">
-            <p className="px-3 text-[9px] font-bold uppercase tracking-wider text-gray-400 mb-1 mt-2">
-              Lainnya
-            </p>
+          <div className="space-y-0.5">
             {secondaryNav.map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -166,20 +145,17 @@ export function Sidebar({ user, isOpen, onClose, onSignOut }: SidebarProps) {
                   href={item.href}
                   onClick={handleNavClick}
                   className={cn(
-                    "flex items-center justify-between px-3 py-3 text-[13px] font-medium transition-colors rounded-md",
+                    "flex items-center gap-3 px-3 py-3 text-sm font-medium transition-all rounded-xl",
                     isActive
-                      ? "bg-amber-50 text-brand-text"
-                      : "text-gray-700 hover:bg-gray-50 hover:text-foreground"
+                      ? "bg-brand/15 text-brand-text font-semibold"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-foreground"
                   )}
                 >
-                  <div className="flex items-center gap-3">
-                    <item.icon
-                      className={cn("size-[18px]", isActive ? "text-brand-text" : "text-gray-400")}
-                      weight={isActive ? "fill" : "regular"}
-                    />
-                    {item.label}
-                  </div>
-                  <CaretRight className={cn("size-3.5", isActive ? "text-brand-text" : "text-gray-300")} />
+                  <item.icon
+                    className={cn("size-5 shrink-0", isActive ? "text-brand-text" : "text-gray-400")}
+                    weight={isActive ? "fill" : "regular"}
+                  />
+                  {item.label}
                 </Link>
               );
             })}
@@ -187,22 +163,32 @@ export function Sidebar({ user, isOpen, onClose, onSignOut }: SidebarProps) {
         </nav>
 
         {/* Footer */}
-        {user && (
-          <div className="border-t border-gray-100 px-5 py-4">
+        <div className="border-t border-gray-100 px-3 py-3 space-y-0.5">
+          <Link
+            href="/tentang-kami"
+            onClick={handleNavClick}
+            className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-500 rounded-xl hover:text-foreground"
+          >
+            <Info className="size-4.5" />
+            Tentang Kami
+          </Link>
+          <Link
+            href="/hubungi-kami"
+            onClick={handleNavClick}
+            className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-500 rounded-xl hover:text-foreground"
+          >
+            <Envelope className="size-4.5" />
+            Hubungi Kami
+          </Link>
+          {user && (
             <button
               onClick={() => { onSignOut(); onClose(); }}
-              className="flex items-center gap-2 text-[12px] text-gray-500 hover:text-red-600 transition-colors"
+              className="flex w-full items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-500 rounded-xl hover:text-red-600"
             >
-              <SignOut className="size-4" />
+              <SignOut className="size-4.5" />
               Keluar
             </button>
-          </div>
-        )}
-
-        <div className="border-t border-gray-100 px-5 py-3">
-          <p className="text-[10px] text-gray-400 text-center">
-            &copy; {new Date().getFullYear()} {SITE_CONFIG.name}
-          </p>
+          )}
         </div>
       </aside>
     </>
