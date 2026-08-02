@@ -17,6 +17,10 @@ import {
   GearSix,
   SignOut,
   User,
+  House,
+  MagnifyingGlass as Search,
+  BookmarkSimple,
+  Sparkle,
 } from "@phosphor-icons/react/dist/ssr";
 import {
   Sheet,
@@ -175,25 +179,20 @@ export function HeaderClient() {
         </div>
       </header>
 
-      {/* Mobile Bottom Navigation */}
+      {/* Mobile Bottom Navigation — icon only */}
       <nav className="fixed bottom-0 left-0 right-0 z-40 flex h-14 items-center justify-around border-t border-gray-100 bg-white sm:hidden">
-        {NAVIGATION.main.map((item) => {
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex flex-col items-center gap-0.5 px-3 py-1.5 text-[11px] font-medium transition-colors",
-                isActive
-                  ? "text-brand"
-                  : "text-gray-400"
-              )}
-            >
-              {item.label}
-            </Link>
-          );
-        })}
+        <Link href="/" className={cn("flex size-12 items-center justify-center rounded-xl transition-colors", pathname === "/" ? "text-brand" : "text-gray-400")}>
+          <House className="size-6" weight={pathname === "/" ? "fill" : "regular"} />
+        </Link>
+        <Link href="/pencarian" className={cn("flex size-12 items-center justify-center rounded-xl transition-colors", pathname === "/pencarian" ? "text-brand" : "text-gray-400")}>
+          <Search className="size-6" weight="regular" />
+        </Link>
+        <Link href="/saved" className={cn("flex size-12 items-center justify-center rounded-xl transition-colors", pathname === "/saved" ? "text-brand" : "text-gray-400")}>
+          <BookmarkSimple className="size-6" weight={pathname === "/saved" ? "fill" : "regular"} />
+        </Link>
+        <Link href="/profile" className={cn("flex size-12 items-center justify-center rounded-xl transition-colors", pathname === "/profile" ? "text-brand" : "text-gray-400")}>
+          <User className="size-6" weight={pathname === "/profile" ? "fill" : "regular"} />
+        </Link>
       </nav>
     </>
   );
