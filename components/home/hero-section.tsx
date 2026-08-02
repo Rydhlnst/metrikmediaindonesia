@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { cn, getImageUrl } from "@/lib/utils";
 import { getCategorySlug, getCategoryName, getTimeAgo, formatViews } from "@/lib/article-helpers";
-import { Clock, Eye, ArrowLeft, ArrowRight } from "@phosphor-icons/react/dist/ssr";
+import { Clock, Eye } from "@phosphor-icons/react/dist/ssr";
 
 interface HeroSectionProps {
   articles: any[];
@@ -35,9 +35,6 @@ export function HeroSection({ articles }: HeroSectionProps) {
   }, [emblaApi, onSelect, mounted]);
 
   if (!displayArticles || displayArticles.length === 0) return null;
-
-  const scrollPrev = () => emblaApi?.scrollPrev();
-  const scrollNext = () => emblaApi?.scrollNext();
 
   return (
     <div className="w-full">
@@ -89,19 +86,6 @@ export function HeroSection({ articles }: HeroSectionProps) {
                 </div>
               ))}
             </div>
-            {/* Navigation arrows */}
-            <button
-              onClick={scrollPrev}
-              className="absolute left-2 top-1/2 -translate-y-1/2 flex size-8 items-center justify-center rounded-full bg-white/80 text-gray-700 shadow-md backdrop-blur-sm transition-colors hover:bg-white"
-            >
-              <ArrowLeft className="size-4" />
-            </button>
-            <button
-              onClick={scrollNext}
-              className="absolute right-2 top-1/2 -translate-y-1/2 flex size-8 items-center justify-center rounded-full bg-white/80 text-gray-700 shadow-md backdrop-blur-sm transition-colors hover:bg-white"
-            >
-              <ArrowRight className="size-4" />
-            </button>
             {/* Dots */}
             <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
               {displayArticles.map((_: any, index: number) => (
@@ -120,7 +104,7 @@ export function HeroSection({ articles }: HeroSectionProps) {
         )}
       </div>
 
-      {/* DESKTOP LAYOUT - Breaking News hero card */}
+      {/* DESKTOP LAYOUT */}
       <div className="hidden lg:block">
         {mounted ? (
           <div className="relative" ref={emblaRef}>
@@ -166,31 +150,17 @@ export function HeroSection({ articles }: HeroSectionProps) {
                 </div>
               ))}
             </div>
-            {/* Navigation */}
-            <div className="absolute bottom-4 right-4 flex items-center gap-2">
-              <button
-                onClick={scrollPrev}
-                className="flex size-9 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-colors hover:bg-white/30"
-              >
-                <ArrowLeft className="size-4" />
-              </button>
-              <div className="flex gap-1.5 px-2">
-                {displayArticles.map((_: any, index: number) => (
-                  <button
-                    key={index}
-                    className={cn(
-                      "h-1.5 rounded-full transition-all duration-300",
-                      index === selectedIndex ? "w-6 bg-brand" : "w-1.5 bg-white/40"
-                    )}
-                  />
-                ))}
-              </div>
-              <button
-                onClick={scrollNext}
-                className="flex size-9 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-colors hover:bg-white/30"
-              >
-                <ArrowRight className="size-4" />
-              </button>
+            {/* Dots */}
+            <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-1.5">
+              {displayArticles.map((_: any, index: number) => (
+                <button
+                  key={index}
+                  className={cn(
+                    "h-1.5 rounded-full transition-all duration-300",
+                    index === selectedIndex ? "w-6 bg-brand" : "w-1.5 bg-white/40"
+                  )}
+                />
+              ))}
             </div>
           </div>
         ) : (

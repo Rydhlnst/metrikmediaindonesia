@@ -132,7 +132,7 @@ export function HeaderClient() {
       </header>
 
       {/* Bottom Nav - mobile only (< sm) */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 glass border-t border-gray-100 sm:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-100 bg-white sm:hidden">
         <div className="flex items-center justify-around px-2 py-2">
           {bottomNavItems.map((item) => {
             const isActive = pathname === item.href;
