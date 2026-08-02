@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { SITE_CONFIG } from "@/lib/constants";
+import { useSession } from "@/lib/use-session";
 import {
   House,
   Sparkle,
@@ -31,6 +32,7 @@ const categories = [
 
 export function DesktopSidebar() {
   const pathname = usePathname();
+  const { user, isLoading } = useSession();
 
   return (
     <aside className="fixed top-0 left-0 z-30 hidden h-screen w-[220px] border-r border-gray-100 bg-white sm:block lg:w-[240px]">
@@ -55,18 +57,49 @@ export function DesktopSidebar() {
 
         {/* User Profile */}
         <div className="px-4 pb-2">
-          <button className="flex w-full items-center gap-3 rounded-xl p-2 transition-colors hover:bg-gray-50">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-gray-900">
-              R
-            </div>
-            <div className="flex flex-1 items-center justify-between min-w-0">
-              <div className="flex flex-col min-w-0">
-                <span className="text-sm font-semibold truncate">Randy Carder</span>
-                <span className="text-[11px] text-gray-400">Premium Plan</span>
+          {isLoading ? (
+            <div className="flex items-center gap-3 rounded-xl p-2">
+              <div className="size-10 shrink-0 animate-pulse rounded-full bg-gray-200" />
+              <div className="flex flex-1 flex-col gap-1.5">
+                <div className="h-3.5 w-20 animate-pulse rounded bg-gray-200" />
+                <div className="h-3 w-28 animate-pulse rounded bg-gray-100" />
               </div>
-              <CaretDown className="size-4 shrink-0 text-gray-400" />
             </div>
-          </button>
+          ) : user ? (
+            <Link href="/profile" className="flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-gray-50">
+              {user.avatar ? (
+                <div className="relative size-10 shrink-0 overflow-hidden rounded-full bg-gray-100">
+                  <Image
+                    src={user.avatar}
+                    alt={user.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-gray-900">
+                  {user.name?.charAt(0)?.toUpperCase() || "?"}
+                </div>
+              )}
+              <div className="flex flex-1 items-center justify-between min-w-0">
+                <div className="flex flex-col min-w-0">
+                  <span className="text-sm font-semibold truncate">{user.name}</span>
+                  <span className="text-[11px] text-gray-400 truncate">{user.email}</span>
+                </div>
+                <CaretDown className="size-4 shrink-0 text-gray-400" />
+              </div>
+            </Link>
+          ) : (
+            <Link href="/login" className="flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-gray-50">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gray-100 text-sm font-bold text-gray-400">
+                <Sparkle className="size-5" />
+              </div>
+              <div className="flex flex-1 flex-col min-w-0">
+                <span className="text-sm font-medium text-gray-500">Masuk</span>
+                <span className="text-[11px] text-gray-400">Untuk fitur lengkap</span>
+              </div>
+            </Link>
+          )}
         </div>
 
         {/* Navigation */}

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { SITE_CONFIG, NAVIGATION } from "@/lib/constants";
+import { useSession } from "@/lib/use-session";
 import { DesktopSidebar } from "./desktop-sidebar";
 import Image from "next/image";
 import {
@@ -43,6 +44,7 @@ export function HeaderClient() {
   const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState("");
   const [sheetOpen, setSheetOpen] = useState(false);
+  const { user, isLoading, signOut } = useSession();
 
   return (
     <>
@@ -97,24 +99,43 @@ export function HeaderClient() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex size-8 items-center justify-center rounded-full bg-brand text-sm font-bold text-gray-900 hover:ring-2 hover:ring-brand/30 transition-all cursor-pointer">
-                  R
+                  {user?.avatar ? (
+                    <Image src={user.avatar} alt={user.name} width={32} height={32} className="size-8 rounded-full object-cover" />
+                  ) : (
+                    user?.name?.charAt(0)?.toUpperCase() || "?"
+                  )}
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 rounded-xl">
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard" className="flex items-center gap-2">
-                    <User className="size-4" /> Profile
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard" className="flex items-center gap-2">
-                    <GearSix className="size-4" /> Settings
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex items-center gap-2 text-red-500 focus:text-red-500">
-                  <SignOut className="size-4" /> Sign out
-                </DropdownMenuItem>
+              <DropdownMenuContent align="end" className="w-56 rounded-xl">
+                {user ? (
+                  <>
+                    <div className="px-3 py-2">
+                      <p className="text-sm font-semibold">{user.name}</p>
+                      <p className="text-xs text-gray-400 truncate">{user.email}</p>
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="/profile" className="flex items-center gap-2">
+                        <User className="size-4" /> Profile
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard" className="flex items-center gap-2">
+                        <GearSix className="size-4" /> Dashboard
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={signOut} className="flex items-center gap-2 text-red-500 focus:text-red-500">
+                      <SignOut className="size-4" /> Sign out
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <DropdownMenuItem asChild>
+                    <Link href="/login" className="flex items-center gap-2">
+                      <User className="size-4" /> Masuk
+                    </Link>
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
