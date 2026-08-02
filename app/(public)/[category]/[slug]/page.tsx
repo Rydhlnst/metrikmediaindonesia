@@ -9,6 +9,7 @@ import { SectionHeader } from "@/components/shared/section-header";
 import { NewsletterSignup } from "@/components/shared/newsletter-signup";
 import { AvatarAuthor } from "@/components/shared/avatar-author";
 import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
+import { ReadingProgress } from "@/components/shared/animate-on-scroll";
 import {
   Clock,
   Eye,
@@ -73,6 +74,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
 
   return (
     <>
+      <ReadingProgress />
       <ArticleJsonLd
         title={article.title}
         description={article.excerpt}
@@ -111,7 +113,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
               >
                 {article.category.name}
               </Link>
-              <h1 className="text-2xl font-bold leading-tight sm:text-[28px] sm:leading-[1.25]">
+              <h1 className="text-2xl font-bold leading-tight sm:text-[28px] sm:leading-[1.25]" style={{ fontFamily: "var(--font-playfair)" }}>
                 {article.title}
               </h1>
               <p className="mt-2.5 text-[15px] leading-relaxed text-gray-600">

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getImageUrl } from "@/lib/utils";
-import { ArrowRight, Clock } from "@phosphor-icons/react/dist/ssr";
+import { ArrowRight, Clock, Eye } from "@phosphor-icons/react/dist/ssr";
 
 interface CategorySectionLargeProps {
   title: string;
@@ -38,7 +38,7 @@ export function CategorySectionLarge({ title, categorySlug, articles }: Category
         <h2 className="text-[14px] font-bold uppercase tracking-wider">{title}</h2>
         <Link
           href={`/${categorySlug}`}
-          className="flex items-center gap-1 text-[11px] font-medium text-gray-500 hover:text-foreground transition-colors"
+          className="flex items-center gap-1 text-[11px] font-medium text-gray-500 hover:text-foreground transition-colors link-underline"
         >
           Lihat Semua <ArrowRight className="size-3" />
         </Link>
@@ -49,7 +49,7 @@ export function CategorySectionLarge({ title, categorySlug, articles }: Category
         {mainArticle && (
           <Link
             href={`/${getArticleCategorySlug(mainArticle)}/${mainArticle.slug}`}
-            className="group"
+            className="group card-hover-lift"
           >
             <div className="relative aspect-[16/10] w-full overflow-hidden bg-gray-100">
               <Image
@@ -57,19 +57,25 @@ export function CategorySectionLarge({ title, categorySlug, articles }: Category
                 alt={mainArticle.title}
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                className="object-cover card-image-zoom"
               />
             </div>
             <div className="mt-2.5 flex flex-col gap-1">
               <span className="text-[9px] font-bold uppercase tracking-wider text-brand">
                 {getArticleCategoryName(mainArticle)}
               </span>
-              <h3 className="text-[15px] font-bold leading-snug line-clamp-2 group-hover:text-brand transition-colors">
+              <h3 className="text-[15px] font-bold leading-snug line-clamp-2 group-hover:text-brand transition-colors" style={{ fontFamily: "var(--font-playfair)" }}>
                 {mainArticle.title}
               </h3>
-              <div className="mt-0.5 flex items-center gap-1.5 text-[10px] text-gray-400">
-                <Clock className="size-2.5" />
-                <span>{getTimeAgo(mainArticle.publishedAt || new Date().toISOString())}</span>
+              <div className="mt-0.5 flex items-center gap-3 text-[10px] text-gray-400">
+                <span className="flex items-center gap-1">
+                  <Clock className="size-2.5" />
+                  {getTimeAgo(mainArticle.publishedAt || new Date().toISOString())}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Eye className="size-2.5" />
+                  {(mainArticle.viewCount || 0).toLocaleString()}
+                </span>
               </div>
             </div>
           </Link>
@@ -89,7 +95,7 @@ export function CategorySectionLarge({ title, categorySlug, articles }: Category
                   alt={article.title}
                   fill
                   sizes="72px"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="object-cover card-image-zoom"
                 />
               </div>
               <div className="flex flex-1 min-w-0 flex-col justify-center">
