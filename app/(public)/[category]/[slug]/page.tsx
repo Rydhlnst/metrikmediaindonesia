@@ -102,7 +102,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
           <div>
             <header>
               {article.isBreaking && (
-                <div className="mb-2.5 inline-flex items-center gap-1.5 bg-brand px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                <div className="mb-2.5 inline-flex items-center gap-1.5 bg-brand px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gray-900">
                   <Lightning className="size-3" weight="fill" />
                   Breaking News
                 </div>

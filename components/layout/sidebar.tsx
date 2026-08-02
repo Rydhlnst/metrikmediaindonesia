@@ -95,7 +95,7 @@ export function Sidebar({ user, isOpen, onClose, onSignOut }: SidebarProps) {
         {user ? (
           <div className="border-b border-gray-100 px-5 py-4">
             <div className="flex items-center gap-3">
-              <div className="flex size-10 items-center justify-center rounded-full bg-brand text-white text-sm font-bold">
+              <div className="flex size-10 items-center justify-center rounded-full bg-brand text-gray-900 text-sm font-bold">
                 {user.name?.charAt(0)?.toUpperCase() || "U"}
               </div>
               <div className="flex-1 min-w-0">
@@ -109,7 +109,7 @@ export function Sidebar({ user, isOpen, onClose, onSignOut }: SidebarProps) {
             <Link
               href="/login"
               onClick={handleNavClick}
-              className="flex items-center justify-center gap-2 bg-brand px-4 py-2.5 text-[12px] font-semibold text-white transition-colors hover:bg-amber-800"
+              className="flex items-center justify-center gap-2 bg-brand px-4 py-2.5 text-[12px] font-semibold text-gray-900 transition-colors hover:bg-amber-400"
             >
               <SignIn className="size-4" />
               Masuk / Daftar
@@ -134,18 +134,18 @@ export function Sidebar({ user, isOpen, onClose, onSignOut }: SidebarProps) {
                   className={cn(
                     "flex items-center justify-between px-3 py-3 text-[13px] font-medium transition-colors rounded-md",
                     isActive
-                      ? "bg-amber-50 text-brand"
+                      ? "bg-amber-50 text-brand-text"
                       : "text-gray-700 hover:bg-gray-50 hover:text-foreground"
                   )}
                 >
                   <div className="flex items-center gap-3">
                     <item.icon
-                      className={cn("size-[18px]", isActive ? "text-brand" : "text-gray-400")}
+                      className={cn("size-[18px]", isActive ? "text-brand-text" : "text-gray-400")}
                       weight={isActive ? "fill" : "regular"}
                     />
                     {item.label}
                   </div>
-                  <CaretRight className={cn("size-3.5", isActive ? "text-brand" : "text-gray-300")} />
+                  <CaretRight className={cn("size-3.5", isActive ? "text-brand-text" : "text-gray-300")} />
                 </Link>
               );
             })}
@@ -168,18 +168,18 @@ export function Sidebar({ user, isOpen, onClose, onSignOut }: SidebarProps) {
                   className={cn(
                     "flex items-center justify-between px-3 py-3 text-[13px] font-medium transition-colors rounded-md",
                     isActive
-                      ? "bg-amber-50 text-brand"
+                      ? "bg-amber-50 text-brand-text"
                       : "text-gray-700 hover:bg-gray-50 hover:text-foreground"
                   )}
                 >
                   <div className="flex items-center gap-3">
                     <item.icon
-                      className={cn("size-[18px]", isActive ? "text-brand" : "text-gray-400")}
+                      className={cn("size-[18px]", isActive ? "text-brand-text" : "text-gray-400")}
                       weight={isActive ? "fill" : "regular"}
                     />
                     {item.label}
                   </div>
-                  <CaretRight className={cn("size-3.5", isActive ? "text-brand" : "text-gray-300")} />
+                  <CaretRight className={cn("size-3.5", isActive ? "text-brand-text" : "text-gray-300")} />
                 </Link>
               );
             })}

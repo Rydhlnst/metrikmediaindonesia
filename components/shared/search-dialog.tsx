@@ -36,7 +36,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
             onChange={(e) => setQuery(e.target.value)}
             className="flex-1 bg-transparent px-3 py-4 text-sm outline-none placeholder:text-muted-foreground"
           />
-          <Button type="submit" size="sm" className="mr-2 h-7 bg-brand text-brand-foreground hover:bg-brand/90">
+          <Button type="submit" size="sm" className="mr-2 h-7 bg-brand text-gray-900 hover:bg-amber-400">
             Cari
           </Button>
         </form>

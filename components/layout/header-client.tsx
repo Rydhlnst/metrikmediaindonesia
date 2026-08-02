@@ -130,7 +130,7 @@ export function HeaderClient() {
 
       {/* ========== MOBILE HEADER ========== */}
       <header className="fixed top-0 left-0 right-0 z-30 bg-white lg:hidden">
-        <div className="flex h-12 items-center border-b border-gray-100 px-4">
+        <div className="flex h-14 items-center border-b border-gray-100 px-4">
           <Link href="/" className="flex items-center gap-2">
             <div className="relative h-7 w-7">
               <Image
@@ -162,7 +162,7 @@ export function HeaderClient() {
           </div>
         </div>
 
-        <div className="flex h-9 items-center overflow-x-auto border-b border-gray-100 px-4 scrollbar-hide">
+        <div className="flex h-10 items-center overflow-x-auto border-b border-gray-100 px-4 scrollbar-hide">
           <div className="flex items-center gap-0">
             {categoryNav.map((item) => {
               const isActive = pathname === item.href;
@@ -173,7 +173,7 @@ export function HeaderClient() {
                   className={cn(
                     "relative whitespace-nowrap px-3 py-2 text-[11px] font-medium tracking-wide transition-colors",
                     isActive
-                      ? "font-bold text-brand"
+                      ? "font-bold text-brand-text"
                       : "text-gray-500 hover:text-foreground"
                   )}
                 >
@@ -218,7 +218,7 @@ export function HeaderClient() {
 
         {/* Main header: Logo + Actions */}
         <div className="border-b border-gray-100">
-          <div className="mx-auto flex h-14 items-center px-6" style={{ maxWidth: "1280px" }}>
+          <div className="mx-auto flex h-16 items-center px-6" style={{ maxWidth: "1280px" }}>
             <Link href="/" className="flex shrink-0 items-center gap-3">
               <div className="relative h-9 w-9">
                 <Image
@@ -251,7 +251,7 @@ export function HeaderClient() {
               <span className="h-5 w-px bg-gray-200" />
               <Link
                 href="/login"
-                className="bg-brand text-white px-4 py-1.5 text-[12px] font-semibold tracking-wide transition-colors hover:bg-amber-800"
+                className="bg-brand text-gray-900 px-4 py-1.5 text-[12px] font-semibold tracking-wide transition-colors hover:bg-amber-400"
               >
                 LANGGANAN
               </Link>
@@ -277,7 +277,7 @@ export function HeaderClient() {
                   className={cn(
                     "relative whitespace-nowrap px-4 py-3 text-[12px] font-semibold tracking-wide transition-colors",
                     isActive
-                      ? "text-brand"
+                      ? "text-brand-text"
                       : "text-gray-600 hover:text-foreground"
                   )}
                 >
@@ -303,11 +303,11 @@ export function HeaderClient() {
                 href={item.href}
                 className={cn(
                   "flex flex-col items-center gap-0.5 px-4 py-1 text-[9px] transition-colors",
-                  isActive ? "text-brand" : "text-gray-400"
+                  isActive ? "text-brand-text" : "text-gray-400"
                 )}
               >
                 <item.icon
-                  className={cn("size-5", isActive && "text-brand")}
+                  className={cn("size-5", isActive && "text-brand-text")}
                   weight={isActive ? "fill" : "regular"}
                 />
                 <span className={cn(isActive && "font-semibold")}>{item.label}</span>

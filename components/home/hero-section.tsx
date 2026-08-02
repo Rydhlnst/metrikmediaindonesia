@@ -62,7 +62,7 @@ export function HeroSection({ articles }: HeroSectionProps) {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                     <div className="absolute top-3 left-3 flex items-center gap-2">
-                      <span className="inline-flex items-center gap-1 bg-brand px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
+                      <span className="inline-flex items-center gap-1 bg-brand px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-gray-900">
                         <Fire className="size-2.5" weight="fill" /> Trending
                       </span>
                       <span className="inline-flex items-center gap-1 bg-black/50 backdrop-blur-sm px-1.5 py-0.5 text-[9px] text-white/80">
@@ -115,7 +115,7 @@ export function HeroSection({ articles }: HeroSectionProps) {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
               <div className="absolute top-4 left-4 flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 bg-brand px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+                <span className="inline-flex items-center gap-1.5 bg-brand px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-gray-900">
                   <Fire className="size-3" weight="fill" /> Berita Utama
                 </span>
                 <span className="inline-flex items-center gap-1 bg-black/50 backdrop-blur-sm px-2 py-1 text-[10px] text-white/80">
@@ -149,8 +149,8 @@ export function HeroSection({ articles }: HeroSectionProps) {
                 href={`/${getCategorySlug(article)}/${article.slug}`}
                 className="group border-t-2 border-gray-200 pt-3 transition-all hover:border-brand hover:pl-1"
               >
-                <span className="text-[9px] font-bold uppercase tracking-wider text-brand">{getCategoryName(article)}</span>
-                <h3 className="mt-1 text-[13px] font-semibold leading-snug line-clamp-3 text-foreground group-hover:text-brand transition-colors">
+<span className="text-[9px] font-bold uppercase tracking-wider text-brand-text">{getCategoryName(article)}</span>
+                  <h3 className="mt-1 text-[13px] font-semibold leading-snug line-clamp-3 text-foreground group-hover:text-brand-text transition-colors">
                   {article.title}
                 </h3>
               </Link>
@@ -176,8 +176,8 @@ export function HeroSection({ articles }: HeroSectionProps) {
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <div className="flex flex-1 min-w-0 flex-col justify-center">
-                  <span className="text-[9px] font-bold uppercase tracking-wider text-brand">{getCategoryName(article)}</span>
-                  <h3 className="mt-0.5 text-[12px] font-semibold leading-snug line-clamp-2 text-foreground group-hover:text-brand transition-colors">
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-brand-text">{getCategoryName(article)}</span>
+                  <h3 className="mt-0.5 text-[12px] font-semibold leading-snug line-clamp-2 text-foreground group-hover:text-brand-text transition-colors">
                     {article.title}
                   </h3>
                   <span className="mt-0.5 text-[9px] text-gray-400 flex items-center gap-1">

@@ -114,7 +114,7 @@ export function FooterServer() {
                 placeholder="Email Anda"
                 className="flex-1 border border-gray-700 bg-gray-900 px-3 py-1.5 text-[11px] text-white placeholder:text-gray-500 outline-none focus:border-brand"
               />
-              <button className="bg-brand px-3 py-1.5 text-[11px] font-semibold text-white transition-colors hover:bg-amber-800">
+              <button className="bg-brand px-3 py-1.5 text-[11px] font-semibold text-gray-900 transition-colors hover:bg-amber-400">
                 Kirim
               </button>
             </div>

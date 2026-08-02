@@ -42,7 +42,7 @@ export function ArticleCard({
           <span
             className={cn(
               "flex shrink-0 items-start pt-1 text-[18px] font-bold ranking-number",
-              rank < 3 ? "text-brand" : "text-gray-200"
+              rank < 3 ? "text-brand-text" : "text-gray-200"
             )}
             style={{ fontFamily: "var(--font-playfair)" }}
           >
@@ -59,10 +59,10 @@ export function ArticleCard({
           />
         </div>
         <div className="flex flex-1 min-w-0 flex-col justify-center">
-          <span className="text-[9px] font-bold uppercase tracking-wider text-brand">
+          <span className="text-[9px] font-bold uppercase tracking-wider text-brand-text">
             {categoryName}
           </span>
-          <h3 className="mt-0.5 text-[12px] font-semibold leading-snug line-clamp-2 text-foreground group-hover:text-brand transition-colors">
+          <h3 className="mt-0.5 text-[12px] font-semibold leading-snug line-clamp-2 text-foreground group-hover:text-brand-text transition-colors">
             {article.title}
           </h3>
           <div className="mt-0.5 flex items-center gap-2 text-[9px] text-gray-400">
@@ -98,17 +98,17 @@ export function ArticleCard({
             priority={priority}
           />
           {showBookmark && (
-            <button className="absolute right-2 top-2 flex size-7 items-center justify-center bg-black/30 text-white backdrop-blur-sm transition-all hover:bg-brand hover:scale-110">
+            <button className="absolute right-2 top-2 flex size-7 items-center justify-center bg-black/30 text-white backdrop-blur-sm transition-all hover:bg-brand hover:text-gray-900 hover:scale-110">
               <BookmarkSimple className="size-3.5" />
             </button>
           )}
         </div>
         <div className="mt-2.5 flex flex-col gap-1">
-          <span className="text-[9px] font-bold uppercase tracking-wider text-brand">
+          <span className="text-[9px] font-bold uppercase tracking-wider text-brand-text">
             {categoryName}
           </span>
           <h3
-            className="text-[15px] font-bold leading-snug line-clamp-2 group-hover:text-brand transition-colors"
+            className="text-[15px] font-bold leading-snug line-clamp-2 group-hover:text-brand-text transition-colors"
             style={{ fontFamily: "var(--font-playfair)" }}
           >
             {article.title}
@@ -162,11 +162,11 @@ export function ArticleCard({
       </div>
       <div className="flex flex-1 flex-col gap-1 pt-2.5">
         <div className="flex items-center gap-2">
-          <span className="text-[9px] font-bold uppercase tracking-wider text-brand">{categoryName}</span>
+          <span className="text-[9px] font-bold uppercase tracking-wider text-brand-text">{categoryName}</span>
           <span className="text-gray-300">|</span>
           <span className="text-[10px] text-gray-400">{getTimeAgo(publishedDate)}</span>
         </div>
-        <h3 className={cn("font-semibold leading-snug line-clamp-2 group-hover:text-brand transition-colors", titleSize)}>
+        <h3 className={cn("font-semibold leading-snug line-clamp-2 group-hover:text-brand-text transition-colors", titleSize)}>
           {article.title}
         </h3>
         {showExcerpt && article.excerpt && (
