@@ -12,6 +12,7 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ articles }: HeroSectionProps) {
+  const [mounted, setMounted] = useState(false);
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -20,13 +21,17 @@ export function HeroSection({ articles }: HeroSectionProps) {
   const subArticles = articles.slice(1, 4);
   const sideArticles = articles.slice(4, 9);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
     setSelectedIndex(emblaApi.selectedScrollSnap());
   }, [emblaApi]);
 
   useEffect(() => {
-    if (!emblaApi) return;
+    if (!emblaApi || !mounted) return;
     emblaApi.on("select", onSelect);
     onSelect();
 
@@ -38,7 +43,7 @@ export function HeroSection({ articles }: HeroSectionProps) {
       emblaApi.off("select", onSelect);
       clearInterval(interval);
     };
-  }, [emblaApi, onSelect]);
+  }, [emblaApi, onSelect, mounted]);
 
   if (!displayArticles || displayArticles.length === 0) return null;
 
@@ -63,63 +68,66 @@ export function HeroSection({ articles }: HeroSectionProps) {
     <div className="w-full">
       {/* ========== MOBILE CAROUSEL ========== */}
       <div className="sm:hidden">
-        <div className="relative w-full overflow-hidden" ref={emblaRef}>
-          <div className="flex">
-            {displayArticles.map((article: any, index: number) => {
-              const categorySlug = getCategorySlug(article);
-              const categoryName = getCategoryName(article);
+        {mounted ? (
+          <div className="relative w-full overflow-hidden" ref={emblaRef}>
+            <div className="flex">
+              {displayArticles.map((article: any, index: number) => {
+                const categorySlug = getCategorySlug(article);
+                const categoryName = getCategoryName(article);
 
-              return (
-                <div key={article.id} className="min-w-0 flex-[0_0_100%]">
-                  <Link
-                    href={`/${categorySlug}/${article.slug}`}
-                    className="group relative block aspect-[16/10] w-full overflow-hidden bg-gray-100"
-                  >
-                    <Image
-                      src={getImageUrl(article.featuredImage)}
-                      alt={article.title}
-                      fill
-                      sizes="100vw"
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
-                      priority={index === 0}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-4">
-                      <span className="mb-1.5 inline-block text-[10px] font-bold uppercase tracking-wider text-red-400">
-                        {categoryName}
-                      </span>
-                      <h1 className="text-lg font-bold leading-tight text-white line-clamp-2">
-                        {article.title}
-                      </h1>
-                      <div className="mt-1.5 flex items-center gap-2 text-[10px] text-white/60">
-                        <Clock className="size-3" />
-                        <span>{getTimeAgo(article.publishedAt || new Date().toISOString())}</span>
+                return (
+                  <div key={article.id} className="min-w-0 flex-[0_0_100%]">
+                    <Link
+                      href={`/${categorySlug}/${article.slug}`}
+                      className="group relative block aspect-[16/10] w-full overflow-hidden bg-gray-100"
+                    >
+                      <Image
+                        src={getImageUrl(article.featuredImage)}
+                        alt={article.title}
+                        fill
+                        sizes="100vw"
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        priority={index === 0}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 p-4">
+                        <span className="mb-1.5 inline-block text-[10px] font-bold uppercase tracking-wider text-amber-400">
+                          {categoryName}
+                        </span>
+                        <h1 className="text-lg font-bold leading-tight text-white line-clamp-2">
+                          {article.title}
+                        </h1>
+                        <div className="mt-1.5 flex items-center gap-2 text-[10px] text-white/60">
+                          <Clock className="size-3" />
+                          <span>{getTimeAgo(article.publishedAt || new Date().toISOString())}</span>
+                        </div>
                       </div>
-                    </div>
-                  </Link>
-                </div>
-              );
-            })}
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
+              {displayArticles.map((_: any, index: number) => (
+                <button
+                  key={index}
+                  className={cn(
+                    "h-1 rounded-full transition-all duration-300",
+                    index === selectedIndex ? "w-6 bg-white" : "w-1.5 bg-white/40"
+                  )}
+                />
+              ))}
+            </div>
           </div>
-          <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
-            {displayArticles.map((_: any, index: number) => (
-              <button
-                key={index}
-                className={cn(
-                  "h-1 rounded-full transition-all duration-300",
-                  index === selectedIndex ? "w-6 bg-white" : "w-1.5 bg-white/40"
-                )}
-              />
-            ))}
-          </div>
-        </div>
+        ) : (
+          <div className="aspect-[16/10] w-full animate-pulse bg-gray-100" />
+        )}
       </div>
 
       {/* ========== DESKTOP LAYOUT ========== */}
       <div className="hidden gap-6 sm:grid sm:grid-cols-[1fr_300px] lg:grid-cols-[1fr_340px]">
         {/* Left: Main Featured + Sub Articles */}
         <div>
-          {/* Main Featured Article */}
           {mainArticle && (
             <Link
               href={`/${getCategorySlug(mainArticle)}/${mainArticle.slug}`}
@@ -135,7 +143,7 @@ export function HeroSection({ articles }: HeroSectionProps) {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
-                <span className="mb-2 inline-block text-[10px] font-bold uppercase tracking-wider text-red-400">
+                <span className="mb-2 inline-block text-[10px] font-bold uppercase tracking-wider text-amber-400">
                   {getCategoryName(mainArticle)}
                 </span>
                 <h1 className="text-xl font-bold leading-tight text-white line-clamp-2 sm:text-2xl lg:text-[28px] lg:leading-[1.2]">
@@ -149,7 +157,6 @@ export function HeroSection({ articles }: HeroSectionProps) {
             </Link>
           )}
 
-          {/* Sub Articles Row */}
           <div className="mt-3 grid grid-cols-3 gap-4">
             {subArticles.map((article: any) => (
               <Link

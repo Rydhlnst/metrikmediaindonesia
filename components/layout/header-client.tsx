@@ -226,7 +226,7 @@ export function HeaderClient() {
               <span className="h-5 w-px bg-gray-200" />
               <Link
                 href="/login"
-                className="bg-brand text-white px-4 py-1.5 text-[12px] font-semibold tracking-wide transition-colors hover:bg-red-700"
+                className="bg-brand text-white px-4 py-1.5 text-[12px] font-semibold tracking-wide transition-colors hover:bg-amber-800"
               >
                 LANGGANAN
               </Link>

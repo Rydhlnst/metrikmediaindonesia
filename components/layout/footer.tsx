@@ -42,7 +42,7 @@ export function Footer() {
                   className="w-40 bg-transparent text-[11px] text-white placeholder:text-gray-500 outline-none sm:w-56"
                 />
               </div>
-              <button type="submit" className="bg-brand px-4 py-2 text-[11px] font-semibold text-white transition-colors hover:bg-red-700">
+              <button type="submit" className="bg-brand px-4 py-2 text-[11px] font-semibold text-white transition-colors hover:bg-amber-800">
                 Berlangganan
               </button>
             </form>

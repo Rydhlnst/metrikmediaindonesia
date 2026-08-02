@@ -40,7 +40,7 @@ export function NewsletterSignup() {
             required
             className="flex-1 border border-gray-200 bg-gray-50 px-3 py-2 text-[11px] text-foreground placeholder:text-gray-400 outline-none focus:border-brand"
           />
-          <Button type="submit" size="icon" className="size-8 shrink-0 bg-brand text-white hover:bg-red-700">
+          <Button type="submit" size="icon" className="size-8 shrink-0 bg-brand text-white hover:bg-amber-800">
             <PaperPlaneRight className="size-3.5" weight="fill" />
           </Button>
         </form>
