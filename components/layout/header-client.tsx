@@ -54,8 +54,8 @@ export function HeaderClient() {
       <header className="fixed top-0 right-0 z-30 h-14 border-b border-gray-100 bg-white sm:flex sm:items-center sm:justify-between sm:pl-[220px] lg:pl-[240px]">
         {/* Desktop: nav tabs + search + icons */}
         <div className="hidden h-full sm:flex sm:w-full sm:items-center sm:justify-between">
-          {/* Nav Tabs */}
-          <nav className="flex h-full items-center gap-1 px-4">
+          {/* Nav Tabs — centered */}
+          <nav className="flex h-full flex-1 items-center justify-center gap-1">
             {topNavItems.map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -79,7 +79,7 @@ export function HeaderClient() {
           </nav>
 
           {/* Search + Icons */}
-          <div className="flex items-center gap-3 pr-5">
+          <div className="flex items-center gap-3 pr-5 shrink-0">
             <div className="relative">
               <MagnifyingGlass className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400" />
               <input
