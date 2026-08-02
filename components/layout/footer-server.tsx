@@ -25,7 +25,7 @@ const socialLinks = [
 
 export function FooterServer() {
   return (
-    <footer className="bg-gray-950 text-white pb-16 lg:pb-0">
+    <footer className="bg-gray-950 text-white pb-16 sm:pb-0">
       {/* Main Footer */}
       <div className="mx-auto px-4 py-10 sm:px-6 lg:px-8" style={{ maxWidth: "1280px" }}>
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">

@@ -121,6 +121,7 @@ export function HeaderClient() {
 
   return (
     <div>
+      {/* Hamburger sidebar (mobile only) */}
       <Sidebar
         user={user}
         isOpen={sidebarOpen}
@@ -128,8 +129,8 @@ export function HeaderClient() {
         onSignOut={signOut}
       />
 
-      {/* ========== MOBILE HEADER ========== */}
-      <header className="fixed top-0 left-0 right-0 z-30 bg-white lg:hidden">
+      {/* ========== MOBILE HEADER (< sm) ========== */}
+      <header className="fixed top-0 left-0 right-0 z-30 bg-white sm:hidden">
         <div className="flex h-14 items-center border-b border-gray-100 px-4">
           <Link href="/" className="flex items-center gap-2">
             <div className="relative h-7 w-7">
@@ -141,7 +142,7 @@ export function HeaderClient() {
                 priority
               />
             </div>
-            <span className="text-[13px] font-bold tracking-tight text-foreground sm:hidden">
+            <span className="text-[13px] font-bold tracking-tight text-foreground">
               {SITE_CONFIG.shortName}
             </span>
           </Link>
@@ -188,11 +189,11 @@ export function HeaderClient() {
         </div>
       </header>
 
-      {/* ========== DESKTOP HEADER ========== */}
-      <header className="fixed top-0 left-0 right-0 z-30 hidden bg-white lg:block">
+      {/* ========== DESKTOP HEADER (sm+) ========== */}
+      <header className="fixed top-0 left-0 right-0 z-30 hidden bg-white sm:block sm:left-[240px] lg:left-[260px]">
         {/* Top strip: date + time */}
         <div className="border-b border-gray-100 bg-gray-50/60">
-          <div className="mx-auto flex h-8 items-center justify-between px-6" style={{ maxWidth: "1280px" }}>
+          <div className="mx-auto flex h-8 items-center justify-between px-4 sm:px-5 lg:px-6">
             <DateTimeDisplay />
             <div className="flex items-center gap-4 text-[11px] text-gray-500">
               <Link href="/tentang-kami" className="transition-colors hover:text-foreground">
@@ -216,10 +217,10 @@ export function HeaderClient() {
           </div>
         </div>
 
-        {/* Main header: Logo + Actions */}
+        {/* Main header: Search + Actions */}
         <div className="border-b border-gray-100">
-          <div className="mx-auto flex h-16 items-center px-6" style={{ maxWidth: "1280px" }}>
-            <Link href="/" className="flex shrink-0 items-center gap-3">
+          <div className="mx-auto flex h-14 items-center justify-between px-4 sm:h-16 sm:px-5 lg:px-6">
+            <Link href="/" className="flex shrink-0 items-center gap-3 sm:hidden">
               <div className="relative h-9 w-9">
                 <Image
                   src="/logo-metrik.png"
@@ -255,45 +256,13 @@ export function HeaderClient() {
               >
                 LANGGANAN
               </Link>
-              <button
-                onClick={() => setSidebarOpen(true)}
-                className="flex size-9 items-center justify-center text-gray-400 transition-colors hover:text-foreground"
-              >
-                <List className="size-5" />
-              </button>
             </div>
-          </div>
-        </div>
-
-        {/* Category Navigation */}
-        <div className="border-b border-gray-200">
-          <div className="mx-auto flex items-center px-6" style={{ maxWidth: "1280px" }}>
-            {categoryNav.map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "relative whitespace-nowrap px-4 py-3 text-[12px] font-semibold tracking-wide transition-colors",
-                    isActive
-                      ? "text-brand-text"
-                      : "text-gray-600 hover:text-foreground"
-                  )}
-                >
-                  {item.label.toUpperCase()}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-brand" />
-                  )}
-                </Link>
-              );
-            })}
           </div>
         </div>
       </header>
 
-      {/* Bottom Nav - mobile only */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-100 bg-white lg:hidden">
+      {/* Bottom Nav - mobile only (< sm) */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-100 bg-white sm:hidden">
         <div className="flex items-center justify-around px-2 py-1.5">
           {bottomNavItems.map((item) => {
             const isActive = pathname === item.href;
