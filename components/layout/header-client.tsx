@@ -48,13 +48,52 @@ function formatTime(date: Date): string {
   return date.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 }
 
+function DateTimeDisplay() {
+  const [now, setNow] = useState<Date | null>(null);
+
+  useEffect(() => {
+    setNow(new Date());
+    const timer = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  if (!now) {
+    return (
+      <div className="flex items-center gap-4 text-[11px] text-gray-500">
+        <span className="flex items-center gap-1.5">
+          <CalendarBlank className="size-3" />
+          <span className="inline-block w-32">&nbsp;</span>
+        </span>
+        <span className="flex items-center gap-1.5">
+          <Clock className="size-3" />
+          <span className="inline-block w-16">&nbsp;</span>
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-4 text-[11px] text-gray-500">
+      <span className="flex items-center gap-1.5">
+        <CalendarBlank className="size-3" />
+        {formatIndonesianDate(now)}
+      </span>
+      <span className="flex items-center gap-1.5">
+        <Clock className="size-3" />
+        {formatTime(now)} WIB
+      </span>
+    </div>
+  );
+}
+
 export function HeaderClient() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [now, setNow] = useState(new Date());
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
+    setMounted(true);
     const mockUser = getMockSession();
     if (mockUser) {
       setUser(mockUser);
@@ -64,11 +103,6 @@ export function HeaderClient() {
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => setUser(data?.user || null))
       .catch(() => setUser(null));
-  }, []);
-
-  useEffect(() => {
-    const timer = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(timer);
   }, []);
 
   const signOut = async () => {
@@ -159,16 +193,7 @@ export function HeaderClient() {
         {/* Top strip: date + time */}
         <div className="border-b border-gray-100 bg-gray-50/60">
           <div className="mx-auto flex h-8 items-center justify-between px-6" style={{ maxWidth: "1280px" }}>
-            <div className="flex items-center gap-4 text-[11px] text-gray-500">
-              <span className="flex items-center gap-1.5">
-                <CalendarBlank className="size-3" />
-                {formatIndonesianDate(now)}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Clock className="size-3" />
-                {formatTime(now)} WIB
-              </span>
-            </div>
+            <DateTimeDisplay />
             <div className="flex items-center gap-4 text-[11px] text-gray-500">
               <Link href="/tentang-kami" className="transition-colors hover:text-foreground">
                 Tentang Kami
@@ -177,7 +202,7 @@ export function HeaderClient() {
                 Kontak
               </Link>
               <span className="h-3 w-px bg-gray-200" />
-              {user ? (
+              {mounted && user ? (
                 <Link href="/profile" className="flex items-center gap-1 transition-colors hover:text-foreground">
                   <User className="size-3" />
                   <span>Profil</span>
