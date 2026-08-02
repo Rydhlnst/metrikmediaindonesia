@@ -32,7 +32,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="container-responsive py-6">
+    <div className="py-6">
       <Breadcrumb items={[{ label: "Hubungi Kami" }]} />
 
       <div className="mt-8 max-w-3xl">
@@ -96,7 +96,7 @@ export default function ContactPage() {
               </div>
               <Button
                 type="submit"
-                className="bg-brand text-brand-foreground hover:bg-brand/90"
+                className="bg-brand text-gray-900 hover:bg-amber-400"
               >
                 <PaperPlaneRight className="mr-2 size-4" weight="fill" />
                 Kirim Pesan
@@ -111,7 +111,7 @@ export default function ContactPage() {
             <h3 className="mb-4 font-bold">Informasi Kontak</h3>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
-                <MapPin className="mt-0.5 size-4 text-brand" />
+                <MapPin className="mt-0.5 size-4 text-brand-text" />
                 <div>
                   <p className="text-sm font-medium">Alamat</p>
                   <p className="text-xs text-muted-foreground">
@@ -120,21 +120,21 @@ export default function ContactPage() {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <EnvelopeSimple className="mt-0.5 size-4 text-brand" />
+                <EnvelopeSimple className="mt-0.5 size-4 text-brand-text" />
                 <div>
                   <p className="text-sm font-medium">Email</p>
                   <p className="text-xs text-muted-foreground">redaksi@metrikmediaindonesia.id</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Phone className="mt-0.5 size-4 text-brand" />
+                <Phone className="mt-0.5 size-4 text-brand-text" />
                 <div>
                   <p className="text-sm font-medium">Telepon</p>
                   <p className="text-xs text-muted-foreground">+62 21 1234 5678</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Clock className="mt-0.5 size-4 text-brand" />
+                <Clock className="mt-0.5 size-4 text-brand-text" />
                 <div>
                   <p className="text-sm font-medium">Jam Operasional</p>
                   <p className="text-xs text-muted-foreground">
@@ -155,7 +155,7 @@ export default function ContactPage() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex size-10 items-center justify-center border border-border text-muted-foreground transition-colors hover:border-brand hover:text-brand"
+                  className="flex size-10 items-center justify-center border border-border text-muted-foreground transition-colors hover:border-brand hover:text-brand-text"
                 >
                   <social.icon className="size-4" weight="fill" />
                 </a>

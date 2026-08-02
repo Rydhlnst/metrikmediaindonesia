@@ -179,7 +179,7 @@ function SearchResults() {
   const results = query ? searchArticles(query) : [];
 
   return (
-    <div className="container-responsive py-6">
+    <div className="py-6">
       <Breadcrumb items={[{ label: "Pencarian" }, { label: query || "" }]} />
 
       <div className="mt-6">
@@ -233,7 +233,7 @@ export default function SearchPage() {
   return (
     <Suspense
       fallback={
-        <div className="container-responsive py-20 text-center">
+        <div className="py-20 text-center">
           <p className="text-sm text-muted-foreground">Memuat...</p>
         </div>
       }

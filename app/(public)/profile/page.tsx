@@ -47,7 +47,7 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="container-responsive py-20 text-center">
+      <div className="py-20 text-center">
         <div className="mx-auto size-6 animate-spin rounded-full border-2 border-muted border-t-foreground" />
       </div>
     );
@@ -87,7 +87,7 @@ export default function ProfilePage() {
   const savedArticles = articles.slice(0, 4);
 
   return (
-    <div className="container-responsive py-6">
+    <div className="py-6">
       {/* Profile Header */}
       <div className="border border-border p-6">
         <div className="flex items-start gap-4">

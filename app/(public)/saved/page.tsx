@@ -33,7 +33,7 @@ export default function SavedPage() {
 
   if (isLoading) {
     return (
-      <div className="container-responsive py-20 text-center">
+      <div className="py-20 text-center">
         <div className="mx-auto size-6 animate-spin rounded-full border-2 border-muted border-t-foreground" />
       </div>
     );
@@ -73,7 +73,7 @@ export default function SavedPage() {
   const savedArticles = articles.slice(0, 6);
 
   return (
-    <div className="container-responsive py-6">
+    <div className="py-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">Artikel Tersimpan</h1>
         <p className="mt-1 text-sm text-muted-foreground">

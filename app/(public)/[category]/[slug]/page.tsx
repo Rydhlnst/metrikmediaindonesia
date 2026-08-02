@@ -91,7 +91,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
           { name: article.title, url: `${SITE_CONFIG.url}/${article.category.slug}/${article.slug}` },
         ]}
       />
-      <div className="container-responsive py-5">
+      <div className="py-5">
         <Breadcrumb
           items={[
             { label: article.category.name, href: `/${article.category.slug}` },
@@ -109,7 +109,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
               )}
               <Link
                 href={`/${article.category.slug}`}
-                className="mb-1.5 inline-block text-[10px] font-bold uppercase tracking-wider text-brand"
+                className="mb-1.5 inline-block text-[10px] font-bold uppercase tracking-wider text-brand-text"
               >
                 {article.category.name}
               </Link>
@@ -152,7 +152,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
             </div>
             <div className="mt-6 flex flex-wrap gap-1.5">
               {article.tags.map((tag) => (
-                <span key={tag} className="border border-gray-200 px-2.5 py-1 text-[10px] text-gray-500 transition-colors hover:border-brand hover:text-brand cursor-pointer">
+                <span key={tag} className="border border-gray-200 px-2.5 py-1 text-[10px] text-gray-500 transition-colors hover:border-brand hover:text-brand-text cursor-pointer">
                   #{tag}
                 </span>
               ))}

@@ -23,7 +23,7 @@ const socialIcons: Record<string, React.ComponentType<Record<string, unknown>>> 
 
 export default function EditorialTeamPage() {
   return (
-    <div className="container-responsive py-6">
+    <div className="py-6">
       <Breadcrumb items={[{ label: "Tim Editorial" }]} />
 
       <div className="mt-8 max-w-3xl">
@@ -44,7 +44,7 @@ export default function EditorialTeamPage() {
                 <AvatarAuthor name={author.name} size="lg" />
                 <div>
                   <h3 className="font-bold">{author.name}</h3>
-                  <p className="text-xs text-brand">{author.role}</p>
+                  <p className="text-xs text-brand-text">{author.role}</p>
                 </div>
               </div>
               <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
@@ -83,7 +83,7 @@ export default function EditorialTeamPage() {
                 <AvatarAuthor name={author.name} size="lg" />
                 <div>
                   <h3 className="font-bold">{author.name}</h3>
-                  <p className="text-xs text-brand">{author.role}</p>
+                  <p className="text-xs text-brand-text">{author.role}</p>
                 </div>
               </div>
               <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
@@ -120,7 +120,7 @@ export default function EditorialTeamPage() {
         </p>
         <Link
           href="/hubungi-kami"
-          className="mt-4 inline-flex items-center gap-2 bg-brand px-6 py-2.5 text-sm font-medium text-brand-foreground transition-colors hover:bg-brand/90"
+          className="mt-4 inline-flex items-center gap-2 bg-brand px-6 py-2.5 text-sm font-medium text-gray-900 transition-colors hover:bg-amber-400"
         >
           Lihat Lowongan
         </Link>

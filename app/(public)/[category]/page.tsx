@@ -54,7 +54,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           { name: cat.name, url: `${SITE_CONFIG.url}/${cat.slug}` },
         ]}
       />
-      <div className="container-responsive py-5">
+      <div className="py-5">
         <Breadcrumb items={[{ label: cat.name }]} />
         <div className="mt-4">
           <div className="border-b-2 border-brand pb-2.5">

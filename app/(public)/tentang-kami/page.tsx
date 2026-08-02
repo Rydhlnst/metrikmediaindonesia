@@ -50,7 +50,7 @@ const values = [
 
 export default function AboutPage() {
   return (
-    <div className="container-responsive py-6">
+    <div className="py-6">
       <Breadcrumb items={[{ label: "Tentang Kami" }]} />
 
       {/* Hero */}
@@ -88,19 +88,19 @@ export default function AboutPage() {
 
         <div className="grid grid-cols-3 gap-6">
           <div className="border border-border p-6">
-            <span className="text-3xl font-bold text-brand">50+</span>
+            <span className="text-3xl font-bold text-brand-text">50+</span>
             <p className="mt-1 text-sm text-muted-foreground">Jurnalis & Tim</p>
           </div>
           <div className="border border-border p-6">
-            <span className="text-3xl font-bold text-brand">1M+</span>
+            <span className="text-3xl font-bold text-brand-text">1M+</span>
             <p className="mt-1 text-sm text-muted-foreground">Pembaca Bulanan</p>
           </div>
           <div className="border border-border p-6">
-            <span className="text-3xl font-bold text-brand">34</span>
+            <span className="text-3xl font-bold text-brand-text">34</span>
             <p className="mt-1 text-sm text-muted-foreground">Kantor Daerah</p>
           </div>
           <div className="border border-border p-6">
-            <span className="text-3xl font-bold text-brand">24/7</span>
+            <span className="text-3xl font-bold text-brand-text">24/7</span>
             <p className="mt-1 text-sm text-muted-foreground">Liputan Non-Stop</p>
           </div>
         </div>
@@ -112,7 +112,7 @@ export default function AboutPage() {
         <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {values.map((value) => (
             <div key={value.title} className="border border-border p-6">
-              <value.icon className="size-6 text-brand" weight="bold" />
+              <value.icon className="size-6 text-brand-text" weight="bold" />
               <h3 className="mt-3 font-bold">{value.title}</h3>
               <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
                 {value.description}
