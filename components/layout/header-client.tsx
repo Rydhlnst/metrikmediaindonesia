@@ -1,157 +1,226 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { SITE_CONFIG } from "@/lib/constants";
-import { Sidebar } from "./sidebar";
-import { getMockSession } from "@/lib/mock-session";
+import { SITE_CONFIG, NAVIGATION } from "@/lib/constants";
+import { DesktopSidebar } from "./desktop-sidebar";
+import Image from "next/image";
 import {
-  MagnifyingGlass,
-  List,
-  House,
-  BookmarkSimple,
-  UserCircle,
   Bell,
+  EnvelopeSimple,
+  List,
+  X,
+  MagnifyingGlass,
+  GearSix,
+  SignOut,
+  User,
 } from "@phosphor-icons/react/dist/ssr";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
-const bottomNavItems = [
-  { label: "Home", href: "/", icon: House },
-  { label: "Search", href: "/pencarian", icon: MagnifyingGlass },
-  { label: "Saved", href: "/saved", icon: BookmarkSimple },
-  { label: "Profile", href: "/profile", icon: UserCircle },
+const topNavItems = [
+  { label: "Top Stories", href: "/" },
+  { label: "For You", href: "/pencarian" },
+  { label: "Your Topics", href: "/saved" },
+  { label: "Fact Check", href: "/fact-check" },
+  { label: "More", href: "/dunia" },
 ];
 
 export function HeaderClient() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
-  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
-
-  useEffect(() => {
-    setMounted(true);
-    const mockUser = getMockSession();
-    if (mockUser) {
-      setUser(mockUser);
-      return;
-    }
-    fetch("/api/auth/get-session")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => setUser(data?.user || null))
-      .catch(() => setUser(null));
-  }, []);
-
-  const signOut = async () => {
-    try {
-      if (getMockSession()) {
-        localStorage.removeItem("mock-session");
-      } else {
-        await fetch("/api/auth/sign-out", { method: "POST" });
-      }
-      setUser(null);
-      window.location.href = "/";
-    } catch (err) {
-      console.error("Sign out error:", err);
-    }
-  };
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   return (
-    <div>
-      {/* Hamburger sidebar (mobile only) */}
-      <Sidebar
-        user={user}
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        onSignOut={signOut}
-      />
+    <>
+      <DesktopSidebar />
 
-      {/* ========== MOBILE HEADER (< sm) ========== */}
-      <header className="fixed top-0 left-0 right-0 z-30 glass sm:hidden">
-        <div className="flex h-14 items-center px-4">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="relative h-8 w-8">
-              <Image
-                src="/logo-metrik.png"
-                alt="Metrik Media"
-                fill
-                className="object-contain"
-                priority
+      {/* Top Header Bar */}
+      <header className="fixed top-0 right-0 z-30 h-14 border-b border-gray-100 bg-white sm:flex sm:items-center sm:justify-between sm:pl-[220px] lg:pl-[240px]">
+        {/* Desktop: nav tabs + search + icons */}
+        <div className="hidden h-full sm:flex sm:w-full sm:items-center sm:justify-between">
+          {/* Nav Tabs */}
+          <nav className="flex h-full items-center gap-1 px-4">
+            {topNavItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "relative flex h-full items-center px-3 text-sm font-medium transition-colors",
+                    isActive
+                      ? "text-foreground"
+                      : "text-gray-400 hover:text-foreground"
+                  )}
+                >
+                  {item.label}
+                  {isActive && (
+                    <span className="absolute bottom-0 left-3 right-3 h-0.5 rounded-full bg-brand" />
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Search + Icons */}
+          <div className="flex items-center gap-3 pr-5">
+            <div className="relative">
+              <MagnifyingGlass className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="h-9 w-64 rounded-xl border border-gray-200 bg-gray-50 pl-9 pr-3 text-sm placeholder-gray-400 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand/20"
               />
             </div>
-            <span className="text-base font-bold tracking-tight text-foreground">
-              {SITE_CONFIG.shortName}
-            </span>
-          </Link>
-          <div className="flex-1" />
-          <div className="flex items-center gap-1">
-            <Link
-              href="/pencarian"
-              className="flex size-10 items-center justify-center text-gray-500 rounded-full hover:bg-gray-100 transition-colors"
-            >
-              <MagnifyingGlass className="size-5" />
+            <button className="relative flex size-9 items-center justify-center rounded-xl text-gray-400 transition-colors hover:bg-gray-100 hover:text-foreground">
+              <Bell className="size-5" weight="regular" />
+            </button>
+            <button className="relative flex size-9 items-center justify-center rounded-xl text-gray-400 transition-colors hover:bg-gray-100 hover:text-foreground">
+              <EnvelopeSimple className="size-5" weight="regular" />
+            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex size-8 items-center justify-center rounded-full bg-brand text-sm font-bold text-gray-900 hover:ring-2 hover:ring-brand/30 transition-all cursor-pointer">
+                  R
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 rounded-xl">
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard" className="flex items-center gap-2">
+                    <User className="size-4" /> Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard" className="flex items-center gap-2">
+                    <GearSix className="size-4" /> Settings
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="flex items-center gap-2 text-red-500 focus:text-red-500">
+                  <SignOut className="size-4" /> Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+
+        {/* Mobile: hamburger + logo + bell */}
+        <div className="flex h-full w-full items-center justify-between px-4 sm:hidden">
+          <div className="flex items-center gap-3">
+            <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+              <SheetTrigger asChild>
+                <button className="flex size-9 items-center justify-center rounded-xl text-gray-600 transition-colors hover:bg-gray-100">
+                  <List className="size-5" weight="fill" />
+                </button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[260px] p-0">
+                <SheetTitle className="sr-only">Navigation</SheetTitle>
+                <MobileSidebar onClose={() => setSheetOpen(false)} />
+              </SheetContent>
+            </Sheet>
+            <Link href="/" className="flex items-center gap-2">
+              <div className="relative h-7 w-7">
+                <Image
+                  src="/logo-metrik.png"
+                  alt={SITE_CONFIG.shortName}
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
             </Link>
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="flex size-10 items-center justify-center text-gray-500 rounded-full hover:bg-gray-100 transition-colors"
-            >
-              <List className="size-5" />
+          </div>
+          <div className="flex items-center gap-2">
+            <button className="relative flex size-9 items-center justify-center rounded-xl text-gray-600 transition-colors hover:bg-gray-100">
+              <Bell className="size-5" weight="regular" />
             </button>
           </div>
         </div>
       </header>
 
-      {/* ========== DESKTOP HEADER (sm+) ========== */}
-      <header className="fixed top-0 left-0 right-0 z-30 hidden bg-white sm:block sm:left-[240px] lg:left-[260px]">
-        <div className="border-b border-gray-100">
-          <div className="flex h-16 items-center gap-4 px-5 lg:px-6">
-            {/* Search bar */}
-            <div className="relative flex-1 max-w-xl">
-              <MagnifyingGlass className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search News"
-                className="h-10 w-full rounded-xl border border-gray-200 bg-gray-50 pl-10 pr-4 text-sm text-foreground placeholder:text-gray-400 outline-none transition-all focus:border-brand focus:bg-white focus:ring-2 focus:ring-brand/20"
-              />
-            </div>
+      {/* Mobile Bottom Navigation */}
+      <nav className="fixed bottom-0 left-0 right-0 z-40 flex h-14 items-center justify-around border-t border-gray-100 bg-white sm:hidden">
+        {NAVIGATION.main.map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex flex-col items-center gap-0.5 px-3 py-1.5 text-[11px] font-medium transition-colors",
+                isActive
+                  ? "text-brand"
+                  : "text-gray-400"
+              )}
+            >
+              {item.label}
+            </Link>
+          );
+        })}
+      </nav>
+    </>
+  );
+}
 
-            <div className="flex items-center gap-2">
-              <button className="flex size-10 items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-foreground transition-colors">
-                <Bell className="size-5" />
-              </button>
-              <Link
-                href="/login"
-                className="rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-amber-400"
-              >
-                LANGGANAN
-              </Link>
-            </div>
+function MobileSidebar({ onClose }: { onClose: () => void }) {
+  const pathname = usePathname();
+
+  return (
+    <div className="flex h-full flex-col bg-white">
+      <div className="flex h-14 items-center justify-between border-b border-gray-100 px-5">
+        <Link href="/" className="flex items-center gap-2" onClick={onClose}>
+          <div className="relative h-7 w-7">
+            <Image
+              src="/logo-metrik.png"
+              alt={SITE_CONFIG.shortName}
+              fill
+              className="object-contain"
+              priority
+            />
           </div>
-        </div>
-      </header>
+          <span className="text-sm font-bold">{SITE_CONFIG.shortName}</span>
+        </Link>
+        <button
+          onClick={onClose}
+          className="flex size-8 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100"
+        >
+          <X className="size-5" />
+        </button>
+      </div>
 
-      {/* Bottom Nav - mobile only (< sm) */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-100 bg-white sm:hidden">
-        <div className="flex items-center justify-around px-2 py-2">
-          {bottomNavItems.map((item) => {
+      <nav className="flex-1 overflow-y-auto px-3 py-4">
+        <div className="space-y-0.5">
+          {NAVIGATION.main.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={onClose}
                 className={cn(
-                  "flex flex-col items-center gap-1 px-4 py-1.5 text-[11px] transition-all rounded-xl",
+                  "flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-all rounded-xl",
                   isActive
-                    ? "text-brand-text font-semibold"
-                    : "text-gray-400"
+                    ? "bg-brand/10 text-brand font-semibold"
+                    : "text-gray-500 hover:bg-gray-50 hover:text-foreground"
                 )}
               >
-                <item.icon
-                  className={cn("size-6", isActive && "text-brand-text")}
-                  weight={isActive ? "fill" : "regular"}
-                />
-                <span>{item.label}</span>
+                {item.label}
               </Link>
             );
           })}

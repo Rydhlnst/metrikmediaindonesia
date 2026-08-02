@@ -1,99 +1,123 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
-import { getImageUrl } from "@/lib/utils";
-import { getCategorySlug, getCategoryName, getTimeAgo } from "@/lib/article-helpers";
-import { Clock, BookmarkSimple } from "@phosphor-icons/react/dist/ssr";
+import { cn, getImageUrl } from "@/lib/utils";
+import { TrendUp, Fire } from "@phosphor-icons/react/dist/ssr";
 
-const categories = [
-  { name: "Bisnis", slug: "bisnis" },
-  { name: "Politik", slug: "politik" },
-  { name: "Olahraga", slug: "olahraga" },
-  { name: "Teknologi", slug: "teknologi" },
-  { name: "Pendidikan", slug: "pendidikan" },
-  { name: "Kesehatan", slug: "kesehatan" },
-  { name: "Hukum", slug: "hukum" },
-  { name: "Sosial & Budaya", slug: "sosial-dan-budaya" },
-];
-
-interface RightSidebarProps {
-  articles: any[];
+interface Article {
+  slug: string;
+  title: string;
+  category?: { slug: string; name: string } | string | null;
+  thumbnail?: { url: string } | string | null;
 }
 
-export function RightSidebar({ articles }: RightSidebarProps) {
-  const curatedArticles = articles.slice(0, 3);
+interface TrendingSection {
+  name: string;
+  articles: number;
+  trend: "up" | "down" | "neutral";
+}
 
+const trendingSections: TrendingSection[] = [
+  { name: "Bisnis", articles: 245, trend: "up" },
+  { name: "Teknologi", articles: 189, trend: "up" },
+  { name: "Olahraga", articles: 312, trend: "neutral" },
+  { name: "Hiburan", articles: 156, trend: "down" },
+  { name: "Dunia", articles: 278, trend: "up" },
+  { name: "Sosial & Budaya", articles: 98, trend: "neutral" },
+];
+
+export function RightSidebar({
+  trendingArticles,
+}: {
+  trendingArticles: Article[];
+}) {
   return (
-    <aside className="hidden xl:block w-[300px] shrink-0 space-y-6">
-      {/* Curated Picks */}
-      <div className="rounded-2xl bg-white p-4 shadow-card">
-        <h3 className="mb-4 text-base font-bold">Curated Picks</h3>
-        <div className="space-y-4">
-          {curatedArticles.map((article: any) => (
-            <Link
-              key={article.id}
-              href={`/${getCategorySlug(article)}/${article.slug}`}
-              className="group flex gap-3"
-            >
-              <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-gray-100">
-                <Image
-                  src={getImageUrl(article.featuredImage)}
-                  alt={article.title}
-                  fill
-                  sizes="64px"
-                  className="object-cover card-image-zoom"
-                />
-              </div>
-              <div className="flex flex-1 min-w-0 flex-col justify-center gap-0.5">
-                <span className="text-xs font-semibold text-brand-text">{getCategoryName(article)}</span>
-                <h4 className="text-sm font-semibold leading-snug line-clamp-2 text-foreground group-hover:text-brand-text transition-colors">
-                  {article.title}
-                </h4>
-                <div className="flex items-center gap-2 text-[11px] text-gray-400">
-                  <span>{getTimeAgo(article.publishedAt || new Date().toISOString())}</span>
+    <aside className="hidden w-[280px] shrink-0 xl:block">
+      <div className="sticky top-20 space-y-6">
+        {/* Trending News */}
+        <div>
+          <div className="mb-3 flex items-center gap-2">
+            <Fire className="size-4 text-brand" weight="fill" />
+            <h3 className="text-sm font-bold text-foreground">Trending News</h3>
+          </div>
+          <div className="space-y-3">
+            {trendingArticles.slice(0, 5).map((article, index) => {
+              const categoryName =
+                typeof article.category === "object" && article.category
+                  ? article.category.name
+                  : typeof article.category === "string"
+                  ? article.category
+                  : "Umum";
+              const categorySlug =
+                typeof article.category === "object" && article.category
+                  ? article.category.slug
+                  : typeof article.category === "string"
+                  ? article.category.toLowerCase().replace(/\s+/g, "-")
+                  : "umum";
+              const imageUrl = getImageUrl(article.thumbnail);
+
+              return (
+                <Link
+                  key={article.slug}
+                  href={`/${categorySlug}/${article.slug}`}
+                  className="group flex gap-3"
+                >
+                  {imageUrl && (
+                    <div className="relative size-14 shrink-0 overflow-hidden rounded-xl bg-gray-100">
+                      <Image
+                        src={imageUrl}
+                        alt={article.title}
+                        fill
+                        className="object-cover transition-transform group-hover:scale-105"
+                      />
+                    </div>
+                  )}
+                  <div className="flex flex-1 flex-col min-w-0">
+                    <span className="text-[10px] font-semibold uppercase tracking-wide text-brand">
+                      {categoryName}
+                    </span>
+                    <span className="mt-0.5 line-clamp-2 text-xs font-medium leading-snug text-foreground group-hover:text-brand transition-colors">
+                      {article.title}
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Trending Sections */}
+        <div>
+          <div className="mb-3 flex items-center gap-2">
+            <TrendUp className="size-4 text-brand" weight="fill" />
+            <h3 className="text-sm font-bold text-foreground">Trending Sections</h3>
+          </div>
+          <div className="space-y-2">
+            {trendingSections.map((section) => (
+              <Link
+                key={section.name}
+                href={`/${section.name.toLowerCase().replace(/\s+/g, "-")}`}
+                className="group flex items-center justify-between rounded-xl px-3 py-2 transition-colors hover:bg-gray-50"
+              >
+                <span className="text-sm font-medium text-foreground group-hover:text-brand transition-colors">
+                  {section.name}
+                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-400">{section.articles} articles</span>
+                  {section.trend === "up" && (
+                    <TrendUp className="size-3.5 text-green-500" weight="fill" />
+                  )}
+                  {section.trend === "down" && (
+                    <TrendUp className="size-3.5 rotate-180 text-red-400" weight="fill" />
+                  )}
+                  {section.trend === "neutral" && (
+                    <div className="h-0.5 w-3.5 rounded bg-gray-300" />
+                  )}
                 </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Categories */}
-      <div className="rounded-2xl bg-white p-4 shadow-card">
-        <h3 className="mb-4 text-base font-bold">Categories</h3>
-        <div className="flex flex-wrap gap-2">
-          {categories.map((cat) => (
-            <Link
-              key={cat.slug}
-              href={`/${cat.slug}`}
-              className="pill pill-inactive text-sm"
-            >
-              {cat.name}
-            </Link>
-          ))}
-        </div>
-        <Link
-          href="/pencarian"
-          className="mt-3 block text-sm font-medium text-brand-text hover:underline"
-        >
-          View More Categories
-        </Link>
-      </div>
-
-      {/* Newsletter */}
-      <div className="rounded-2xl bg-brand/10 p-4">
-        <h3 className="text-base font-bold">Newsletter</h3>
-        <p className="mt-1 text-sm text-gray-500">
-          Dapatkan berita terkini langsung ke email Anda.
-        </p>
-        <div className="mt-3 flex gap-2">
-          <input
-            type="email"
-            placeholder="Email Anda"
-            className="flex-1 rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-foreground placeholder:text-gray-400 outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
-          />
-          <button className="rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-gray-900 transition-colors hover:bg-amber-400">
-            Kirim
-          </button>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </aside>
