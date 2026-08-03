@@ -23,7 +23,7 @@ export function LiveFromHome({ articles }: LiveFromHomeProps) {
             <Link
               key={article.id}
               href={`/${getCategorySlug(article)}/${article.slug}`}
-              className="group relative aspect-[3/4] w-40 shrink-0 overflow-hidden rounded-2xl bg-gray-100 sm:w-48"
+              className="group relative aspect-[3/4] w-40 shrink-0 overflow-hidden rounded-xl bg-gray-100 sm:w-48"
             >
               <Image
                 src={getImageUrl(article.featuredImage)}

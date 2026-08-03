@@ -17,7 +17,7 @@ export function NewsletterSignup() {
   };
 
   return (
-    <div className="rounded-2xl bg-brand/10 p-5">
+    <div className="rounded-xl bg-brand/10 p-5">
       <div className="mb-3 flex items-center gap-2">
         <EnvelopeSimple className="size-5 text-brand-text" weight="bold" />
         <h3 className="text-base font-bold">Newsletter</h3>

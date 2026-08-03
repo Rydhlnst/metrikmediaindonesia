@@ -47,7 +47,7 @@ export function HeroSection({ articles }: HeroSectionProps) {
                 <div key={article.id} className="min-w-0 flex-[0_0_100%] pl-4 first:pl-0">
                   <Link
                     href={`/${getCategorySlug(article)}/${article.slug}`}
-                    className="group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl bg-gray-100"
+                    className="group relative block aspect-[4/3] w-full overflow-hidden rounded-xl bg-gray-100"
                   >
                     <Image
                       src={getImageUrl(article.featuredImage)}
@@ -100,7 +100,7 @@ export function HeroSection({ articles }: HeroSectionProps) {
             </div>
           </div>
         ) : (
-          <div className="aspect-[4/3] w-full animate-pulse rounded-2xl bg-gray-100" />
+          <div className="aspect-[4/3] w-full animate-pulse rounded-xl bg-gray-100" />
         )}
       </div>
 
@@ -113,7 +113,7 @@ export function HeroSection({ articles }: HeroSectionProps) {
                 <div key={article.id} className="min-w-0 flex-[0_0_100%]">
                   <Link
                     href={`/${getCategorySlug(article)}/${article.slug}`}
-                    className="group relative block aspect-[21/9] w-full overflow-hidden rounded-2xl bg-gray-100"
+                    className="group relative block aspect-[21/9] w-full overflow-hidden rounded-xl bg-gray-100"
                   >
                     <Image
                       src={getImageUrl(article.featuredImage)}
@@ -164,7 +164,7 @@ export function HeroSection({ articles }: HeroSectionProps) {
             </div>
           </div>
         ) : (
-          <div className="aspect-[21/9] w-full animate-pulse rounded-2xl bg-gray-100" />
+          <div className="aspect-[21/9] w-full animate-pulse rounded-xl bg-gray-100" />
         )}
       </div>
     </div>

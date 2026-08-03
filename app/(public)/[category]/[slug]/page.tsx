@@ -104,7 +104,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
         <article className="grid gap-8 lg:grid-cols-[1fr_320px]">
           <div>
             {/* Hero Image */}
-            <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl bg-gray-100">
+            <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-gray-100">
               <Image
                 src={article.thumbnail}
                 alt={article.title}
@@ -183,7 +183,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
             </div>
 
             {/* Share */}
-            <div className="mt-8 flex items-center gap-3 rounded-2xl bg-gray-50 p-4">
+            <div className="mt-8 flex items-center gap-3 rounded-xl bg-gray-50 p-4">
               <span className="flex items-center gap-2 text-sm font-semibold">
                 <ShareNetwork className="size-5" />
                 Bagikan
@@ -208,7 +208,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
             </div>
 
             {/* Author Card */}
-            <div className="mt-8 rounded-2xl bg-white p-5 shadow-card">
+            <div className="mt-8 rounded-xl bg-white p-5 shadow-card">
               <div className="flex items-start gap-4">
                 <AvatarAuthor name={article.author.name} size="lg" />
                 <div>

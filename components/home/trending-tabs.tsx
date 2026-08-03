@@ -55,7 +55,7 @@ export function TrendingTabs({ articles }: TrendingTabsProps) {
           <Link
             key={article.id}
             href={`/${getCategorySlug(article)}/${article.slug}`}
-            className="group flex gap-4 rounded-2xl p-3 transition-all hover:bg-gray-50"
+            className="group flex gap-4 rounded-xl p-3 transition-all hover:bg-gray-50"
           >
             <div className="relative h-20 w-24 shrink-0 overflow-hidden rounded-xl bg-gray-100 sm:h-24 sm:w-28">
               <Image
