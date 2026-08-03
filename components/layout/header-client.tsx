@@ -169,7 +169,7 @@ export function HeaderClient() {
               </SheetContent>
             </Sheet>
             <Link href="/" className="flex items-center gap-2">
-              <div className="relative h-7 w-7">
+              <div className="relative h-[42px] w-[42px]">
                 <Image
                   src="/logo-metrik.png"
                   alt={SITE_CONFIG.shortName}
@@ -232,7 +232,7 @@ function MobileSidebar({ onClose }: { onClose: () => void }) {
       {/* Header */}
       <div className="flex h-[62px] items-center justify-between border-b border-gray-100 px-5">
         <Link href="/" className="flex items-center gap-2" onClick={onClose}>
-          <div className="relative h-7 w-7">
+          <div className="relative h-[42px] w-[42px]">
             <Image
               src="/logo-metrik.png"
               alt={SITE_CONFIG.shortName}

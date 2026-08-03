@@ -30,7 +30,7 @@ export function CoverOverlay() {
       </button>
 
       <div className="flex flex-col items-center px-6 text-center">
-        <div className="relative h-32 w-32 sm:h-44 sm:w-44">
+        <div className="relative h-48 w-48 sm:h-64 sm:w-64">
           <Image
             src="/logo-metrik.png"
             alt="PT Metrik Media Indonesia"

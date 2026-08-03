@@ -82,7 +82,7 @@ export function FooterServer() {
 
         {/* Logo + Copyright */}
         <div className="mt-12 flex flex-col items-center gap-4">
-          <div className="relative h-8 w-8">
+          <div className="relative h-12 w-12">
             <Image src="/logo-metrik.png" alt={SITE_CONFIG.shortName} fill className="object-contain" />
           </div>
           <p className="text-center text-xs text-gray-400">

@@ -40,7 +40,7 @@ export function DesktopSidebar() {
         {/* Logo */}
         <div className="flex h-16 items-center px-5">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="relative h-8 w-8">
+            <div className="relative h-12 w-12">
               <Image
                 src="/logo-metrik.png"
                 alt={SITE_CONFIG.shortName}
