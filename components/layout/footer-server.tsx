@@ -1,171 +1,136 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 import { SITE_CONFIG } from "@/lib/constants";
+import { Plus, Minus } from "@phosphor-icons/react/dist/ssr";
 
-const kategoriLinks = [
-  { label: "Bisnis", href: "/bisnis" },
-  { label: "Olahraga", href: "/olahraga" },
-  { label: "Pendidikan", href: "/pendidikan" },
-  { label: "Sosial & Budaya", href: "/sosial-dan-budaya" },
-];
-
-const perusahaanLinks = [
-  { label: "Tentang Kami", href: "/tentang-kami" },
-  { label: "Tim Editorial", href: "/tim-editorial" },
-  { label: "Hubungi Kami", href: "/hubungi-kami" },
-];
-
-const socialLinks = [
-  { label: "Facebook", href: "https://facebook.com/metrikmediaid" },
-  { label: "Twitter", href: "https://twitter.com/metrikmediaid" },
-  { label: "Instagram", href: "https://instagram.com/metrikmediaid" },
-  { label: "YouTube", href: "https://youtube.com/@metrikmediaid" },
-  { label: "LinkedIn", href: "https://linkedin.com/company/metrikmediaid" },
+const sections = [
+  {
+    title: "Kategori",
+    links: [
+      { label: "Bisnis", href: "/bisnis" },
+      { label: "Olahraga", href: "/olahraga" },
+      { label: "Pendidikan", href: "/pendidikan" },
+      { label: "Sosial & Budaya", href: "/sosial-dan-budaya" },
+      { label: "Dunia", href: "/dunia" },
+      { label: "Teknologi", href: "/teknologi" },
+    ],
+  },
+  {
+    title: "Perusahaan",
+    links: [
+      { label: "Tentang Kami", href: "/tentang-kami" },
+      { label: "Tim Editorial", href: "/tim-editorial" },
+      { label: "Hubungi Kami", href: "/hubungi-kami" },
+    ],
+  },
+  {
+    title: "Bantuan",
+    links: [
+      { label: "Kebijakan Privasi", href: "/tentang-kami" },
+      { label: "Syarat & Ketentuan", href: "/tentang-kami" },
+      { label: "Kontak", href: "/hubungi-kami" },
+    ],
+  },
+  {
+    title: "Social",
+    links: [
+      { label: "Facebook", href: "https://facebook.com/metrikmediaid" },
+      { label: "Twitter", href: "https://twitter.com/metrikmediaid" },
+      { label: "Instagram", href: "https://instagram.com/metrikmediaid" },
+      { label: "YouTube", href: "https://youtube.com/@metrikmediaid" },
+      { label: "LinkedIn", href: "https://linkedin.com/company/metrikmediaid" },
+    ],
+  },
 ];
 
 export function FooterServer() {
+  const [email, setEmail] = useState("");
+
   return (
-    <footer className="bg-gray-950 text-white pb-20 sm:pb-0">
-      <div className="mx-auto px-4 py-12 sm:px-6 lg:px-8" style={{ maxWidth: "1320px" }}>
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Brand */}
-          <div className="lg:col-span-1">
-            <Link href="/" className="inline-flex items-center gap-3">
-              <div className="relative h-9 w-9">
-                <Image src="/logo-metrik.png" alt="Metrik Media" fill className="object-contain" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-bold tracking-tight leading-none">
-                  {SITE_CONFIG.shortName}
-                </span>
-                <span className="text-[10px] font-medium tracking-[0.1em] text-gray-500 uppercase">
-                  {SITE_CONFIG.tagline}
-                </span>
-              </div>
-            </Link>
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-gray-400">
-              Menyajikan berita terkini, terpercaya, dan akurat dari seluruh Indonesia.
-            </p>
-            <div className="mt-5 flex items-center gap-2">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex size-9 items-center justify-center rounded-full text-gray-500 transition-colors hover:bg-white/10 hover:text-white"
-                  aria-label={social.label}
-                >
-                  <SocialIcon label={social.label} />
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Kategori */}
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-gray-300">
-              Kategori
-            </h3>
-            <ul className="mt-4 space-y-3">
-              {kategoriLinks.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-gray-400 transition-colors hover:text-white">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Perusahaan */}
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-gray-300">
-              Perusahaan
-            </h3>
-            <ul className="mt-4 space-y-3">
-              {perusahaanLinks.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-gray-400 transition-colors hover:text-white">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Newsletter */}
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-gray-300">
-              Ikuti Kami
-            </h3>
-            <p className="mt-4 text-sm leading-relaxed text-gray-400">
-              Dapatkan berita terkini langsung ke email Anda.
-            </p>
-            <div className="mt-4 flex gap-2">
-              <input
-                type="email"
-                placeholder="Email Anda"
-                className="flex-1 rounded-xl border border-gray-700 bg-gray-900 px-4 py-2.5 text-sm text-white placeholder:text-gray-500 outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
-              />
-              <button className="shrink-0 rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-gray-900 transition-colors hover:bg-amber-400">
-                Kirim
-              </button>
-            </div>
+    <footer className="border-t border-gray-100 bg-white pb-20 sm:pb-0">
+      <div className="mx-auto max-w-3xl px-5 py-12">
+        {/* Newsletter */}
+        <div className="text-center">
+          <h2 className="text-2xl font-semibold leading-snug text-foreground sm:text-3xl">
+            Dapatkan berita terkini
+            <br />
+            langsung di inbox Anda
+          </h2>
+          <div className="mx-auto mt-6 flex max-w-md items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-2 py-1.5 transition-colors focus-within:border-foreground focus-within:bg-white">
+            <input
+              type="email"
+              placeholder="Masukkan email Anda"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="flex-1 bg-transparent px-4 text-sm text-foreground placeholder:text-gray-400 outline-none"
+            />
+            <button className="shrink-0 rounded-full bg-foreground px-5 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90">
+              Subscribe
+            </button>
           </div>
         </div>
-      </div>
 
-      {/* Bottom Bar */}
-      <div className="border-t border-gray-800">
-        <div className="mx-auto flex flex-col items-center justify-between gap-3 px-4 py-5 sm:flex-row sm:px-6 lg:px-8" style={{ maxWidth: "1320px" }}>
-          <p className="text-xs text-gray-500">
+        {/* Accordion Sections */}
+        <div className="mt-12 space-y-0">
+          {sections.map((section) => (
+            <AccordionSection key={section.title} section={section} />
+          ))}
+        </div>
+
+        {/* Logo + Copyright */}
+        <div className="mt-12 flex flex-col items-center gap-4">
+          <div className="relative h-8 w-8">
+            <Image src="/logo-metrik.png" alt={SITE_CONFIG.shortName} fill className="object-contain" />
+          </div>
+          <p className="text-center text-xs text-gray-400">
             &copy; {new Date().getFullYear()} {SITE_CONFIG.name}. All rights reserved.
           </p>
-          <div className="flex items-center gap-5 text-xs text-gray-500">
-            <Link href="/tentang-kami" className="transition-colors hover:text-white">Kebijakan Privasi</Link>
-            <Link href="/tentang-kami" className="transition-colors hover:text-white">Syarat & Ketentuan</Link>
-            <Link href="/hubungi-kami" className="transition-colors hover:text-white">Kontak</Link>
-          </div>
+        </div>
+
+        {/* Bottom Links */}
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-gray-400">
+          <Link href="/tentang-kami" className="transition-colors hover:text-foreground">Kebijakan Privasi</Link>
+          <Link href="/tentang-kami" className="transition-colors hover:text-foreground">Syarat & Ketentuan</Link>
+          <Link href="/hubungi-kami" className="transition-colors hover:text-foreground">Kontak</Link>
         </div>
       </div>
     </footer>
   );
 }
 
-function SocialIcon({ label }: { label: string }) {
-  switch (label) {
-    case "Facebook":
-      return (
-        <svg className="size-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd" />
-        </svg>
-      );
-    case "Twitter":
-      return (
-        <svg className="size-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-        </svg>
-      );
-    case "Instagram":
-      return (
-        <svg className="size-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path fillRule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clipRule="evenodd" />
-        </svg>
-      );
-    case "YouTube":
-      return (
-        <svg className="size-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-        </svg>
-      );
-    case "LinkedIn":
-      return (
-        <svg className="size-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path fillRule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.763-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clipRule="evenodd" />
-        </svg>
-      );
-    default:
-      return null;
-  }
+function AccordionSection({ section }: { section: { title: string; links: { label: string; href: string }[] } }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="border-b border-gray-100">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center justify-between py-4 text-left text-[15px] font-medium text-foreground"
+      >
+        {section.title}
+        {open ? <Minus className="size-4 shrink-0 text-gray-400" /> : <Plus className="size-4 shrink-0 text-gray-400" />}
+      </button>
+      {open && (
+        <div className="pb-4">
+          <ul className="space-y-2.5">
+            {section.links.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className="text-sm text-gray-500 transition-colors hover:text-foreground"
+                  target={link.href.startsWith("http") ? "_blank" : undefined}
+                  rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
 }
