@@ -55,7 +55,7 @@ export function HeaderClient() {
       <DesktopSidebar />
 
       {/* Top Header Bar — mobile: full width, desktop: from sidebar to right edge */}
-      <header className="fixed top-0 left-0 right-0 z-30 h-14 border-b border-gray-100 bg-white sm:left-[220px] lg:left-[240px]">
+      <header className="fixed top-0 left-0 right-0 z-30 h-[62px] border-b border-gray-100 bg-white sm:left-[220px] lg:left-[240px]">
         {/* Desktop: nav tabs + search + icons */}
         <div className="hidden h-full sm:flex sm:w-full sm:items-center sm:justify-between">
           {/* Nav Tabs — centered */}
