@@ -21,6 +21,15 @@ import {
   MagnifyingGlass as Search,
   BookmarkSimple,
   Sparkle,
+  CaretDown,
+  House as HomeIcon,
+  Newspaper,
+  Globe,
+  MapPin,
+  Trophy,
+  Cpu,
+  FilmReel,
+  Buildings,
 } from "@phosphor-icons/react/dist/ssr";
 import {
   Sheet,
@@ -154,7 +163,7 @@ export function HeaderClient() {
                   <List className="size-5" weight="fill" />
                 </button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[260px] p-0">
+              <SheetContent side="left" className="w-full p-0 sm:w-[260px]">
                 <SheetTitle className="sr-only">Navigation</SheetTitle>
                 <MobileSidebar onClose={() => setSheetOpen(false)} />
               </SheetContent>
@@ -200,10 +209,28 @@ export function HeaderClient() {
 
 function MobileSidebar({ onClose }: { onClose: () => void }) {
   const pathname = usePathname();
+  const { user, isLoading, signOut } = useSession();
+
+  const navItems = [
+    { label: "Home", href: "/", icon: House },
+    { label: "For You", href: "/pencarian", icon: Sparkle },
+    { label: "Following", href: "/saved", icon: BookmarkSimple },
+  ];
+
+  const categories = [
+    { label: "Bisnis", href: "/bisnis" },
+    { label: "Dunia", href: "/dunia" },
+    { label: "Lokal", href: "/lokal" },
+    { label: "Olahraga", href: "/olahraga" },
+    { label: "Teknologi", href: "/teknologi" },
+    { label: "Hiburan", href: "/hiburan" },
+    { label: "Sosial & Budaya", href: "/sosial-dan-budaya" },
+  ];
 
   return (
     <div className="flex h-full flex-col bg-white">
-      <div className="flex h-14 items-center justify-between border-b border-gray-100 px-5">
+      {/* Header */}
+      <div className="flex h-[62px] items-center justify-between border-b border-gray-100 px-5">
         <Link href="/" className="flex items-center gap-2" onClick={onClose}>
           <div className="relative h-7 w-7">
             <Image
@@ -224,9 +251,51 @@ function MobileSidebar({ onClose }: { onClose: () => void }) {
         </button>
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-3 py-4">
+      {/* Scrollable content */}
+      <nav className="flex-1 overflow-y-auto px-5 py-4">
+        {/* User Profile */}
+        <div className="mb-6">
+          {isLoading ? (
+            <div className="flex items-center gap-3">
+              <div className="size-12 shrink-0 animate-pulse rounded-full bg-gray-200" />
+              <div className="flex flex-1 flex-col gap-1.5">
+                <div className="h-4 w-24 animate-pulse rounded bg-gray-200" />
+                <div className="h-3 w-32 animate-pulse rounded bg-gray-100" />
+              </div>
+            </div>
+          ) : user ? (
+            <Link href="/profile" onClick={onClose} className="flex items-center gap-3">
+              {user.avatar ? (
+                <div className="relative size-12 shrink-0 overflow-hidden rounded-full bg-gray-100">
+                  <Image src={user.avatar} alt={user.name} fill className="object-cover" />
+                </div>
+              ) : (
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-brand text-base font-bold text-gray-900">
+                  {user.name?.charAt(0)?.toUpperCase() || "?"}
+                </div>
+              )}
+              <div className="flex flex-1 flex-col min-w-0">
+                <span className="text-sm font-semibold truncate">{user.name}</span>
+                <span className="text-xs text-gray-400 truncate">{user.email}</span>
+              </div>
+              <CaretDown className="size-4 shrink-0 text-gray-400" />
+            </Link>
+          ) : (
+            <Link href="/login" onClick={onClose} className="flex items-center gap-3">
+              <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-400">
+                <User className="size-6" />
+              </div>
+              <div className="flex flex-1 flex-col">
+                <span className="text-sm font-medium text-gray-700">Masuk</span>
+                <span className="text-xs text-gray-400">Untuk fitur lengkap</span>
+              </div>
+            </Link>
+          )}
+        </div>
+
+        {/* Navigation */}
         <div className="space-y-0.5">
-          {NAVIGATION.main.map((item) => {
+          {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
@@ -234,9 +303,37 @@ function MobileSidebar({ onClose }: { onClose: () => void }) {
                 href={item.href}
                 onClick={onClose}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-all rounded-xl",
+                  "flex items-center gap-3 px-3 py-3 text-[15px] font-medium transition-all rounded-xl",
                   isActive
-                    ? "bg-brand/10 text-brand font-semibold"
+                    ? "bg-gray-100 text-foreground font-semibold"
+                    : "text-gray-500 hover:bg-gray-50 hover:text-foreground"
+                )}
+              >
+                <item.icon
+                  className={cn("size-5 shrink-0", isActive ? "text-foreground" : "text-gray-400")}
+                  weight={isActive ? "fill" : "regular"}
+                />
+                {item.label}
+              </Link>
+            );
+          })}
+        </div>
+
+        <div className="my-4 h-px bg-gray-100" />
+
+        {/* Categories */}
+        <div className="space-y-0.5">
+          {categories.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onClose}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-3 text-[15px] font-medium transition-all rounded-xl",
+                  isActive
+                    ? "bg-gray-100 text-foreground font-semibold"
                     : "text-gray-500 hover:bg-gray-50 hover:text-foreground"
                 )}
               >
@@ -245,6 +342,20 @@ function MobileSidebar({ onClose }: { onClose: () => void }) {
             );
           })}
         </div>
+
+        {/* Sign out */}
+        {user && (
+          <>
+            <div className="my-4 h-px bg-gray-100" />
+            <button
+              onClick={() => { signOut(); onClose(); }}
+              className="flex w-full items-center gap-3 px-3 py-3 text-[15px] font-medium text-red-500 hover:bg-red-50 rounded-xl transition-colors"
+            >
+              <SignOut className="size-5 shrink-0" />
+              Keluar
+            </button>
+          </>
+        )}
       </nav>
     </div>
   );
