@@ -11,7 +11,13 @@ export const auth = betterAuth({
   },
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: false,
+    requireEmailVerification: true,
+    sendResetPassword: async ({ user, url, token }: { user: any; url: string; token: string }) => {
+      console.log(`Password reset for ${user.email}: ${url}`);
+    },
+    sendVerificationEmail: async ({ user, url, token }: { user: any; url: string; token: string }) => {
+      console.log(`Email verification for ${user.email}: ${url}`);
+    },
   },
   session: {
     expiresIn: 60 * 60 * 24 * 7,

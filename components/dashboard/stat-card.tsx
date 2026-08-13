@@ -1,11 +1,67 @@
 "use client";
 
-import { GoTriangleUp, GoTriangleDown } from "react-icons/go";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { stats } from "./data";
+import { NewspaperClipping, ChartBar, Users, FolderOpen } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/utils";
 
+interface StatsData {
+  totalArticles: number;
+  totalViews: number;
+  activeAuthors: number;
+  totalCategories: number;
+}
+
 export function StatGrid() {
+  const [data, setData] = useState<StatsData>({
+    totalArticles: 0,
+    totalViews: 0,
+    activeAuthors: 0,
+    totalCategories: 0,
+  });
+
+  useEffect(() => {
+    fetch("/api/stats")
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.stats) {
+          setData(resData.stats);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const stats = [
+    {
+      label: "Total Artikel Berita",
+      value: data.totalArticles.toLocaleString("id-ID"),
+      detail: "Terpublikasi & Draft",
+      icon: NewspaperClipping,
+      tone: "bg-news-red",
+    },
+    {
+      label: "Total Views Pembaca",
+      value: data.totalViews.toLocaleString("id-ID"),
+      detail: "Total akumulasi pembaca",
+      icon: ChartBar,
+      tone: "bg-blue-500",
+    },
+    {
+      label: "Penulis & Redaksi",
+      value: data.activeAuthors.toLocaleString("id-ID"),
+      detail: "Tim Jurnalis Aktif",
+      icon: Users,
+      tone: "bg-emerald-500",
+    },
+    {
+      label: "Kategori Berita",
+      value: data.totalCategories.toLocaleString("id-ID"),
+      detail: "Kategori aktif",
+      icon: FolderOpen,
+      tone: "bg-purple-500",
+    },
+  ];
+
   return (
     <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
       {stats.map((stat) => (
@@ -26,31 +82,7 @@ export function StatGrid() {
           </CardHeader>
           <CardContent className="px-4 flex flex-col mt-auto">
             <div className="text-3xl font-bold tracking-tight">{stat.value}</div>
-            <div>
-              <div
-                className={cn(
-                  "mt-2 flex items-center gap-1 text-sm",
-                  stat.detail.startsWith("+")
-                    ? "text-emerald-500"
-                    : stat.detail.startsWith("-")
-                    ? "text-red-500"
-                    : "text-muted-foreground"
-                )}
-              >
-                {stat.detail.startsWith("+") || stat.detail.startsWith("-") ? (
-                  <>
-                    {stat.detail.startsWith("+") ? (
-                      <GoTriangleUp className="size-4 fill-current" />
-                    ) : (
-                      <GoTriangleDown className="size-4 fill-current" />
-                    )}
-                    <span>{stat.detail}</span>
-                  </>
-                ) : (
-                  <span>{stat.detail}</span>
-                )}
-              </div>
-            </div>
+            <div className="mt-2 text-xs text-muted-foreground">{stat.detail}</div>
           </CardContent>
         </Card>
       ))}

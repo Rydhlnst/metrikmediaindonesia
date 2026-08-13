@@ -2,10 +2,13 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { SITE_CONFIG } from "@/lib/constants";
-import { getArticleBySlug, getRelatedArticles, articles } from "@/lib/mock-data";
+import { getArticleBySlug, getArticles, getRelatedArticles, incrementViewCount } from "@/lib/queries";
 import { ArticleCard } from "@/components/article/article-card";
 import { SectionHeader } from "@/components/shared/section-header";
 import { AvatarAuthor } from "@/components/shared/avatar-author";
+import { CategoryBadge } from "@/components/shared/category-badge";
+import { ContentCard } from "@/components/shared/content-card";
+import { CopyLinkButton } from "@/components/article/copy-link-button";
 import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { ReadingProgress } from "@/components/shared/animate-on-scroll";
 import {
@@ -30,26 +33,32 @@ interface ArticleDetailPageProps {
 
 export async function generateMetadata({ params }: ArticleDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  let article;
+  try {
+    article = await getArticleBySlug(slug);
+  } catch {
+    return {};
+  }
   if (!article) return {};
+  const ogImage = article.thumbnail || SITE_CONFIG.ogImage;
   return {
-    title: article.title,
-    description: article.excerpt,
+    title: article.seoTitle || article.title,
+    description: article.seoDescription || article.excerpt || "",
     keywords: article.tags,
     openGraph: {
       title: article.title,
-      description: article.excerpt,
+      description: article.excerpt || "",
       type: "article",
-      publishedTime: article.publishedAt,
+      publishedTime: article.publishedAt || undefined,
       authors: [article.author.name],
-      images: [{ url: article.thumbnail, width: 800, height: 450, alt: article.title }],
+      images: [{ url: ogImage, width: 800, height: 450, alt: article.title }],
       siteName: SITE_CONFIG.name,
     },
     twitter: {
       card: "summary_large_image",
       title: article.title,
-      description: article.excerpt,
-      images: [article.thumbnail],
+      description: article.excerpt || "",
+      images: [ogImage],
     },
     alternates: {
       canonical: `${SITE_CONFIG.url}/${article.category.slug}/${article.slug}`,
@@ -57,28 +66,47 @@ export async function generateMetadata({ params }: ArticleDetailPageProps): Prom
   };
 }
 
-export function generateStaticParams() {
-  return articles.map((a) => ({
-    category: a.category.slug,
-    slug: a.slug,
-  }));
+export async function generateStaticParams() {
+  try {
+    const all = await getArticles({ limit: 1000 });
+    return all.map((a) => ({
+      category: a.category.slug,
+      slug: a.slug,
+    }));
+  } catch {
+    return [];
+  }
 }
+
+export const revalidate = 300;
 
 export default async function ArticleDetailPage({ params }: ArticleDetailPageProps) {
   const { category, slug } = await params;
-  const article = getArticleBySlug(slug);
+  let article;
+  try {
+    article = await getArticleBySlug(slug);
+  } catch {
+    notFound();
+  }
   if (!article || article.category.slug !== category) notFound();
 
-  const relatedArticles = getRelatedArticles(article, 4);
+  void incrementViewCount(slug);
+
+  let relatedArticles: Awaited<ReturnType<typeof getRelatedArticles>> = [];
+  try {
+    relatedArticles = await getRelatedArticles(article, 4);
+  } catch {
+    relatedArticles = [];
+  }
 
   return (
     <>
       <ReadingProgress />
       <ArticleJsonLd
         title={article.title}
-        description={article.excerpt}
-        image={article.thumbnail}
-        datePublished={article.publishedAt}
+        description={article.excerpt || ""}
+        image={article.thumbnail || ""}
+        datePublished={article.publishedAt || ""}
         author={article.author.name}
         slug={article.slug}
         category={article.category.name}
@@ -91,11 +119,11 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
         ]}
       />
 
-      <div className="py-6">
+      <div className="container-editorial py-8 pb-20 md:pb-8">
         {/* Back button */}
         <Link
           href={`/${article.category.slug}`}
-          className="mb-4 inline-flex items-center gap-2 text-sm font-medium text-gray-500 transition-colors hover:text-foreground"
+          className="mb-6 inline-flex items-center gap-2 font-label-md text-label-md text-on-surface-variant transition-colors hover:text-primary"
         >
           <ArrowLeft className="size-4" />
           {article.category.name}
@@ -104,9 +132,9 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
         <article className="grid gap-8 lg:grid-cols-[1fr_320px]">
           <div>
             {/* Hero Image */}
-            <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-gray-100">
+            <div className="relative aspect-[16/9] w-full overflow-hidden bg-surface-container">
               <Image
-                src={article.thumbnail}
+                src={article.thumbnail || "/placeholder.png"}
                 alt={article.title}
                 fill
                 sizes="(max-width: 1024px) 100vw, 640px"
@@ -115,7 +143,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
               />
               {article.isBreaking && (
                 <div className="absolute top-4 left-4">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-news-red px-3 py-1 text-sm font-semibold text-white">
+                  <span className="inline-flex items-center gap-1.5 bg-news-red px-3 py-1 text-sm font-semibold text-news-red-foreground">
                     <Lightning className="size-3.5" weight="fill" />
                     Breaking News
                   </span>
@@ -127,17 +155,18 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
             <header className="mt-6">
               <Link
                 href={`/${article.category.slug}`}
-                className="inline-block rounded-full bg-brand/15 px-3 py-1 text-sm font-semibold text-brand-text"
+                className="inline-block"
               >
-                {article.category.name}
+                <CategoryBadge variant="pill">
+                  {article.category.name}
+                </CategoryBadge>
               </Link>
               <h1
-                className="mt-3 text-2xl font-bold leading-tight sm:text-3xl lg:text-[34px] lg:leading-[1.2]"
-                style={{ fontFamily: "var(--font-playfair)" }}
+                className="mt-3 font-headline-xl text-headline-xl text-primary leading-tight"
               >
                 {article.title}
               </h1>
-              <p className="mt-3 text-lg leading-relaxed text-gray-500">
+              <p className="mt-3 font-body-xl text-body-xl text-on-surface-variant">
                 {article.excerpt}
               </p>
 
@@ -146,20 +175,20 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
                 <div className="flex items-center gap-3">
                   <AvatarAuthor name={article.author.name} size="sm" />
                   <div>
-                    <span className="block text-sm font-semibold text-foreground">{article.author.name}</span>
-                    <span className="text-xs text-gray-400">{article.author.role}</span>
+                    <span className="block text-sm font-semibold text-on-surface">{article.author.name}</span>
+                    <span className="text-xs text-on-surface-variant">{article.author.role}</span>
                   </div>
                 </div>
-                <span className="text-gray-300">|</span>
-                <span className="flex items-center gap-1.5 text-sm text-gray-500">
+                <span className="text-outline-variant">|</span>
+                <span className="flex items-center gap-1.5 text-sm text-on-surface-variant">
                   <CalendarBlank className="size-4" />
-                  {format(new Date(article.publishedAt), "dd MMMM yyyy, HH:mm", { locale: id })} WIB
+                  {article.publishedAt ? format(new Date(article.publishedAt), "dd MMMM yyyy, HH:mm", { locale: id }) : "—"} WIB
                 </span>
-                <span className="flex items-center gap-1.5 text-sm text-gray-500">
+                <span className="flex items-center gap-1.5 text-sm text-on-surface-variant">
                   <Clock className="size-4" />
-                  {article.readingTime} menit baca
+                  {article.readingTime || 5} menit baca
                 </span>
-                <span className="flex items-center gap-1.5 text-sm text-gray-500">
+                <span className="flex items-center gap-1.5 text-sm text-on-surface-variant">
                   <Eye className="size-4" />
                   {article.viewCount.toLocaleString("id-ID")} views
                 </span>
@@ -167,57 +196,92 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
             </header>
 
             {/* Article Content */}
-            <div className="prose prose-neutral mt-8 max-w-none">
-              <p>{article.excerpt} Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-              <h2>Latar Belakang</h2>
-              <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis.</p>
+            <div className="prose mt-8 max-w-none">
+              {article.content ? (
+                <div dangerouslySetInnerHTML={{ __html: article.content }} />
+              ) : (
+                <>
+                  <p>{article.excerpt}</p>
+                  <p className="text-on-surface-variant italic">Konten artikel sedang diperbarui.</p>
+                </>
+              )}
             </div>
 
             {/* Tags */}
             <div className="mt-8 flex flex-wrap gap-2">
-              {article.tags.map((tag) => (
-                <span key={tag} className="pill pill-inactive text-sm cursor-pointer">
+              {article.tags.map((tag: any) => (
+                <span key={tag} className="border border-outline-variant px-3 py-1 text-sm text-on-surface-variant cursor-pointer hover:bg-surface-container-low transition-colors">
                   #{tag}
                 </span>
               ))}
             </div>
 
             {/* Share */}
-            <div className="mt-8 flex items-center gap-3 rounded-xl bg-gray-50 p-4">
-              <span className="flex items-center gap-2 text-sm font-semibold">
+            <ContentCard variant="low" className="mt-8 flex items-center gap-3">
+              <span className="flex items-center gap-2 text-sm font-semibold text-on-surface">
                 <ShareNetwork className="size-5" />
                 Bagikan
               </span>
               <div className="flex items-center gap-2">
-                <button className="flex size-9 items-center justify-center rounded-full bg-[#1877F2] text-white transition-opacity hover:opacity-80">
-                  <FacebookLogo className="size-4" weight="fill" />
-                </button>
-                <button className="flex size-9 items-center justify-center rounded-full bg-[#1DA1F2] text-white transition-opacity hover:opacity-80">
-                  <TwitterLogo className="size-4" weight="fill" />
-                </button>
-                <button className="flex size-9 items-center justify-center rounded-full bg-[#25D366] text-white transition-opacity hover:opacity-80">
-                  <span className="text-xs font-bold">WA</span>
-                </button>
-                <button className="flex size-9 items-center justify-center rounded-full bg-[#0A66C2] text-white transition-opacity hover:opacity-80">
-                  <LinkedinLogo className="size-4" weight="fill" />
-                </button>
-                <button className="flex size-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 transition-colors hover:text-foreground">
-                  <LinkIcon className="size-4" />
-                </button>
+                {(() => {
+                  const shareUrl = encodeURIComponent(`${SITE_CONFIG.url}/${article.category.slug}/${article.slug}`);
+                  const shareTitle = encodeURIComponent(article.title);
+                  return (
+                    <>
+                      <a
+                        href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex size-9 items-center justify-center bg-[#1877F2] text-white transition-opacity hover:opacity-80"
+                        aria-label="Bagikan ke Facebook"
+                      >
+                        <FacebookLogo className="size-4" weight="fill" />
+                      </a>
+                      <a
+                        href={`https://twitter.com/intent/tweet?url=${shareUrl}&text=${shareTitle}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex size-9 items-center justify-center bg-[#1DA1F2] text-white transition-opacity hover:opacity-80"
+                        aria-label="Bagikan ke Twitter"
+                      >
+                        <TwitterLogo className="size-4" weight="fill" />
+                      </a>
+                      <a
+                        href={`https://wa.me/?text=${shareTitle}%20${shareUrl}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex size-9 items-center justify-center bg-[#25D366] text-white transition-opacity hover:opacity-80"
+                        aria-label="Bagikan ke WhatsApp"
+                      >
+                        <span className="text-xs font-bold">WA</span>
+                      </a>
+                      <a
+                        href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex size-9 items-center justify-center bg-[#0A66C2] text-white transition-opacity hover:opacity-80"
+                        aria-label="Bagikan ke LinkedIn"
+                      >
+                        <LinkedinLogo className="size-4" weight="fill" />
+                      </a>
+                      <CopyLinkButton url={`${SITE_CONFIG.url}/${article.category.slug}/${article.slug}`} />
+                    </>
+                  );
+                })()}
               </div>
-            </div>
+            </ContentCard>
 
             {/* Author Card */}
-            <div className="mt-8 rounded-xl bg-white p-5 shadow-card">
+            <ContentCard className="mt-8">
               <div className="flex items-start gap-4">
                 <AvatarAuthor name={article.author.name} size="lg" />
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-gray-400">Penulis</span>
-                  <h3 className="mt-0.5 text-base font-bold">{article.author.name}</h3>
-                  <p className="mt-1.5 text-sm leading-relaxed text-gray-500">{article.author.bio}</p>
+                  <span className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Penulis</span>
+                  <h3 className="mt-0.5 text-base font-bold text-on-surface">{article.author.name}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-on-surface-variant">{article.author.bio}</p>
                 </div>
               </div>
-            </div>
+            </ContentCard>
           </div>
 
           {/* Sidebar */}

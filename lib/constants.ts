@@ -1,37 +1,48 @@
 export const SITE_CONFIG = {
   name: "Metrik Media Indonesia",
-  shortName: "Metrik Media Indonesia",
-  tagline: "Portal Berita Terpercaya",
-  description: "Portal berita terpercaya, terkini, dan akurat dari Metrik Media Indonesia",
-  url: "https://metrikmediaindonesia.id",
+  shortName: "Metrik Media",
+  tagline: "Media Berita Digital Terpercaya Indonesia",
+  description: "Platform media berita digital profesional yang menyediakan berita aktual, informatif, dan terstruktur berdasarkan kategori, topik, wilayah, serta entitas di Indonesia.",
+  url: process.env.NEXT_PUBLIC_APP_URL || "https://metrikmediaindonesia.id",
   ogImage: "/og-image.jpg",
   twitterHandle: "@metrikmediaid",
-  company: "PT Prima Mutiara Media",
+  company: "PT Metrik Media Indonesia",
 } as const;
 
 export const NAVIGATION = {
   main: [
     { label: "Beranda", href: "/" },
-    { label: "Bisnis", href: "/bisnis" },
-    { label: "Olahraga", href: "/olahraga" },
-    { label: "Pendidikan", href: "/pendidikan" },
-    { label: "Sosial & Budaya", href: "/sosial-dan-budaya" },
+    { label: "Nasional", href: "/category/nasional" },
+    { label: "Politik", href: "/category/politik" },
+    { label: "Bisnis", href: "/category/bisnis" },
+    { label: "Teknologi", href: "/category/teknologi" },
+    { label: "Lifestyle", href: "/category/lifestyle" },
+    { label: "Entertainment", href: "/category/entertainment" },
+    { label: "Sports", href: "/category/sports" },
+    { label: "Daerah", href: "/category/daerah" },
+    { label: "Video", href: "/video" },
+    { label: "Foto", href: "/foto" },
   ],
   footer: {
     berita: [
-      { label: "Bisnis", href: "/bisnis" },
-      { label: "Olahraga", href: "/olahraga" },
-      { label: "Pendidikan", href: "/pendidikan" },
-      { label: "Sosial & Budaya", href: "/sosial-dan-budaya" },
+      { label: "Nasional", href: "/category/nasional" },
+      { label: "Politik", href: "/category/politik" },
+      { label: "Bisnis", href: "/category/bisnis" },
+      { label: "Teknologi", href: "/category/teknologi" },
+      { label: "Sports", href: "/category/sports" },
+      { label: "Daerah", href: "/category/daerah" },
     ],
     perusahaan: [
       { label: "Tentang Kami", href: "/tentang-kami" },
       { label: "Tim Editorial", href: "/tim-editorial" },
       { label: "Hubungi Kami", href: "/hubungi-kami" },
+      { label: "Publish Business", href: "/business-publication" },
     ],
     layanan: [
       { label: "Beranda", href: "/" },
       { label: "Pencarian", href: "/pencarian" },
+      { label: "News Sitemap", href: "/news-sitemap.xml" },
+      { label: "XML Sitemap", href: "/sitemap.xml" },
     ],
   },
   social: [
@@ -44,16 +55,19 @@ export const NAVIGATION = {
 } as const;
 
 export const CATEGORIES = [
-  { id: "1", name: "Bisnis", slug: "bisnis", color: "#2563EB" },
-  { id: "2", name: "Olahraga", slug: "olahraga", color: "#059669" },
-  { id: "3", name: "Pendidikan", slug: "pendidikan", color: "#7C3AED" },
-  { id: "4", name: "Sosial & Budaya", slug: "sosial-dan-budaya", color: "#D97706" },
+  { id: "1", name: "Nasional", slug: "nasional", color: "#1D4ED8" },
+  { id: "2", name: "Politik", slug: "politik", color: "#B91C1C" },
+  { id: "3", name: "Bisnis", slug: "bisnis", color: "#2563EB" },
+  { id: "4", name: "Teknologi", slug: "teknologi", color: "#DC2626" },
+  { id: "5", name: "Lifestyle", slug: "lifestyle", color: "#DB2777" },
+  { id: "6", name: "Entertainment", slug: "entertainment", color: "#9333EA" },
+  { id: "7", name: "Sports", slug: "sports", color: "#059669" },
+  { id: "8", name: "Daerah", slug: "daerah", color: "#D97706" },
 ] as const;
 
 export const BREAKING_NEWS = [
-  "Pertumbuhan Ekonomi Digital Indonesia Meningkat 15% di Q1 2026",
-  "Timnas Indonesia Meraih Medali Emas di ASEAN Games 2026",
-  "Program Literasi Digital Pemerintah Sasar 10 Juta Pelajar",
-  "Festival Budaya Nusantara Hadirkan 34 Provinsi di Jakarta",
-  "Startup EdTech Indonesia Raih Pendanaan Seri B Senilai $50 Juta",
+  "Pemerintah Meluncurkan Program Transformasi Digital Nasional 2026-2030",
+  "Pasar Saham Indonesia (IHSG) Menembus Level Rekor Baru",
+  "Peluncuran Satelit Komunikasi Nusantara Utama Sukses Dilakukan",
+  "Kebijakan Baru Ekonomi Daerah Siap Diberlakukan Semester Ini",
 ] as const;

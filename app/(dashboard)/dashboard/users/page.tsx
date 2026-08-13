@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { getInitials } from "@/lib/utils";
 import { DashboardTopbar } from "@/components/dashboard/topbar";
 import { UserDialog } from "@/components/dashboard/user-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,7 +27,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Pencil, Trash, Search, Loader2 } from "lucide-react";
+import { Plus, PencilSimple, Trash, MagnifyingGlass, CircleNotch } from "@phosphor-icons/react/dist/ssr";
 import { toast } from "sonner";
 
 interface User {
@@ -114,15 +115,6 @@ export default function UsersPage() {
     }
   };
 
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
   return (
     <main className="flex-1 px-4 pb-7 lg:px-8">
       <DashboardTopbar />
@@ -144,7 +136,7 @@ export default function UsersPage() {
           <CardContent className="px-6 pb-4">
             <div className="mb-4 flex items-center gap-2">
               <div className="relative flex-1 max-w-sm">
-                <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                <MagnifyingGlass className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   placeholder="Cari pengguna..."
                   value={search}
@@ -169,7 +161,7 @@ export default function UsersPage() {
                   {isLoading ? (
                     <TableRow>
                       <TableCell colSpan={5} className="h-32 text-center">
-                        <Loader2 className="mx-auto size-6 animate-spin text-muted-foreground" />
+                        <CircleNotch className="mx-auto size-6 animate-spin text-muted-foreground" />
                       </TableCell>
                     </TableRow>
                   ) : users.length === 0 ? (
@@ -221,7 +213,7 @@ export default function UsersPage() {
                                 setDialogOpen(true);
                               }}
                             >
-                              <Pencil className="size-3.5" />
+                              <PencilSimple className="size-3.5" />
                             </Button>
                             <Button
                               variant="ghost"

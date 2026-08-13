@@ -25,12 +25,12 @@ export function HomeSkeleton() {
         ))}
       </div>
 
-      <div className="my-6 border-t border-border" />
+      <div className="my-6 border-t border-outline-variant" />
 
       {/* List Skeleton */}
       <div>
         <Skeleton className="mb-4 h-5 w-32" />
-        <div className="divide-y divide-border">
+        <div className="divide-y divide-outline-variant">
           {[1, 2, 3].map((i) => (
             <div key={i} className="flex gap-4 py-4">
               <Skeleton className="h-20 w-24 shrink-0 sm:w-28" />

@@ -15,7 +15,7 @@ interface Session {
   isLoading: boolean;
 }
 
-export function useSession(): Session & { signOut: () => Promise<void> } {
+export function useSession(): Session & { signOut: () => Promise<void>; refresh: () => Promise<void> } {
   const [session, setSession] = useState<Session>({
     user: null,
     isLoading: true,
@@ -49,5 +49,9 @@ export function useSession(): Session & { signOut: () => Promise<void> } {
     }
   };
 
-  return { ...session, signOut };
+  const refresh = async () => {
+    await fetchSession();
+  };
+
+  return { ...session, signOut, refresh };
 }

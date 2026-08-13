@@ -1,23 +1,98 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCategories, getCategoryBySlug } from "@/lib/payload-queries";
+import { getDb } from "@/db/index";
+import { categories, articles } from "@/db/schema/index";
+import { desc, eq, count } from "drizzle-orm";
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const slug = searchParams.get("slug");
-
   try {
+    const db = await getDb();
+    const { searchParams } = new URL(request.url);
+    const slug = searchParams.get("slug");
+
     if (slug) {
-      const category = await getCategoryBySlug(slug);
+      const [category] = await db
+        .select()
+        .from(categories)
+        .where(eq(categories.slug, slug))
+        .limit(1);
+
       if (!category) {
-        return NextResponse.json({ error: "Category not found" }, { status: 404 });
+        return NextResponse.json({ message: "Kategori tidak ditemukan" }, { status: 404 });
       }
+
       return NextResponse.json(category);
     }
 
-    const result = await getCategories();
-    return NextResponse.json(result);
-  } catch (error) {
-    console.error("Error fetching categories:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    const items = await db.select().from(categories).orderBy(desc(categories.createdAt));
+
+    // Get article count for each category
+    const itemsWithCounts = await Promise.all(
+      items.map(async (cat) => {
+        const [articleCount] = await db
+          .select({ count: count() })
+          .from(articles)
+          .where(eq(articles.categoryId, cat.id));
+
+        return {
+          ...cat,
+          articleCount: articleCount?.count || 0,
+        };
+      })
+    );
+
+    return NextResponse.json(itemsWithCounts);
+  } catch (error: any) {
+    console.error("GET /api/categories error:", error);
+    return NextResponse.json({ message: "Gagal mengambil data kategori" }, { status: 500 });
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const db = await getDb();
+    const body = await request.json();
+
+    const { name, slug, description, color, seoTitle, seoDescription } = body;
+
+    if (!name || !slug) {
+      return NextResponse.json(
+        { message: "Nama dan slug kategori wajib diisi" },
+        { status: 400 }
+      );
+    }
+
+    // Check duplicate slug
+    const [existing] = await db
+      .select()
+      .from(categories)
+      .where(eq(categories.slug, slug))
+      .limit(1);
+
+    if (existing) {
+      return NextResponse.json(
+        { message: "Slug kategori sudah digunakan" },
+        { status: 400 }
+      );
+    }
+
+    const [newCategory] = await db
+      .insert(categories)
+      .values({
+        name,
+        slug,
+        description: description || null,
+        color: color || "#DC2626",
+        seoTitle: seoTitle || name,
+        seoDescription: seoDescription || description || null,
+      })
+      .returning();
+
+    return NextResponse.json(
+      { message: "Kategori berhasil dibuat", data: newCategory },
+      { status: 201 }
+    );
+  } catch (error: any) {
+    console.error("POST /api/categories error:", error);
+    return NextResponse.json({ message: "Gagal membuat kategori" }, { status: 500 });
   }
 }

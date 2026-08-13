@@ -1,5 +1,5 @@
-export function Skeleton({ className }: { className?: string }) {
+export function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div className={`animate-pulse bg-muted ${className ?? ""}`} />
+    <div className={`animate-pulse bg-muted ${className ?? ""}`} {...props} />
   );
 }

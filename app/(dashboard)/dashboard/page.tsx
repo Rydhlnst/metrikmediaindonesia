@@ -1,11 +1,12 @@
+import dynamic from "next/dynamic";
 import { DashboardTopbar } from "@/components/dashboard/topbar";
 import { StatGrid } from "@/components/dashboard/stat-card";
-import { ViewsChart } from "@/components/dashboard/charts";
-import { CategoryBarChart } from "@/components/dashboard/charts";
 import { RecentArticlesTable } from "@/components/dashboard/recent-articles-table";
 import { RecentCommentsTable } from "@/components/dashboard/recent-comments-table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { categoryData } from "@/components/dashboard/data";
+const ViewsChart = dynamic(() => import("@/components/dashboard/charts").then((m) => m.ViewsChart), { loading: () => <div className="h-full animate-pulse bg-muted/30" /> });
+const CategoryBarChart = dynamic(() => import("@/components/dashboard/charts").then((m) => m.CategoryBarChart), { loading: () => <div className="h-full animate-pulse bg-muted/30" /> });
 
 export default function DashboardPage() {
   return (

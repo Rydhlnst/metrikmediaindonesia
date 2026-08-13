@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import { CATEGORIES, SITE_CONFIG } from "@/lib/constants";
-import { getArticlesByCategory } from "@/lib/mock-data";
-import { ArticleCard } from "@/components/article/article-card";
+import { getArticles, getCategoryBySlug } from "@/lib/queries";
 import { WebsiteJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
-import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
+import { CategoryBadge } from "@/components/shared/category-badge";
+import { Divider } from "@/components/shared/divider";
 import type { Metadata } from "next";
 
 interface CategoryPageProps {
@@ -13,21 +14,27 @@ interface CategoryPageProps {
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { category } = await params;
-  const cat = CATEGORIES.find((c) => c.slug === category);
+  let cat;
+  try {
+    cat = await getCategoryBySlug(category);
+  } catch {
+    return {};
+  }
   if (!cat) return {};
+  const name = cat.name;
   return {
-    title: `Berita ${cat.name} Terkini`,
-    description: `Berita terbaru seputar ${cat.name} di ${SITE_CONFIG.name}. Ikuti perkembangan terkini ${cat.name.toLowerCase()} Indonesia dan dunia.`,
+    title: `Berita ${name} Terkini`,
+    description: `Berita terbaru seputar ${name} di ${SITE_CONFIG.name}. Ikuti perkembangan terkini ${name.toLowerCase()} Indonesia dan dunia.`,
     openGraph: {
-      title: `Berita ${cat.name} Terkini | ${SITE_CONFIG.shortName}`,
-      description: `Berita terbaru seputar ${cat.name} di ${SITE_CONFIG.name}.`,
+      title: `Berita ${name} Terkini | ${SITE_CONFIG.shortName}`,
+      description: `Berita terbaru seputar ${name} di ${SITE_CONFIG.name}.`,
       type: "website",
       siteName: SITE_CONFIG.name,
     },
     twitter: {
       card: "summary_large_image",
-      title: `Berita ${cat.name} Terkini | ${SITE_CONFIG.shortName}`,
-      description: `Berita terbaru seputar ${cat.name} di ${SITE_CONFIG.name}.`,
+      title: `Berita ${name} Terkini | ${SITE_CONFIG.shortName}`,
+      description: `Berita terbaru seputar ${name} di ${SITE_CONFIG.name}.`,
     },
     alternates: {
       canonical: `${SITE_CONFIG.url}/${category}`,
@@ -41,10 +48,23 @@ export function generateStaticParams() {
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { category } = await params;
-  const cat = CATEGORIES.find((c) => c.slug === category);
+  let cat;
+  try {
+    cat = await getCategoryBySlug(category);
+  } catch {
+    notFound();
+  }
   if (!cat) notFound();
 
-  const articles = getArticlesByCategory(category);
+  let articles: Awaited<ReturnType<typeof getArticles>> = [];
+  try {
+    articles = await getArticles({ categorySlug: category, limit: 20 });
+  } catch {
+    articles = [];
+  }
+  const featured = articles[0];
+  const secondary = articles.slice(1, 4);
+  const latest = articles.slice(4, 7);
 
   return (
     <>
@@ -55,32 +75,156 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           { name: cat.name, url: `${SITE_CONFIG.url}/${cat.slug}` },
         ]}
       />
-      <div className="py-6">
-        <Link
-          href="/"
-          className="mb-4 inline-flex items-center gap-2 text-sm font-medium text-gray-500 transition-colors hover:text-foreground"
-        >
-          <ArrowLeft className="size-4" />
-          Beranda
-        </Link>
 
-        <div className="flex items-center gap-3">
-          <span className="h-8 w-1.5 rounded-full bg-brand" />
-          <h1 className="text-2xl font-bold tracking-tight">{cat.name}</h1>
+      {/* Main Content Canvas */}
+      <section className="container-editorial py-8 pb-20 md:pb-8">
+        {/* Category Header */}
+        <div className="mb-12 border-b border-outline-variant pb-6">
+          <h1 className="font-display-lg text-display-lg text-primary leading-tight">{cat.name}</h1>
+          <p className="font-body-xl text-body-xl text-on-surface-variant mt-4 max-w-2xl">
+            Berita terbaru seputar {cat.name.toLowerCase()} di Indonesia dan dunia.
+          </p>
         </div>
 
-        {articles.length > 0 ? (
-          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {articles.map((article) => (
-              <ArticleCard key={article.id} article={article} />
+        {/* Featured Story (Asymmetric Layout) */}
+        {featured && (
+          <article className="grid grid-cols-1 md:grid-cols-12 gap-[24px] mb-[80px]">
+            <div className="md:col-span-8 group cursor-pointer">
+              <div className="relative w-full aspect-[4/3] mb-6 overflow-hidden bg-surface-variant">
+                <Image
+                  src={featured.thumbnail || "/og-image.jpg"}
+                  alt={featured.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 66vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                />
+                <div className="absolute top-4 left-4 bg-surface px-3 py-1 border border-outline-variant">
+                  <CategoryBadge>
+                    {cat.name}
+                  </CategoryBadge>
+                </div>
+              </div>
+            </div>
+            <div className="md:col-span-4 flex flex-col justify-center">
+              <div className="flex items-center gap-2 mb-4">
+                <CategoryBadge variant="bordered">
+                  {cat.name}
+                </CategoryBadge>
+                <span className="text-on-surface-variant text-sm">&bull;</span>
+                <span className="font-label-md text-label-md text-on-surface-variant">
+                  {featured.readingTime} MENIT BACA
+                </span>
+              </div>
+              <h2 className="font-headline-xl text-headline-xl text-primary mb-4 group-hover:text-secondary transition-colors duration-300">
+                <Link href={`/${category}/${featured.slug}`}>
+                  {featured.title}
+                </Link>
+              </h2>
+              <p className="font-body-md text-body-md text-on-surface-variant mb-6">
+                {featured.excerpt}
+              </p>
+              <div className="mt-auto pt-6 border-t border-outline-variant">
+                <p className="font-label-md text-label-md text-primary">
+                  BY {featured.author.name.toUpperCase()}
+                </p>
+              </div>
+            </div>
+          </article>
+        )}
+
+        {/* Editorial Grid (Secondary Stories) */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-[24px] gap-y-16">
+          {/* Story 1 */}
+          {secondary[0] && (
+            <article className="md:col-span-4 group cursor-pointer flex flex-col">
+              <div className="w-full aspect-[3/4] mb-4 overflow-hidden bg-surface-variant">
+                <Image
+                  src={secondary[0].thumbnail || "/og-image.jpg"}
+                  alt={secondary[0].title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                />
+              </div>
+              <div className="flex items-center gap-2 mb-3">
+                <CategoryBadge variant="bordered">
+                  {cat.name}
+                </CategoryBadge>
+              </div>
+              <h3 className="font-headline-lg text-headline-lg text-primary mb-3 leading-tight group-hover:text-secondary transition-colors duration-300">
+                <Link href={`/${category}/${secondary[0].slug}`}>
+                  {secondary[0].title}
+                </Link>
+              </h3>
+              <p className="font-body-md text-body-md text-on-surface-variant mb-4 flex-grow">
+                {secondary[0].excerpt}
+              </p>
+              <div className="mt-auto pt-4 border-t border-outline-variant">
+                <p className="font-label-md text-label-md text-primary">
+                  BY {secondary[0].author.name.toUpperCase()}
+                </p>
+              </div>
+            </article>
+          )}
+
+          {/* Story 2 */}
+          {secondary[1] && (
+            <article className="md:col-span-4 group cursor-pointer flex flex-col">
+              <div className="w-full aspect-square mb-4 overflow-hidden bg-surface-variant">
+                <Image
+                  src={secondary[1].thumbnail || "/og-image.jpg"}
+                  alt={secondary[1].title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                />
+              </div>
+              <div className="flex items-center gap-2 mb-3">
+                <CategoryBadge variant="bordered" className="text-on-surface-variant border-on-surface-variant">
+                  {cat.name}
+                </CategoryBadge>
+              </div>
+              <h3 className="font-headline-lg text-headline-lg text-primary mb-3 leading-tight group-hover:text-secondary transition-colors duration-300">
+                <Link href={`/${category}/${secondary[1].slug}`}>
+                  {secondary[1].title}
+                </Link>
+              </h3>
+              <p className="font-body-md text-body-md text-on-surface-variant mb-4 flex-grow">
+                {secondary[1].excerpt}
+              </p>
+              <div className="mt-auto pt-4 border-t border-outline-variant">
+                <p className="font-label-md text-label-md text-primary">
+                  BY {secondary[1].author.name.toUpperCase()}
+                </p>
+              </div>
+            </article>
+          )}
+
+          {/* Text-Only Stories List */}
+          <div className="md:col-span-4 flex flex-col gap-8">
+            <div className="border-b-2 border-primary pb-2 mb-4">
+              <h4 className="font-label-md text-label-md text-primary uppercase tracking-widest">
+                Latest Profiles
+              </h4>
+            </div>
+            {latest.map((article: any) => (
+              <article key={article.id} className="group cursor-pointer border-b border-outline-variant pb-6 last:border-b-0 last:pb-0">
+                <CategoryBadge variant="bordered" className="mb-2 border-on-surface-variant text-on-surface-variant">
+                  {cat.name}
+                </CategoryBadge>
+                <h3 className="font-headline-lg text-headline-lg text-primary mb-2 group-hover:text-secondary transition-colors duration-300 text-2xl">
+                  <Link href={`/${category}/${article.slug}`}>
+                    {article.title}
+                  </Link>
+                </h3>
+                <p className="font-body-md text-body-md text-on-surface-variant line-clamp-3">
+                  {article.excerpt}
+                </p>
+              </article>
             ))}
           </div>
-        ) : (
-          <div className="py-20 text-center">
-            <p className="text-gray-400 text-sm">Belum ada berita di kategori ini.</p>
-          </div>
-        )}
-      </div>
+        </div>
+      </section>
     </>
   );
 }

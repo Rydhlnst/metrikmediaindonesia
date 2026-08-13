@@ -1,5 +1,7 @@
 import { HeaderServer } from "@/components/layout/header-server";
 import { FooterServer } from "@/components/layout/footer-server";
+import { BreakingNewsTicker } from "@/components/layout/breaking-news-ticker";
+import { WebsiteJsonLd, OrganizationJsonLd } from "@/components/seo/json-ld";
 
 export default function PublicLayout({
   children,
@@ -8,20 +10,14 @@ export default function PublicLayout({
 }) {
   return (
     <div className="min-h-screen bg-background">
+      <WebsiteJsonLd />
+      <OrganizationJsonLd />
       <HeaderServer />
-      {/*
-        Mobile: pt-[56px] (h-14), pb-20 (bottom nav)
-        sm+:    ml-[220px] (sidebar w-[220px]), pt-[56px] (h-14 header), pb-0
-        lg:     ml-[240px] (sidebar w-[240px])
-      */}
-      <main className="min-h-screen pt-[62px] pb-20 sm:ml-[220px] sm:pt-[62px] sm:pb-0 lg:ml-[240px]">
-        <div className="mx-auto px-4 sm:px-5 lg:px-6" style={{ maxWidth: "1320px" }}>
-          {children}
-        </div>
+      <BreakingNewsTicker />
+      <main className="min-h-screen">
+        {children}
       </main>
-      <div className="sm:ml-[220px] lg:ml-[240px]">
-        <FooterServer />
-      </div>
+      <FooterServer />
     </div>
   );
 }

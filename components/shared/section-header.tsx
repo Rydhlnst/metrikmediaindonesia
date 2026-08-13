@@ -14,14 +14,14 @@ export function SectionHeader({ title, href, icon, className }: SectionHeaderPro
   return (
     <div className={cn("flex items-center justify-between", className)}>
       <div className="flex items-center gap-2.5">
-        <span className="h-6 w-1 rounded-full bg-brand" />
-        <h2 className="text-base font-bold tracking-tight">{title}</h2>
+        <span className="h-6 w-1 bg-secondary" />
+        <h2 className="font-headline-lg text-headline-lg text-primary">{title}</h2>
         {icon}
       </div>
       {href && (
         <Link
           href={href}
-          className="flex items-center gap-1 text-sm font-medium text-gray-500 transition-colors hover:text-foreground"
+          className="flex items-center gap-1 font-label-md text-label-md text-on-surface-variant transition-colors hover:text-primary"
         >
           View all
           <ArrowRight className="size-4" />

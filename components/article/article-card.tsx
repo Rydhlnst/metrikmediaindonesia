@@ -3,6 +3,7 @@ import Image from "next/image";
 import { cn, getImageUrl } from "@/lib/utils";
 import { getCategorySlug, getCategoryName, getAuthorName, getTimeAgo, formatViews } from "@/lib/article-helpers";
 import { Clock, Eye, BookmarkSimple } from "@phosphor-icons/react/dist/ssr";
+import { CategoryBadge } from "@/components/shared/category-badge";
 
 interface ArticleCardProps {
   article: any;
@@ -41,17 +42,16 @@ export function ArticleCard({
         {rank !== undefined && (
           <span
             className={cn(
-              "flex shrink-0 items-start text-lg font-bold ranking-number",
-              rank < 3 ? "text-brand-text" : "text-gray-300"
+              "flex shrink-0 items-start font-headline-lg text-headline-lg font-bold ranking-number",
+              rank < 3 ? "text-on-secondary-container" : "text-outline-variant"
             )}
-            style={{ fontFamily: "var(--font-playfair)" }}
           >
             {String(rank + 1).padStart(2, "0")}
           </span>
         )}
-        <div className="relative h-[72px] w-[100px] shrink-0 overflow-hidden rounded-xl bg-gray-100">
+        <div className="relative h-[72px] w-[100px] shrink-0 overflow-hidden bg-surface-container">
           <Image
-            src={getImageUrl(article.featuredImage)}
+            src={getImageUrl(article.featuredImage, "thumbnail")}
             alt={article.title}
             fill
             sizes="100px"
@@ -59,13 +59,11 @@ export function ArticleCard({
           />
         </div>
         <div className="flex flex-1 min-w-0 flex-col justify-center gap-1">
-          <span className="text-xs font-semibold text-brand-text">
-            {categoryName}
-          </span>
-          <h3 className="text-[15px] font-semibold leading-snug line-clamp-2 text-foreground group-hover:text-brand-text transition-colors">
+          <CategoryBadge>{categoryName}</CategoryBadge>
+          <h3 className="text-[15px] font-semibold leading-snug line-clamp-2 text-on-surface group-hover:text-secondary transition-colors">
             {article.title}
           </h3>
-          <div className="flex items-center gap-2 text-xs text-gray-400">
+          <div className="flex items-center gap-2 text-xs text-on-surface-variant">
             {authorName && <span>{authorName}</span>}
             {authorName && <span>·</span>}
             <span className="flex items-center gap-1">
@@ -91,11 +89,11 @@ export function ArticleCard({
     return (
       <Link
         href={`/${categorySlug}/${article.slug}`}
-        className={cn("group card-modern overflow-hidden", className)}
+        className={cn("group overflow-hidden border border-outline-variant", className)}
       >
-        <div className="relative aspect-[16/10] w-full overflow-hidden bg-gray-100">
-          <Image
-            src={getImageUrl(article.featuredImage)}
+          <div className="relative aspect-[16/10] w-full overflow-hidden bg-surface-container">
+            <Image
+              src={getImageUrl(article.featuredImage, "card")}
             alt={article.title}
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
@@ -104,19 +102,16 @@ export function ArticleCard({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
           <div className="absolute top-3 left-3 flex items-center gap-2">
-            <span className="inline-flex items-center rounded-full bg-brand px-3 py-1 text-xs font-semibold text-gray-900">
-              {categoryName}
-            </span>
+            <CategoryBadge variant="pill">{categoryName}</CategoryBadge>
             {showBookmark && (
-              <button className="flex size-8 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-brand hover:text-gray-900">
+              <button className="flex size-8 items-center justify-center bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-secondary-container hover:text-on-secondary-container">
                 <BookmarkSimple className="size-4" />
               </button>
             )}
           </div>
           <div className="absolute bottom-0 left-0 right-0 p-4">
             <h3
-              className="text-lg font-bold leading-snug text-white line-clamp-2"
-              style={{ fontFamily: "var(--font-playfair)" }}
+              className="font-headline-lg text-headline-lg font-bold leading-snug text-white line-clamp-2"
             >
               {article.title}
             </h3>
@@ -143,11 +138,11 @@ export function ArticleCard({
   return (
     <Link
       href={`/${categorySlug}/${article.slug}`}
-      className={cn("group card-modern overflow-hidden", className)}
+      className={cn("group overflow-hidden border border-outline-variant", className)}
     >
-      <div className={cn("relative overflow-hidden bg-gray-100", size === "lg" ? "aspect-[16/10]" : "aspect-[16/10]")}>
+      <div className={cn("relative overflow-hidden bg-surface-container", size === "lg" ? "aspect-[16/10]" : "aspect-[16/10]")}>
         <Image
-          src={getImageUrl(article.featuredImage)}
+          src={getImageUrl(article.featuredImage, "card")}
           alt={article.title}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
@@ -155,22 +150,22 @@ export function ArticleCard({
           priority={priority}
         />
         {showBookmark && (
-          <button className="absolute right-2 top-2 flex size-8 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-brand hover:text-gray-900">
+          <button className="absolute right-2 top-2 flex size-8 items-center justify-center bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-secondary-container hover:text-on-secondary-container">
             <BookmarkSimple className="size-4" />
           </button>
         )}
       </div>
       <div className="flex flex-1 flex-col gap-1.5 p-4">
-        <span className="text-xs font-semibold text-brand-text">{categoryName}</span>
-        <h3 className={cn("font-semibold leading-snug line-clamp-2 group-hover:text-brand-text transition-colors", titleSize)}>
+        <CategoryBadge>{categoryName}</CategoryBadge>
+        <h3 className={cn("font-semibold leading-snug line-clamp-2 group-hover:text-secondary transition-colors", titleSize)}>
           {article.title}
         </h3>
         {showExcerpt && article.excerpt && (
-          <p className="text-sm leading-relaxed text-gray-500 line-clamp-2">
+          <p className="text-sm leading-relaxed text-on-surface-variant line-clamp-2">
             {article.excerpt}
           </p>
         )}
-        <div className="mt-1 flex items-center gap-2 text-xs text-gray-400">
+        <div className="mt-1 flex items-center gap-2 text-xs text-on-surface-variant">
           {authorName && <span>{authorName}</span>}
           <span>·</span>
           <span className="flex items-center gap-1">

@@ -1,5 +1,8 @@
 "use client";
 
+import { PrimaryButton } from "@/components/shared/primary-button";
+import { SectionHeading } from "@/components/shared/section-heading";
+
 export default function PublicError({
   error,
   reset,
@@ -8,17 +11,16 @@ export default function PublicError({
   reset: () => void;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center py-20 text-center">
-      <p className="text-lg font-medium">Terjadi kesalahan</p>
-      <p className="mt-2 text-sm text-muted-foreground">
+    <div className="container-editorial py-8 pb-20 md:pb-8 flex flex-col items-center justify-center text-center">
+      <SectionHeading size="md" className="mb-2">
+        Terjadi kesalahan
+      </SectionHeading>
+      <p className="font-body-md text-body-md text-on-surface-variant">
         {error.message || "Silakan coba lagi nanti"}
       </p>
-      <button
-        onClick={reset}
-        className="mt-4 bg-foreground px-4 py-2 text-sm font-medium text-background hover:opacity-90"
-      >
+      <PrimaryButton onClick={reset} size="md" className="mt-4">
         Coba Lagi
-      </button>
+      </PrimaryButton>
     </div>
   );
 }

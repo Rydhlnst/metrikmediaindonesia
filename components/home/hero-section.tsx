@@ -47,7 +47,7 @@ export function HeroSection({ articles }: HeroSectionProps) {
                 <div key={article.id} className="min-w-0 flex-[0_0_100%] pl-4 first:pl-0">
                   <Link
                     href={`/${getCategorySlug(article)}/${article.slug}`}
-                    className="group relative block aspect-[4/3] w-full overflow-hidden rounded-xl bg-gray-100"
+                    className="group relative block aspect-[4/3] w-full overflow-hidden bg-surface-container"
                   >
                     <Image
                       src={getImageUrl(article.featuredImage)}
@@ -59,14 +59,13 @@ export function HeroSection({ articles }: HeroSectionProps) {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                     <div className="absolute top-3 left-3">
-                      <span className="inline-flex items-center rounded-full bg-brand px-3 py-1 text-xs font-semibold text-gray-900">
+                      <span className="inline-flex items-center bg-secondary-container px-3 py-1 text-xs font-semibold text-on-secondary-container">
                         {getCategoryName(article)}
                       </span>
                     </div>
                     <div className="absolute bottom-0 left-0 right-0 p-4">
                       <h1
-                        className="text-lg font-bold leading-tight text-white line-clamp-2"
-                        style={{ fontFamily: "var(--font-playfair)" }}
+                        className="font-headline-lg-mobile text-headline-lg-mobile font-bold leading-tight text-white line-clamp-2"
                       >
                         {article.title}
                       </h1>
@@ -93,14 +92,14 @@ export function HeroSection({ articles }: HeroSectionProps) {
                   key={index}
                   className={cn(
                     "h-1.5 rounded-full transition-all duration-300",
-                    index === selectedIndex ? "w-6 bg-white" : "w-1.5 bg-white/40"
+                    index === selectedIndex ? "w-6 bg-secondary" : "w-1.5 bg-white/40"
                   )}
                 />
               ))}
             </div>
           </div>
         ) : (
-          <div className="aspect-[4/3] w-full animate-pulse rounded-xl bg-gray-100" />
+          <div className="aspect-[4/3] w-full animate-pulse bg-surface-container" />
         )}
       </div>
 
@@ -113,7 +112,7 @@ export function HeroSection({ articles }: HeroSectionProps) {
                 <div key={article.id} className="min-w-0 flex-[0_0_100%]">
                   <Link
                     href={`/${getCategorySlug(article)}/${article.slug}`}
-                    className="group relative block aspect-[21/9] w-full overflow-hidden rounded-xl bg-gray-100"
+                    className="group relative block aspect-[21/9] w-full overflow-hidden bg-surface-container"
                   >
                     <Image
                       src={getImageUrl(article.featuredImage)}
@@ -125,17 +124,16 @@ export function HeroSection({ articles }: HeroSectionProps) {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
                     <div className="absolute top-4 left-4 flex items-center gap-2">
-                      <span className="inline-flex items-center rounded-full bg-brand px-3 py-1 text-sm font-semibold text-gray-900">
+                      <span className="inline-flex items-center bg-secondary-container px-3 py-1 text-sm font-semibold text-on-secondary-container">
                         {getCategoryName(article)}
                       </span>
-                      <span className="inline-flex items-center gap-1 rounded-full bg-black/40 px-3 py-1 text-sm text-white/80 backdrop-blur-sm">
+                      <span className="inline-flex items-center gap-1 bg-black/40 px-3 py-1 text-sm text-white/80 backdrop-blur-sm">
                         <Eye className="size-3.5" /> {formatViews(article.viewCount || 0)}
                       </span>
                     </div>
                     <div className="absolute bottom-0 left-0 right-0 p-6">
                       <h1
-                        className="text-2xl font-bold leading-tight text-white line-clamp-2 xl:text-3xl"
-                        style={{ fontFamily: "var(--font-playfair)" }}
+                        className="font-headline-lg text-headline-lg font-bold leading-tight text-white line-clamp-2 xl:text-headline-xl xl:text-headline-xl"
                       >
                         {article.title}
                       </h1>
@@ -157,14 +155,14 @@ export function HeroSection({ articles }: HeroSectionProps) {
                   key={index}
                   className={cn(
                     "h-1.5 rounded-full transition-all duration-300",
-                    index === selectedIndex ? "w-6 bg-brand" : "w-1.5 bg-white/40"
+                    index === selectedIndex ? "w-6 bg-secondary" : "w-1.5 bg-white/40"
                   )}
                 />
               ))}
             </div>
           </div>
         ) : (
-          <div className="aspect-[21/9] w-full animate-pulse rounded-xl bg-gray-100" />
+          <div className="aspect-[21/9] w-full animate-pulse bg-surface-container" />
         )}
       </div>
     </div>

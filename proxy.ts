@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Public routes that don't require authentication
 const publicRoutes = [
   "/",
   "/login",
@@ -11,18 +10,18 @@ const publicRoutes = [
   "/tim-editorial",
   "/saved",
   "/profile",
+  "/forgot-password",
+  "/reset-password",
+  "/verify-email",
 ];
 
-// Auth routes - redirect to dashboard if already logged in
-const authRoutes = ["/login", "/signup"];
+const authRoutes = ["/login", "/signup", "/forgot-password", "/reset-password"];
 
-// Category slugs
-const categorySlugs = ["bisnis", "olahraga", "pendidikan", "sosial-dan-budaya"];
+const categorySlugs = ["bisnis", "olahraga", "pendidikan", "sosial-dan-budaya", "teknologi"];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Check if it's a static file or Next.js internal
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon") ||
@@ -31,12 +30,10 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Check if it's a Payload admin route or API
-  if (pathname.startsWith("/admin") || pathname.startsWith("/api/")) {
+  if (pathname.startsWith("/api/")) {
     return NextResponse.next();
   }
 
-  // Check if it's a public route
   const isPublicRoute = publicRoutes.some((route) => pathname === route);
   const isCategoryPage = categorySlugs.some((slug) => pathname === `/${slug}`);
   const isArticlePage = categorySlugs.some((slug) =>
@@ -44,20 +41,23 @@ export function proxy(request: NextRequest) {
   );
 
   if (isPublicRoute || isCategoryPage || isArticlePage) {
+    if (authRoutes.some((route) => pathname.startsWith(route))) {
+      const sessionCookie = request.cookies.get("better-auth.session_token");
+      if (sessionCookie) {
+        return NextResponse.redirect(new URL("/dashboard", request.url));
+      }
+    }
     return NextResponse.next();
   }
 
-  // Check for session cookie (better-auth)
   const sessionCookie = request.cookies.get("better-auth.session_token");
   const hasSession = !!sessionCookie;
 
-  // If on auth routes and already logged in, redirect to dashboard
   if (authRoutes.some((route) => pathname.startsWith(route)) && hasSession) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  // If protected route and not logged in, redirect to login
-  if (!hasSession && !isPublicRoute) {
+  if (!hasSession) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("redirect", pathname);
     return NextResponse.redirect(loginUrl);

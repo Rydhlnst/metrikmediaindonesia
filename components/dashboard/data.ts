@@ -1,84 +1,59 @@
 import {
-  LayoutDashboard,
-  Newspaper,
+  SquaresFour,
+  NewspaperClipping,
   FolderOpen,
-  Tags,
+  TagSimple,
   Users,
   Image,
-  MessageSquare,
+  ChatCircleText,
   Megaphone,
   FileText,
   UserCircle,
   Shield,
-  Settings,
-  BarChart3,
-  Zap,
-} from "lucide-react";
+  Gear,
+  ChartBar,
+  Lightning,
+} from "@phosphor-icons/react/dist/ssr";
 
 export const navSections = [
   {
     title: "Main",
     items: [
-      { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard", active: true },
-      { label: "Analytics", icon: BarChart3, href: "/dashboard/analytics" },
+      { label: "Dashboard", icon: SquaresFour, href: "/dashboard", active: true },
+      { label: "Analytics", icon: ChartBar, href: "/dashboard/analytics" },
     ],
   },
   {
-    title: "Konten",
+    title: "Editorial & Konten",
     items: [
-      { label: "Artikel", icon: Newspaper, href: "/dashboard/articles" },
+      { label: "Editorial Workflow Board", icon: Lightning, href: "/dashboard/editorial" },
+      { label: "Artikel", icon: NewspaperClipping, href: "/dashboard/articles" },
+      { label: "Topik Berita", icon: TagSimple, href: "/dashboard/topics" },
+      { label: "Wilayah & Lokasi", icon: FolderOpen, href: "/dashboard/locations" },
+      { label: "Entitas (Relationship)", icon: Users, href: "/dashboard/entities" },
       { label: "Kategori", icon: FolderOpen, href: "/dashboard/categories" },
-      { label: "Tags", icon: Tags, href: "/dashboard/tags" },
+      { label: "Tags", icon: TagSimple, href: "/dashboard/tags" },
       { label: "Penulis", icon: Users, href: "/dashboard/authors" },
     ],
   },
   {
-    title: "Manajemen",
+    title: "SEO & Manajemen",
     items: [
-      { label: "Media", icon: Image, href: "/dashboard/media" },
-      { label: "Komentar", icon: MessageSquare, href: "/dashboard/comments" },
-      { label: "Iklan", icon: Megaphone, href: "/dashboard/advertisements" },
-      { label: "Halaman", icon: FileText, href: "/dashboard/pages" },
+      { label: "SEO Health Dashboard", icon: Shield, href: "/dashboard/seo-health" },
+      { label: "Redirect Manager (301)", icon: FileText, href: "/dashboard/redirects" },
+      { label: "Media Library", icon: Image, href: "/dashboard/media" },
+      { label: "Komentar", icon: ChatCircleText, href: "/dashboard/comments" },
+      { label: "Iklan & Sponsored", icon: Megaphone, href: "/dashboard/advertisements" },
+      { label: "Halaman Static", icon: FileText, href: "/dashboard/pages" },
     ],
   },
   {
     title: "Sistem",
     items: [
       { label: "Pengguna", icon: UserCircle, href: "/dashboard/users" },
-      { label: "Role", icon: Shield, href: "/dashboard/roles" },
-      { label: "Pengaturan", icon: Settings, href: "/dashboard/settings" },
+      { label: "Role & Akses (RBAC)", icon: Shield, href: "/dashboard/roles" },
+      { label: "Pengaturan System", icon: Gear, href: "/dashboard/settings" },
     ],
-  },
-];
-
-export const stats = [
-  {
-    label: "Total Artikel",
-    value: "1,248",
-    detail: "+12.5%",
-    icon: Newspaper,
-    tone: "bg-news-red",
-  },
-  {
-    label: "Total Views",
-    value: "2.4M",
-    detail: "+8.3%",
-    icon: BarChart3,
-    tone: "bg-blue-500",
-  },
-  {
-    label: "Penulis Aktif",
-    value: "24",
-    detail: "+2 bulan ini",
-    icon: Users,
-    tone: "bg-emerald-500",
-  },
-  {
-    label: "Kategori",
-    value: "18",
-    detail: "6 aktif",
-    icon: FolderOpen,
-    tone: "bg-purple-500",
   },
 ];
 

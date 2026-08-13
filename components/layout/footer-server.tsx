@@ -1,136 +1,40 @@
-"use client";
-
 import Link from "next/link";
-import Image from "next/image";
-import { useState } from "react";
-import { SITE_CONFIG } from "@/lib/constants";
-import { Plus, Minus } from "@phosphor-icons/react/dist/ssr";
+import { BrandName } from "@/components/shared/brand-name";
+import { NAVIGATION } from "@/lib/constants";
 
-const sections = [
-  {
-    title: "Kategori",
-    links: [
-      { label: "Bisnis", href: "/bisnis" },
-      { label: "Olahraga", href: "/olahraga" },
-      { label: "Pendidikan", href: "/pendidikan" },
-      { label: "Sosial & Budaya", href: "/sosial-dan-budaya" },
-      { label: "Dunia", href: "/dunia" },
-      { label: "Teknologi", href: "/teknologi" },
-    ],
-  },
-  {
-    title: "Perusahaan",
-    links: [
-      { label: "Tentang Kami", href: "/tentang-kami" },
-      { label: "Tim Editorial", href: "/tim-editorial" },
-      { label: "Hubungi Kami", href: "/hubungi-kami" },
-    ],
-  },
-  {
-    title: "Bantuan",
-    links: [
-      { label: "Kebijakan Privasi", href: "/tentang-kami" },
-      { label: "Syarat & Ketentuan", href: "/tentang-kami" },
-      { label: "Kontak", href: "/hubungi-kami" },
-    ],
-  },
-  {
-    title: "Social",
-    links: [
-      { label: "Facebook", href: "https://facebook.com/metrikmediaid" },
-      { label: "Twitter", href: "https://twitter.com/metrikmediaid" },
-      { label: "Instagram", href: "https://instagram.com/metrikmediaid" },
-      { label: "YouTube", href: "https://youtube.com/@metrikmediaid" },
-      { label: "LinkedIn", href: "https://linkedin.com/company/metrikmediaid" },
-    ],
-  },
+const footerLinks = [
+  ...NAVIGATION.footer.perusahaan,
+  { label: "Arsip", href: "/pencarian" },
+  { label: "Berlangganan", href: "/signup" },
 ];
 
 export function FooterServer() {
-  const [email, setEmail] = useState("");
-
   return (
-    <footer className="border-t border-gray-100 bg-white pb-20 sm:pb-0">
-      <div className="mx-auto max-w-3xl px-5 py-12">
-        {/* Newsletter */}
-        <div className="text-center">
-          <h2 className="text-2xl font-semibold leading-snug text-foreground sm:text-3xl">
-            Dapatkan berita terkini
-            <br />
-            langsung di inbox Anda
-          </h2>
-          <div className="mx-auto mt-6 flex max-w-md items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-2 py-1.5 transition-colors focus-within:border-foreground focus-within:bg-white">
-            <input
-              type="email"
-              placeholder="Masukkan email Anda"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="flex-1 bg-transparent px-4 text-sm text-foreground placeholder:text-gray-400 outline-none"
-            />
-            <button className="shrink-0 rounded-full bg-foreground px-5 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90">
-              Subscribe
-            </button>
-          </div>
-        </div>
-
-        {/* Accordion Sections */}
-        <div className="mt-12 space-y-0">
-          {sections.map((section) => (
-            <AccordionSection key={section.title} section={section} />
-          ))}
-        </div>
-
-        {/* Logo + Copyright */}
-        <div className="mt-12 flex flex-col items-center gap-4">
-          <div className="relative h-12 w-12">
-            <Image src="/logo-metrik.png" alt={SITE_CONFIG.shortName} fill className="object-contain" />
-          </div>
-          <p className="text-center text-xs text-gray-400">
-            &copy; {new Date().getFullYear()} {SITE_CONFIG.name}. All rights reserved.
+    <footer className="w-full mt-[80px] bg-surface-container-low border-t border-outline-variant">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-[24px] max-w-[1280px] mx-auto px-4 md:px-16 py-12">
+        {/* Brand + Copyright */}
+        <div className="md:col-span-4 mb-8 md:mb-0 flex flex-col gap-6">
+          <Link href="/">
+            <BrandName size="md" />
+          </Link>
+          <p className="font-body-md text-body-md text-on-surface">
+            &copy; {new Date().getFullYear()} METRIK MEDIA INDONESIA. Intellectual clarity for the modern intelligentsia.
           </p>
         </div>
 
-        {/* Bottom Links */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-gray-400">
-          <Link href="/tentang-kami" className="transition-colors hover:text-foreground">Kebijakan Privasi</Link>
-          <Link href="/tentang-kami" className="transition-colors hover:text-foreground">Syarat & Ketentuan</Link>
-          <Link href="/hubungi-kami" className="transition-colors hover:text-foreground">Kontak</Link>
+        {/* Links */}
+        <div className="md:col-span-8 flex flex-col md:flex-row md:flex-nowrap justify-end gap-6 md:gap-12">
+          {footerLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-all opacity-80 hover:opacity-100 uppercase tracking-widest"
+            >
+              {link.label}
+            </Link>
+          ))}
         </div>
       </div>
     </footer>
-  );
-}
-
-function AccordionSection({ section }: { section: { title: string; links: { label: string; href: string }[] } }) {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <div className="border-b border-gray-100">
-      <button
-        onClick={() => setOpen(!open)}
-        className="flex w-full items-center justify-between py-4 text-left text-[15px] font-medium text-foreground"
-      >
-        {section.title}
-        {open ? <Minus className="size-4 shrink-0 text-gray-400" /> : <Plus className="size-4 shrink-0 text-gray-400" />}
-      </button>
-      {open && (
-        <div className="pb-4">
-          <ul className="space-y-2.5">
-            {section.links.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className="text-sm text-gray-500 transition-colors hover:text-foreground"
-                  target={link.href.startsWith("http") ? "_blank" : undefined}
-                  rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
   );
 }

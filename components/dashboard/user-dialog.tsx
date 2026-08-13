@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { getInitials } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -19,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
-import { Upload, X } from "lucide-react";
+import { UploadSimple, X } from "@phosphor-icons/react/dist/ssr";
 
 interface Role {
   id: number;
@@ -157,15 +158,6 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
     }
   };
 
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md rounded-none">
@@ -200,7 +192,7 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
                     asChild
                   >
                     <span>
-                      <Upload className="size-3" />
+                      <UploadSimple className="size-3" />
                       {isUploading ? "Upload..." : "Upload"}
                     </span>
                   </Button>

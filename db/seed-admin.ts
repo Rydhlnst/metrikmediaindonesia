@@ -9,7 +9,7 @@ async function seedAdminUser() {
 
   try {
     // Create admin user via Better Auth
-    const result = await auth.api.createUser({
+    const result = await (auth.api as any).createUser({
       body: {
         email: "admin@metrikmedia.id",
         password: "admin123",

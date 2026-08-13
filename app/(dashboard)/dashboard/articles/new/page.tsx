@@ -1,15 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { DashboardTopbar } from "@/components/dashboard/topbar";
-import { TiptapEditor } from "@/components/dashboard/tiptap-editor";
+const TiptapEditor = dynamic(
+  () => import("@/components/dashboard/tiptap-editor").then((m) => m.TiptapEditor),
+  { ssr: false, loading: () => <div className="min-h-[300px] bg-muted/30 animate-pulse" /> }
+);
+import { SeoTracker } from "@/components/dashboard/seo-tracker";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Eye, Save, Send, ArrowLeft, Plus, X, Image } from "lucide-react";
+import { Eye, FloppyDisk, PaperPlaneRight, ArrowLeft, Plus, X, Image, CircleNotch, Trash } from "@phosphor-icons/react/dist/ssr";
 import { CATEGORIES } from "@/lib/constants";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function NewArticlePage() {
   const [title, setTitle] = useState("");
@@ -22,7 +29,44 @@ export default function NewArticlePage() {
   const [seoTitle, setSeoTitle] = useState("");
   const [seoDescription, setSeoDescription] = useState("");
   const [seoKeywords, setSeoKeywords] = useState("");
+  const [focusKeyword, setFocusKeyword] = useState("");
+  const [seoScore, setSeoScore] = useState(0);
   const [activeTab, setActiveTab] = useState<"content" | "seo">("content");
+  const [thumbnailUrl, setThumbnailUrl] = useState("");
+  const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
+
+  const thumbnailInputRef = useRef<HTMLInputElement>(null);
+
+  const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const file = files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("maxWidth", "1920");
+
+    setIsUploadingThumbnail(true);
+    const toastId = toast.loading("Mengunggah dan mengkompresi gambar utama...");
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.message || "Gagal mengunggah gambar");
+
+      setThumbnailUrl(result.data.url);
+      toast.success("Gambar utama berhasil diunggah (WebP)", { id: toastId });
+    } catch (err: any) {
+      toast.error(err.message || "Gagal mengunggah gambar", { id: toastId });
+    } finally {
+      setIsUploadingThumbnail(false);
+      if (thumbnailInputRef.current) thumbnailInputRef.current.value = "";
+    }
+  };
 
   const generateSlug = (text: string) => {
     return text
@@ -45,8 +89,52 @@ export default function NewArticlePage() {
     }
   };
 
+  const router = useRouter();
+  const [isSaving, setIsSaving] = useState(false);
+
   const removeTag = (tag: string) => {
     setTags(tags.filter((t) => t !== tag));
+  };
+
+  const handleSaveArticle = async (status: "draft" | "published") => {
+    if (!title || !slug) {
+      toast.error("Judul dan slug artikel wajib diisi");
+      return;
+    }
+
+    setIsSaving(true);
+    const toastId = toast.loading(status === "published" ? "Mempublikasikan artikel..." : "Menyimpan draft...");
+
+    try {
+      const res = await fetch("/api/articles", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          slug,
+          excerpt,
+          content,
+          thumbnail: thumbnailUrl,
+          status,
+          categoryId: selectedCategory || null,
+          seoTitle,
+          seoDescription,
+          seoKeywords,
+          focusKeyword,
+          seoScore,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Gagal menyimpan artikel");
+
+      toast.success(status === "published" ? "Artikel berhasil dipublikasikan" : "Draft berhasil disimpan", { id: toastId });
+      router.push("/dashboard/articles");
+    } catch (err: any) {
+      toast.error(err.message || "Gagal menyimpan artikel", { id: toastId });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -64,16 +152,21 @@ export default function NewArticlePage() {
             <h1 className="text-lg font-bold">Artikel Baru</h1>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" className="gap-2 rounded-none">
-              <Eye className="size-4" />
-              Preview
-            </Button>
-            <Button variant="outline" className="gap-2 rounded-none">
-              <Save className="size-4" />
+            <Button
+              variant="outline"
+              className="gap-2 rounded-none"
+              disabled={isSaving}
+              onClick={() => handleSaveArticle("draft")}
+            >
+              {isSaving ? <CircleNotch className="size-4 animate-spin" /> : <FloppyDisk className="size-4" />}
               Simpan Draft
             </Button>
-            <Button className="gap-2 rounded-none bg-news-red text-white hover:bg-news-red/90">
-              <Send className="size-4" />
+            <Button
+              disabled={isSaving}
+              onClick={() => handleSaveArticle("published")}
+              className="gap-2 rounded-none bg-news-red text-white hover:bg-news-red/90"
+            >
+              {isSaving ? <CircleNotch className="size-4 animate-spin" /> : <PaperPlaneRight className="size-4" />}
               Publish
             </Button>
           </div>
@@ -130,58 +223,63 @@ export default function NewArticlePage() {
 
             {/* SEO Tab */}
             {activeTab === "seo" && (
-              <Card className="rounded-none bg-card ring-0 shadow-sm">
-                <CardHeader className="px-4 py-3">
-                  <CardTitle className="text-sm font-bold">SEO & Metadata</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4 px-4 pb-4">
-                  <div>
-                    <label className="mb-1.5 block text-xs font-medium">SEO Title</label>
-                    <Input
-                      placeholder="Judul untuk mesin pencari"
-                      value={seoTitle}
-                      onChange={(e) => setSeoTitle(e.target.value)}
-                      className="rounded-none"
-                    />
-                    <p className="mt-1 text-[10px] text-muted-foreground">
-                      {seoTitle.length}/60 karakter
-                    </p>
-                  </div>
-                  <div>
-                    <label className="mb-1.5 block text-xs font-medium">Meta Description</label>
-                    <textarea
-                      rows={3}
-                      placeholder="Deskripsi untuk mesin pencari"
-                      value={seoDescription}
-                      onChange={(e) => setSeoDescription(e.target.value)}
-                      className="w-full resize-none rounded-none border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-news-red"
-                    />
-                    <p className="mt-1 text-[10px] text-muted-foreground">
-                      {seoDescription.length}/160 karakter
-                    </p>
-                  </div>
-                  <div>
-                    <label className="mb-1.5 block text-xs font-medium">Keywords</label>
-                    <Input
-                      placeholder="keyword1, keyword2, keyword3"
-                      value={seoKeywords}
-                      onChange={(e) => setSeoKeywords(e.target.value)}
-                      className="rounded-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="mb-1.5 block text-xs font-medium">Canonical URL</label>
-                    <Input
-                      placeholder="https://metrikmediaindonesia.id/..."
-                      className="rounded-none"
-                      disabled
-                    />
-                    <p className="mt-1 text-[10px] text-muted-foreground">
-                      Auto-generated dari slug
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="space-y-4">
+                <SeoTracker
+                  title={title}
+                  slug={slug}
+                  excerpt={excerpt}
+                  content={content}
+                  thumbnailUrl={thumbnailUrl}
+                  seoTitle={seoTitle}
+                  seoDescription={seoDescription}
+                  seoKeywords={seoKeywords}
+                  focusKeyword={focusKeyword}
+                  onFocusKeywordChange={setFocusKeyword}
+                  onScoreChange={setSeoScore}
+                />
+
+                <Card className="rounded-none bg-card ring-0 shadow-sm">
+                  <CardHeader className="px-4 py-3">
+                    <CardTitle className="text-sm font-bold">Metadata Pencarian (Meta Tags)</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4 px-4 pb-4">
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium">SEO Title Override</label>
+                      <Input
+                        placeholder="Judul untuk mesin pencari (opsional)"
+                        value={seoTitle}
+                        onChange={(e) => setSeoTitle(e.target.value)}
+                        className="rounded-none"
+                      />
+                      <p className="mt-1 text-[10px] text-muted-foreground">
+                        {seoTitle.length}/65 karakter (kosongkan jika ingin menggunakan judul utama)
+                      </p>
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium">Meta Description</label>
+                      <textarea
+                        rows={3}
+                        placeholder="Deskripsi ringkas untuk Google Search & Social Preview"
+                        value={seoDescription}
+                        onChange={(e) => setSeoDescription(e.target.value)}
+                        className="w-full resize-none rounded-none border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-news-red"
+                      />
+                      <p className="mt-1 text-[10px] text-muted-foreground">
+                        {seoDescription.length}/160 karakter
+                      </p>
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium">Keywords (Kata Kunci SEO)</label>
+                      <Input
+                        placeholder="keyword1, keyword2, keyword3"
+                        value={seoKeywords}
+                        onChange={(e) => setSeoKeywords(e.target.value)}
+                        className="rounded-none"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             )}
           </div>
 
@@ -287,17 +385,50 @@ export default function NewArticlePage() {
                 <CardTitle className="text-sm font-bold">Gambar Utama</CardTitle>
               </CardHeader>
               <CardContent className="px-4 pb-4">
-                <div className="flex aspect-video items-center justify-center border-2 border-dashed border-border bg-muted">
-                  <div className="text-center">
-                    <Image className="mx-auto size-8 text-muted-foreground/50" />
-                    <p className="mt-2 text-xs text-muted-foreground">
-                      Klik untuk upload gambar
-                    </p>
-                    <p className="text-[10px] text-muted-foreground">
-                      JPG, PNG, WebP (max 5MB)
-                    </p>
+                <input
+                  ref={thumbnailInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleThumbnailUpload}
+                />
+                {thumbnailUrl ? (
+                  <div className="relative aspect-video overflow-hidden border border-border bg-muted">
+                    <img
+                      src={thumbnailUrl}
+                      alt="Gambar Utama"
+                      className="h-full w-full object-cover"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon"
+                      className="absolute right-2 top-2 size-7 rounded-none"
+                      onClick={() => setThumbnailUrl("")}
+                    >
+                      <Trash className="size-3.5" />
+                    </Button>
                   </div>
-                </div>
+                ) : (
+                  <div
+                    onClick={() => thumbnailInputRef.current?.click()}
+                    className="flex aspect-video cursor-pointer flex-col items-center justify-center border-2 border-dashed border-border bg-muted transition-colors hover:border-news-red/50"
+                  >
+                    {isUploadingThumbnail ? (
+                      <CircleNotch className="size-8 animate-spin text-news-red" />
+                    ) : (
+                      <div className="text-center">
+                        <Image className="mx-auto size-8 text-muted-foreground/50" />
+                        <p className="mt-2 text-xs font-medium text-foreground">
+                          Klik untuk upload gambar
+                        </p>
+                        <p className="text-[10px] text-muted-foreground">
+                          Otomatis dikonversi ke WebP dioptimasi (max 5MB)
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

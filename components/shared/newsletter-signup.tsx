@@ -2,31 +2,41 @@
 
 import { useState } from "react";
 import { EnvelopeSimple, PaperPlaneRight, CheckCircle } from "@phosphor-icons/react/dist/ssr";
+import { SectionHeading } from "@/components/shared/section-heading";
 
 export function NewsletterSignup() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email.trim()) {
-      setSubmitted(true);
-      setEmail("");
-      setTimeout(() => setSubmitted(false), 3000);
+    if (!email.trim()) return;
+
+    setSubmitted(true);
+    try {
+      await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+    } catch {
+      // Silent fail — UI already shows success state
     }
+    setEmail("");
+    setTimeout(() => setSubmitted(false), 3000);
   };
 
   return (
-    <div className="rounded-xl bg-brand/10 p-5">
+    <div className="rounded-xl bg-surface-container-low border border-outline-variant p-5">
       <div className="mb-3 flex items-center gap-2">
-        <EnvelopeSimple className="size-5 text-brand-text" weight="bold" />
-        <h3 className="text-base font-bold">Newsletter</h3>
+        <EnvelopeSimple className="size-5 text-secondary" weight="bold" />
+        <SectionHeading size="sm" as="h3">Newsletter</SectionHeading>
       </div>
-      <p className="mb-4 text-sm leading-relaxed text-gray-500">
+      <p className="mb-4 text-sm leading-relaxed text-on-surface-variant">
         Dapatkan berita terkini langsung ke email Anda. Gratis dan tanpa spam.
       </p>
       {submitted ? (
-        <div className="flex items-center gap-2 rounded-xl bg-green-50 py-3 text-center text-sm font-medium text-green-700">
+        <div className="flex items-center gap-2 rounded-xl bg-secondary-container py-3 text-center text-sm font-medium text-on-secondary-container">
           <CheckCircle className="size-4" />
           Terima kasih telah berlangganan!
         </div>
@@ -38,9 +48,9 @@ export function NewsletterSignup() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="flex-1 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-foreground placeholder:text-gray-400 outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
+            className="flex-1 rounded-xl border border-outline-variant bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-on-surface-variant outline-none focus:border-primary"
           />
-          <button type="submit" className="shrink-0 rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-gray-900 transition-colors hover:bg-amber-400">
+          <button type="submit" className="shrink-0 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-secondary hover:text-on-secondary">
             <PaperPlaneRight className="size-4" weight="fill" />
           </button>
         </form>

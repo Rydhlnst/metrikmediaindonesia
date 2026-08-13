@@ -26,7 +26,7 @@ export function PageSkeleton() {
       {/* Grid Skeleton */}
       <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="border border-border p-6">
+          <div key={i} className="border border-outline-variant p-6">
             <Skeleton className="h-6 w-6" />
             <Skeleton className="mt-3 h-4 w-32" />
             <Skeleton className="mt-2 h-3 w-full" />

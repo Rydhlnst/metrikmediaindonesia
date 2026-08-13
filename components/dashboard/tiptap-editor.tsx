@@ -22,33 +22,33 @@ import { common, createLowlight } from "lowlight";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
-  Bold,
-  Italic,
-  Underline as UnderlineIcon,
-  Strikethrough,
+  TextB,
+  TextItalic,
+  TextUnderline as UnderlineIcon,
+  TextStrikethrough,
   Code,
-  Heading1,
-  Heading2,
-  Heading3,
+  TextHOne,
+  TextHTwo,
+  TextHThree,
   List,
-  ListOrdered,
+  ListNumbers,
   ListChecks,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  Link as LinkIcon,
+  TextAlignLeft,
+  TextAlignCenter,
+  TextAlignRight,
+  LinkSimpleHorizontal as LinkIcon,
   Image as ImageIcon,
-  Video,
-  Code2,
-  Quote,
+  VideoCamera,
+  Code as Code2,
+  Quotes,
   Minus,
   Highlighter,
-  Undo2,
-  Redo2,
+  ArrowCounterClockwise,
+  ArrowClockwise,
   Table as TableIcon,
-  Upload,
-  Loader2,
-} from "lucide-react";
+  UploadSimple,
+  CircleNotch,
+} from "@phosphor-icons/react/dist/ssr";
 import {
   Dialog,
   DialogContent,
@@ -222,13 +222,13 @@ export function TiptapEditor({
           onClick={() => editor.chain().focus().toggleBold().run()}
           active={editor.isActive("bold")}
         >
-          <Bold className="size-4" />
+          <TextB className="size-4" />
         </ToolButton>
         <ToolButton
           onClick={() => editor.chain().focus().toggleItalic().run()}
           active={editor.isActive("italic")}
         >
-          <Italic className="size-4" />
+          <TextItalic className="size-4" />
         </ToolButton>
         <ToolButton
           onClick={() => editor.chain().focus().toggleUnderline().run()}
@@ -240,7 +240,7 @@ export function TiptapEditor({
           onClick={() => editor.chain().focus().toggleStrike().run()}
           active={editor.isActive("strike")}
         >
-          <Strikethrough className="size-4" />
+          <TextStrikethrough className="size-4" />
         </ToolButton>
         <ToolButton
           onClick={() => editor.chain().focus().toggleCode().run()}
@@ -262,19 +262,19 @@ export function TiptapEditor({
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           active={editor.isActive("heading", { level: 1 })}
         >
-          <Heading1 className="size-4" />
+          <TextHOne className="size-4" />
         </ToolButton>
         <ToolButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           active={editor.isActive("heading", { level: 2 })}
         >
-          <Heading2 className="size-4" />
+          <TextHTwo className="size-4" />
         </ToolButton>
         <ToolButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
           active={editor.isActive("heading", { level: 3 })}
         >
-          <Heading3 className="size-4" />
+          <TextHThree className="size-4" />
         </ToolButton>
 
         <Separator orientation="vertical" className="mx-1 h-6" />
@@ -290,7 +290,7 @@ export function TiptapEditor({
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           active={editor.isActive("orderedList")}
         >
-          <ListOrdered className="size-4" />
+          <ListNumbers className="size-4" />
         </ToolButton>
         <ToolButton
           onClick={() => editor.chain().focus().toggleTaskList().run()}
@@ -306,19 +306,19 @@ export function TiptapEditor({
           onClick={() => editor.chain().focus().setTextAlign("left").run()}
           active={editor.isActive({ textAlign: "left" })}
         >
-          <AlignLeft className="size-4" />
+          <TextAlignLeft className="size-4" />
         </ToolButton>
         <ToolButton
           onClick={() => editor.chain().focus().setTextAlign("center").run()}
           active={editor.isActive({ textAlign: "center" })}
         >
-          <AlignCenter className="size-4" />
+          <TextAlignCenter className="size-4" />
         </ToolButton>
         <ToolButton
           onClick={() => editor.chain().focus().setTextAlign("right").run()}
           active={editor.isActive({ textAlign: "right" })}
         >
-          <AlignRight className="size-4" />
+          <TextAlignRight className="size-4" />
         </ToolButton>
 
         <Separator orientation="vertical" className="mx-1 h-6" />
@@ -328,7 +328,7 @@ export function TiptapEditor({
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           active={editor.isActive("blockquote")}
         >
-          <Quote className="size-4" />
+          <Quotes className="size-4" />
         </ToolButton>
         <ToolButton
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
@@ -356,13 +356,13 @@ export function TiptapEditor({
           disabled={isUploading}
         >
           {isUploading ? (
-            <Loader2 className="size-4 animate-spin" />
+            <CircleNotch className="size-4 animate-spin" />
           ) : (
-            <Upload className="size-4" />
+            <UploadSimple className="size-4" />
           )}
         </ToolButton>
         <ToolButton onClick={() => setYoutubeDialogOpen(true)}>
-          <Video className="size-4" />
+          <VideoCamera className="size-4" />
         </ToolButton>
         <ToolButton onClick={addTable}>
           <TableIcon className="size-4" />
@@ -375,13 +375,13 @@ export function TiptapEditor({
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editor.can().undo()}
         >
-          <Undo2 className="size-4" />
+          <ArrowCounterClockwise className="size-4" />
         </ToolButton>
         <ToolButton
           onClick={() => editor.chain().focus().redo().run()}
           disabled={!editor.can().redo()}
         >
-          <Redo2 className="size-4" />
+          <ArrowClockwise className="size-4" />
         </ToolButton>
       </div>
 

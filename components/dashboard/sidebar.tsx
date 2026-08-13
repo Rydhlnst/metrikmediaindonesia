@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/sidebar";
 import { navSections } from "./data";
 import { cn } from "@/lib/utils";
-import { Zap, ChevronDown } from "lucide-react";
+import { Lightning, CaretDown } from "@phosphor-icons/react/dist/ssr";
 
 export function DashboardSidebar() {
   const pathname = usePathname();
@@ -36,7 +36,7 @@ export function DashboardSidebar() {
             >
               <Link href="/dashboard">
                 <div className="flex size-8 items-center justify-center bg-news-red text-white">
-                  <Zap className="size-5" />
+                  <Lightning className="size-5" />
                 </div>
                 <span className="text-lg font-bold tracking-tight">Metrik Media Indonesia</span>
               </Link>
@@ -106,17 +106,6 @@ export function DashboardSidebar() {
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              tooltip="Payload Admin"
-              className="h-9 gap-3 px-3 text-sm text-muted-foreground"
-            >
-              <Link href="/admin" target="_blank">
-                <span>Payload Admin</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
           <SidebarMenuItem className="flex items-center gap-0">
             <SidebarMenuButton
               asChild
@@ -132,7 +121,7 @@ export function DashboardSidebar() {
                 <span className="flex-1 truncate text-sm font-medium">
                   Admin
                 </span>
-                <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
+                <CaretDown className="size-4 shrink-0 text-muted-foreground" />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

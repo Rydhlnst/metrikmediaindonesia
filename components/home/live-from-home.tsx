@@ -5,6 +5,7 @@ import Image from "next/image";
 import { getImageUrl } from "@/lib/utils";
 import { getCategorySlug, getCategoryName, getTimeAgo } from "@/lib/article-helpers";
 import { SectionHeader } from "@/components/shared/section-header";
+import { CategoryBadge } from "@/components/shared/category-badge";
 
 interface LiveFromHomeProps {
   articles: any[];
@@ -23,7 +24,7 @@ export function LiveFromHome({ articles }: LiveFromHomeProps) {
             <Link
               key={article.id}
               href={`/${getCategorySlug(article)}/${article.slug}`}
-              className="group relative aspect-[3/4] w-40 shrink-0 overflow-hidden rounded-xl bg-gray-100 sm:w-48"
+              className="group relative aspect-[3/4] w-40 shrink-0 overflow-hidden rounded-xl bg-surface-container sm:w-48"
             >
               <Image
                 src={getImageUrl(article.featuredImage)}
@@ -34,9 +35,9 @@ export function LiveFromHome({ articles }: LiveFromHomeProps) {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
               <div className="absolute top-2 left-2">
-                <span className="inline-flex items-center rounded-full bg-brand px-2.5 py-0.5 text-[11px] font-semibold text-gray-900">
+                <CategoryBadge variant="pill" className="text-[11px]">
                   {getCategoryName(article)}
-                </span>
+                </CategoryBadge>
               </div>
               <div className="absolute bottom-0 left-0 right-0 p-3">
                 <h3 className="text-sm font-semibold leading-snug text-white line-clamp-2">

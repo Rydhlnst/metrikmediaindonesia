@@ -3,11 +3,9 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { SITE_CONFIG } from "@/lib/constants";
-import { Eye, EyeOff, Loader2, Mail, Lock, ArrowRight } from "lucide-react";
-import { FcGoogle } from "react-icons/fc";
-import { FaGithub } from "react-icons/fa";
+import { Eye, EyeSlash, CircleNotch, EnvelopeSimple, LockSimple, ArrowRight, GoogleLogo, GithubLogo } from "@phosphor-icons/react/dist/ssr";
 import Blocks from "@/components/ui/blocks";
+import { BrandName } from "@/components/shared/brand-name";
 
 interface AuthFormProps {
   mode: "login" | "register";
@@ -24,6 +22,7 @@ export function AuthForm({ mode }: AuthFormProps) {
   // Login fields
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
 
   // Register extra fields
   const [name, setName] = useState("");
@@ -66,7 +65,7 @@ export function AuthForm({ mode }: AuthFormProps) {
 
     try {
       const url = isLogin ? "/api/auth/sign-in/email" : "/api/auth/sign-up/email";
-      const body = isLogin ? { email, password } : { name, email, password };
+      const body = isLogin ? { email, password, rememberMe } : { name, email, password };
 
       const res = await fetch(url, {
         method: "POST",
@@ -81,7 +80,7 @@ export function AuthForm({ mode }: AuthFormProps) {
       }
 
       const searchParams = new URLSearchParams(window.location.search);
-      const redirectTo = searchParams.get("redirect") || "/dashboard";
+      const redirectTo = searchParams.get("redirect") || "/profile";
       router.push(redirectTo);
       router.refresh();
     } catch (err: any) {
@@ -99,9 +98,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           {/* Brand */}
           <div className="space-y-1">
             <Link href="/" className="inline-block">
-              <span className="text-2xl font-bold tracking-tight font-serif">
-                {SITE_CONFIG.shortName}
-              </span>
+              <BrandName size="sm" />
             </Link>
           </div>
 
@@ -121,32 +118,32 @@ export function AuthForm({ mode }: AuthFormProps) {
           <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
-              className="flex h-10 items-center justify-center gap-2 border border-border bg-muted text-sm font-medium transition-colors hover:bg-muted/80"
+              className="flex h-10 items-center justify-center gap-2 border border-outline-variant bg-muted text-sm font-medium transition-colors hover:bg-muted/80"
             >
-              <FcGoogle className="h-4 w-4" />
+              <GoogleLogo className="h-4 w-4" />
               Google
             </button>
             <button
               type="button"
-              className="flex h-10 items-center justify-center gap-2 border border-border bg-muted text-sm font-medium transition-colors hover:bg-muted/80"
+              className="flex h-10 items-center justify-center gap-2 border border-outline-variant bg-muted text-sm font-medium transition-colors hover:bg-muted/80"
             >
-              <FaGithub className="h-4 w-4" />
+              <GithubLogo className="h-4 w-4" />
               GitHub
             </button>
           </div>
 
           {/* Divider */}
           <div className="flex items-center gap-3">
-            <div className="h-px flex-1 bg-border" />
+            <div className="h-px flex-1 bg-outline-variant" />
             <span className="shrink-0 text-xs text-muted-foreground">
               or continue with email
             </span>
-            <div className="h-px flex-1 bg-border" />
+            <div className="h-px flex-1 bg-outline-variant" />
           </div>
 
           {/* Error */}
           {error && (
-            <div className="bg-red-50 p-3 text-xs text-red-600 dark:bg-red-950 dark:text-red-400">
+            <div className="bg-error/10 p-3 text-xs text-error">
               {error}
             </div>
           )}
@@ -165,7 +162,7 @@ export function AuthForm({ mode }: AuthFormProps) {
                   placeholder="Your name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="h-11 w-full border border-border bg-muted px-3.5 pl-10 text-sm outline-none transition-colors focus:border-foreground focus:ring-1 focus:ring-foreground"
+                  className="h-11 w-full border border-outline-variant bg-muted px-3.5 pl-10 text-sm outline-none transition-colors focus:border-foreground focus:ring-1 focus:ring-foreground"
                   required
                 />
               </div>
@@ -177,14 +174,14 @@ export function AuthForm({ mode }: AuthFormProps) {
                 Email address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <EnvelopeSimple className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <input
                   id="email"
                   type="email"
                   placeholder="you@company.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-11 w-full border border-border bg-muted pl-10 pr-3.5 text-sm outline-none transition-colors focus:border-foreground focus:ring-1 focus:ring-foreground"
+                  className="h-11 w-full border border-outline-variant bg-muted pl-10 pr-3.5 text-sm outline-none transition-colors focus:border-foreground focus:ring-1 focus:ring-foreground"
                   required
                 />
               </div>
@@ -197,20 +194,20 @@ export function AuthForm({ mode }: AuthFormProps) {
                   Password
                 </label>
                 {isLogin && (
-                  <Link href="/login" className="text-xs font-medium text-foreground hover:underline">
+                  <Link href="/forgot-password" className="text-xs font-medium text-foreground hover:underline">
                     Forgot password?
                   </Link>
                 )}
               </div>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <LockSimple className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="h-11 w-full border border-border bg-muted pl-10 pr-10 text-sm outline-none transition-colors focus:border-foreground focus:ring-1 focus:ring-foreground"
+                  className="h-11 w-full border border-outline-variant bg-muted pl-10 pr-10 text-sm outline-none transition-colors focus:border-foreground focus:ring-1 focus:ring-foreground"
                   required
                 />
                 <button
@@ -218,7 +215,7 @@ export function AuthForm({ mode }: AuthFormProps) {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? <EyeSlash className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
             </div>
@@ -229,7 +226,9 @@ export function AuthForm({ mode }: AuthFormProps) {
                 <input
                   id="remember"
                   type="checkbox"
-                  className="h-4 w-4 border-border accent-foreground"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="h-4 w-4 border-outline-variant accent-foreground"
                 />
                 <label htmlFor="remember" className="cursor-pointer text-sm text-muted-foreground">
                   Keep me signed in
@@ -244,7 +243,7 @@ export function AuthForm({ mode }: AuthFormProps) {
               className="flex h-11 w-full items-center justify-center gap-2 bg-foreground text-sm font-semibold text-background transition-colors hover:bg-foreground/90 disabled:opacity-50"
             >
               {isLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <CircleNotch className="h-4 w-4 animate-spin" />
               ) : (
                 <>
                   {isLogin ? "Sign in" : "Create account"}
@@ -270,7 +269,7 @@ export function AuthForm({ mode }: AuthFormProps) {
       {/* Right - Blocks Animation */}
       <section
         ref={containerRef}
-        className="relative hidden flex-1 items-center justify-center overflow-hidden bg-black lg:flex"
+        className="relative hidden flex-1 items-center justify-center overflow-hidden bg-on-surface lg:flex"
       >
         <Blocks
           containerRef={containerRef}
@@ -279,7 +278,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           divClass="border-white/5"
         />
         <div className="relative z-10 max-w-md text-center text-white">
-          <h2 className="text-3xl font-bold font-serif">Metrik Media Indonesia</h2>
+          <BrandName size="lg" color="white" as="h2" />
           <p className="mt-3 text-lg text-white/80">Portal Berita Terpercaya</p>
         </div>
       </section>

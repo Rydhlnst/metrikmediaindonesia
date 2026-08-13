@@ -1,10 +1,40 @@
 import sharp from "sharp";
 
+export interface OptimizeImageOptions {
+  quality?: number;
+  maxWidth?: number;
+  maxHeight?: number;
+  effort?: number;
+}
+
 export async function convertToWebp(
   buffer: Buffer,
-  quality: number = 80
+  options: OptimizeImageOptions = {}
 ): Promise<Buffer> {
-  return sharp(buffer).webp({ quality }).toBuffer();
+  const {
+    quality = 80,
+    maxWidth = 1920,
+    maxHeight = 1080,
+    effort = 6,
+  } = options;
+
+  let pipeline = sharp(buffer);
+
+  if (maxWidth || maxHeight) {
+    pipeline = pipeline.resize({
+      width: maxWidth,
+      height: maxHeight,
+      fit: "inside",
+      withoutEnlargement: true,
+    });
+  }
+
+  return pipeline
+    .webp({
+      quality,
+      effort,
+    })
+    .toBuffer();
 }
 
 export async function getImageMetadata(
