@@ -5,8 +5,8 @@ export function BreakingNewsTicker() {
   return (
     <div className="w-full bg-surface-container-lowest border-b border-outline-variant py-2 shadow-2xs">
       <div className="max-w-[1280px] mx-auto px-4 md:px-8 flex items-center gap-3">
-        {/* Red Breaking Pill Badge */}
-        <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-red-600 text-white font-bold text-[11px] uppercase tracking-wider shrink-0 shadow-xs">
+        {/* Orange-Emas Breaking Badge */}
+        <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-none bg-amber-600 text-white font-bold text-[10px] uppercase tracking-wider shrink-0 shadow-2xs">
           <Lightning className="size-3.5 fill-current animate-bounce" />
           <span>BREAKING</span>
         </div>

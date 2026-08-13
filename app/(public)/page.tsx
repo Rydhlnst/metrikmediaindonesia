@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   },
 };
 
-export const revalidate = 60; // 1 minute revalidate for fresh news updates
+export const revalidate = 60; // 1 minute revalidate
 
 const FALLBACK_ARTICLES = [
   {
@@ -43,7 +43,7 @@ const FALLBACK_ARTICLES = [
     subtitle: "Fokus utama pada hilirisasi industri, energi hijau, dan digitalisasi UMKM.",
     excerpt: "Pemerintah meluncurkan target pertumbuhan ekonomi nasional sebesar 8 persen yang didukung efisiensi birokrasi dan investasi strategis.",
     thumbnail: "https://picsum.photos/seed/ekonomi/800/450",
-    category: { name: "Nasional", slug: "nasional", color: "#1D4ED8" },
+    category: { name: "Nasional", slug: "nasional" },
     author: { name: "Ahmad Rizky Pratama", slug: "ahmad-rizky-pratama" },
     publishedAt: new Date().toISOString(),
     readingTime: 5,
@@ -58,7 +58,7 @@ const FALLBACK_ARTICLES = [
     subtitle: "Fraksi-fraksi di DPR mulai menyepakati poin krusial ambang batas parlemen.",
     excerpt: "Pembahasan RUU Pemilu 2029 resmi dimulai di Senayan dengan fokus penyempurnaan sistem pemungutan suara elektronik.",
     thumbnail: "https://picsum.photos/seed/politik/800/450",
-    category: { name: "Politik", slug: "politik", color: "#B91C1C" },
+    category: { name: "Politik", slug: "politik" },
     author: { name: "Siti Nurhaliza", slug: "siti-nurhaliza" },
     publishedAt: new Date(Date.now() - 3600000).toISOString(),
     readingTime: 4,
@@ -71,7 +71,7 @@ const FALLBACK_ARTICLES = [
     subtitle: "IHSG bergerak menguat didorong aksi beli bersih investor asing.",
     excerpt: "Indeks Harga Saham Gabungan (IHSG) menembus level psikologis 8.000 didorong optimisme pertumbuhan ekonomi domestik.",
     thumbnail: "https://picsum.photos/seed/saham/800/450",
-    category: { name: "Bisnis", slug: "bisnis", color: "#2563EB" },
+    category: { name: "Bisnis", slug: "bisnis" },
     author: { name: "Ahmad Rizky Pratama", slug: "ahmad-rizky-pratama" },
     publishedAt: new Date(Date.now() - 7200000).toISOString(),
     readingTime: 5,
@@ -84,7 +84,7 @@ const FALLBACK_ARTICLES = [
     subtitle: "Pemerintah merilis standar etika dan keamanan data nasional untuk adopsi AI.",
     excerpt: "Pedoman nasional penggunaan AI dirilis guna memastikan perlindungan data pribadi konsumen dan etika algoritma.",
     thumbnail: "https://picsum.photos/seed/tekno/800/450",
-    category: { name: "Teknologi", slug: "teknologi", color: "#DC2626" },
+    category: { name: "Teknologi", slug: "teknologi" },
     author: { name: "Ahmad Rizky Pratama", slug: "ahmad-rizky-pratama" },
     publishedAt: new Date(Date.now() - 10800000).toISOString(),
     readingTime: 6,
@@ -97,7 +97,7 @@ const FALLBACK_ARTICLES = [
     subtitle: "Kemenangan dramatis 2-1 menegaskan kesiapan tim nasional di kancah dunia.",
     excerpt: "Garuda Muda mengamankan tiket fase gugur setelah menaklukkan tim kuat dalam laga ketat di Stadion GBK.",
     thumbnail: "https://picsum.photos/seed/timnas/800/450",
-    category: { name: "Sports", slug: "sports", color: "#059669" },
+    category: { name: "Sports", slug: "sports" },
     author: { name: "Reza Firmansyah", slug: "reza-firmansyah" },
     publishedAt: new Date(Date.now() - 14400000).toISOString(),
     readingTime: 5,
@@ -110,7 +110,7 @@ const FALLBACK_ARTICLES = [
     subtitle: "Layanan perizinan dan administrasi warga kini dapat diakses dalam satu aplikasi terpadu.",
     excerpt: "Inovasi sistem digitalisasi Pemprov Jabar memangkas waktu pengurusan izin usaha menjadi hanya beberapa menit.",
     thumbnail: "https://picsum.photos/seed/jabar/800/450",
-    category: { name: "Daerah", slug: "daerah", color: "#D97706" },
+    category: { name: "Daerah", slug: "daerah" },
     author: { name: "Siti Nurhaliza", slug: "siti-nurhaliza" },
     publishedAt: new Date(Date.now() - 18000000).toISOString(),
     readingTime: 4,
@@ -131,7 +131,6 @@ export default async function HomePage() {
     console.error("HomePage fetch error:", err);
   }
 
-  // Fallback to FALLBACK_ARTICLES if database is empty/initializing
   const articles = latestArticles.length > 0 ? latestArticles : FALLBACK_ARTICLES;
   const trending = trendingArticles.length > 0 ? trendingArticles : articles.slice(0, 5);
 
@@ -143,7 +142,7 @@ export default async function HomePage() {
     <div className="w-full bg-background">
       
       {/* ============================================================ */}
-      {/* 1. HERO FEATURED SPOTLIGHT SECTION                            */}
+      {/* 1. HERO FEATURED SPOTLIGHT SECTION (Hitam, Emas, Putih)       */}
       {/* ============================================================ */}
       <section className="max-w-[1280px] mx-auto px-4 md:px-8 pt-6 pb-12">
         {heroArticle && (
@@ -158,8 +157,8 @@ export default async function HomePage() {
                       {getCategoryName(heroArticle) || "UTAMA"}
                     </span>
                     {heroArticle.breaking && (
-                      <span className="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider bg-red-600 text-white rounded-none flex items-center gap-1 animate-pulse">
-                        <Lightning className="size-3" /> BREAKING
+                      <span className="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider bg-black text-white rounded-none flex items-center gap-1 border border-amber-600/50">
+                        <Lightning className="size-3 text-amber-500 fill-current" /> BREAKING
                       </span>
                     )}
                   </div>
@@ -174,7 +173,7 @@ export default async function HomePage() {
                   </h1>
 
                   {heroArticle.subtitle && (
-                    <p className="text-sm md:text-base font-semibold text-amber-900/80 dark:text-amber-300 mb-3 italic">
+                    <p className="text-sm md:text-base font-semibold text-amber-900/80 dark:text-amber-400 mb-3 italic">
                       {heroArticle.subtitle}
                     </p>
                   )}
@@ -226,8 +225,8 @@ export default async function HomePage() {
           
           {/* Main Content Area (8 Cols) */}
           <div className="lg:col-span-8 space-y-8">
-            <div className="flex items-center justify-between border-b-2 border-primary pb-2">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-primary flex items-center gap-2">
+            <div className="flex items-center justify-between border-b-2 border-black pb-2">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-on-surface flex items-center gap-2">
                 <Newspaper className="size-4 text-amber-600" />
                 <span>Berita Terkini & Populer</span>
               </h2>
@@ -239,7 +238,7 @@ export default async function HomePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {secondaryArticles.map((article: any, index: number) => (
                 <AnimateOnScroll key={article.id} animation="fade-up" delay={(index * 100) as 0 | 100 | 200}>
-                  <article className="flex flex-col border border-outline-variant bg-surface-container-lowest p-4 hover:border-primary/50 transition-all group h-full justify-between">
+                  <article className="flex flex-col border border-outline-variant bg-surface-container-lowest p-4 hover:border-amber-600/50 transition-all group h-full justify-between">
                     <div>
                       <div className="relative aspect-[16/9] w-full overflow-hidden border border-outline-variant mb-3">
                         <Link href={`/${getCategorySlug(article)}/${article.slug}`}>
@@ -283,10 +282,10 @@ export default async function HomePage() {
             )}
           </div>
 
-          {/* Sidebar Area (4 Cols) - Trending & Editorial Pick */}
+          {/* Sidebar Area (4 Cols) - Trending & Multimedia */}
           <aside className="lg:col-span-4 space-y-8">
             
-            {/* Trending Box with Contrast Header */}
+            {/* Trending Box */}
             <div className="border border-outline-variant bg-surface-container-low p-5">
               <div className="flex items-center gap-2 pb-3 border-b-2 border-amber-600 mb-4">
                 <TrendUp className="size-5 text-amber-600" weight="bold" />
@@ -298,7 +297,7 @@ export default async function HomePage() {
               <div className="space-y-4">
                 {trending.map((item: any, idx: number) => (
                   <div key={item.id} className="flex items-start gap-3 pb-3 border-b border-outline-variant/60 last:border-0 last:pb-0 group">
-                    <span className="text-2xl font-black text-amber-600/80 w-6 shrink-0 leading-none">
+                    <span className="text-2xl font-black text-amber-600 w-6 shrink-0 leading-none">
                       0{idx + 1}
                     </span>
                     <div className="flex-1 min-w-0">
@@ -323,7 +322,7 @@ export default async function HomePage() {
             <div className="bg-[#18181B] text-white p-6 border border-zinc-800 space-y-4 shadow-md">
               <div className="flex items-center justify-between border-b border-zinc-700 pb-3">
                 <div className="flex items-center gap-2">
-                  <Play className="size-4 text-red-500 fill-current" />
+                  <Play className="size-4 text-amber-500 fill-current" />
                   <h3 className="text-xs font-bold uppercase tracking-wider text-white">
                     Metrik Video HD
                   </h3>
@@ -341,7 +340,7 @@ export default async function HomePage() {
                   className="object-cover opacity-80 group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                  <div className="p-3 bg-red-600 text-white rounded-none shadow-lg group-hover:bg-red-700 transition-colors">
+                  <div className="p-3 bg-amber-600 text-white rounded-none shadow-lg group-hover:bg-amber-700 transition-colors">
                     <Play className="size-6 fill-current" />
                   </div>
                 </div>
@@ -360,7 +359,7 @@ export default async function HomePage() {
       </section>
 
       {/* ============================================================ */}
-      {/* 3. DARK EDITORIAL SPOTLIGHT BANNER                             */}
+      {/* 3. DARK EDITORIAL SPOTLIGHT BANNER (Black & Gold)              */}
       {/* ============================================================ */}
       <section className="bg-[#141414] text-white py-14 border-y border-zinc-800">
         <div className="max-w-[1280px] mx-auto px-4 md:px-8">

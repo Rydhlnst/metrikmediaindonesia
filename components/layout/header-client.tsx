@@ -110,7 +110,7 @@ export function HeaderClient() {
           <div className="hidden md:flex items-center gap-3 shrink-0">
             <Link
               href="/saved"
-              className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold uppercase tracking-wider text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-none"
+              className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold uppercase tracking-wider text-on-surface-variant hover:text-amber-700 hover:bg-surface-container-low transition-colors rounded-none"
             >
               <BookmarkSimple className="size-4" />
               <span>Disimpan</span>
@@ -154,14 +154,14 @@ export function HeaderClient() {
                   className={cn(
                     "px-3 py-2.5 whitespace-nowrap transition-all duration-150 border-b-2 flex items-center gap-1.5 rounded-none",
                     isActive
-                      ? "text-secondary font-bold border-secondary bg-secondary/5"
-                      : "text-on-surface-variant border-transparent hover:text-secondary hover:border-secondary/40",
+                      ? "text-amber-700 font-bold border-amber-600 bg-amber-600/5"
+                      : "text-on-surface-variant border-transparent hover:text-amber-700 hover:border-amber-600/40",
                     item.highlight && "text-amber-600 font-extrabold hover:text-amber-700"
                   )}
                 >
                   {item.label}
                   {item.badge && (
-                    <span className="px-1.5 py-0.5 text-[9px] font-black uppercase rounded-none bg-red-600 text-white animate-pulse">
+                    <span className="px-1.5 py-0.5 text-[9px] font-black uppercase rounded-none bg-amber-600 text-white animate-pulse">
                       {item.badge}
                     </span>
                   )}
@@ -260,7 +260,7 @@ function PremiumMobileSheet({ onClose }: { onClose: () => void }) {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 text-xs font-bold uppercase tracking-wider transition-colors rounded-none",
                   isActive
-                    ? "bg-secondary/10 text-secondary border-l-2 border-secondary"
+                    ? "bg-amber-600/10 text-amber-700 border-l-2 border-amber-600"
                     : "text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface"
                 )}
               >
@@ -292,14 +292,14 @@ function PremiumMobileSheet({ onClose }: { onClose: () => void }) {
                 className={cn(
                   "flex items-center justify-between px-3 py-2 text-xs font-bold uppercase tracking-wider transition-colors rounded-none",
                   isActive
-                    ? "text-secondary font-extrabold bg-secondary/5"
+                    ? "text-amber-700 font-extrabold bg-amber-600/5"
                     : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low",
                   item.highlight && "text-amber-600"
                 )}
               >
                 <span>{item.label}</span>
                 {item.badge && (
-                  <span className="px-1.5 py-0.5 text-[9px] bg-red-600 text-white rounded-none font-bold">
+                  <span className="px-1.5 py-0.5 text-[9px] bg-amber-600 text-white rounded-none font-bold">
                     {item.badge}
                   </span>
                 )}
