@@ -1,8 +1,8 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export function getInitials(name: string): string {
@@ -12,7 +12,7 @@ export function getInitials(name: string): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-const PLACEHOLDER = "/placeholder.png";
+const PLACEHOLDER = "https://picsum.photos/seed/metrik/800/450";
 
 export type ImageSize = "thumbnail" | "card" | "hero" | "og" | "original";
 
@@ -20,13 +20,14 @@ export function getImageUrl(image: any, size: ImageSize = "original"): string {
   if (!image) return PLACEHOLDER;
 
   if (typeof image === "string") {
-    return image || PLACEHOLDER;
+    return image.trim() || PLACEHOLDER;
   }
 
-  if (size !== "original" && image.sizes?.[size]?.url) {
-    return image.sizes[size].url;
+  if (typeof image === "object") {
+    if (image.thumbnail && typeof image.thumbnail === "string") return image.thumbnail;
+    if (image.featuredImage && typeof image.featuredImage === "string") return image.featuredImage;
+    if (image.url && typeof image.url === "string") return image.url;
   }
 
-  const url: string | undefined = image.url;
-  return url || PLACEHOLDER;
+  return PLACEHOLDER;
 }
