@@ -27,7 +27,7 @@ export function NewsletterSignup() {
   };
 
   return (
-    <div className="rounded-xl bg-surface-container-low border border-outline-variant p-5">
+    <div className="rounded-none bg-surface-container-low border border-outline-variant p-5">
       <div className="mb-3 flex items-center gap-2">
         <EnvelopeSimple className="size-5 text-secondary" weight="bold" />
         <SectionHeading size="sm" as="h3">Newsletter</SectionHeading>
@@ -36,7 +36,7 @@ export function NewsletterSignup() {
         Dapatkan berita terkini langsung ke email Anda. Gratis dan tanpa spam.
       </p>
       {submitted ? (
-        <div className="flex items-center gap-2 rounded-xl bg-secondary-container py-3 text-center text-sm font-medium text-on-secondary-container">
+        <div className="flex items-center justify-center gap-2 rounded-none bg-secondary-container py-3 text-center text-xs font-bold uppercase tracking-wider text-on-secondary-container">
           <CheckCircle className="size-4" />
           Terima kasih telah berlangganan!
         </div>
@@ -48,9 +48,9 @@ export function NewsletterSignup() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="flex-1 rounded-xl border border-outline-variant bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-on-surface-variant outline-none focus:border-primary"
+            className="flex-1 rounded-none border border-outline-variant bg-background px-4 py-2.5 text-xs font-medium text-foreground placeholder:text-on-surface-variant outline-none focus:border-primary"
           />
-          <button type="submit" className="shrink-0 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-secondary hover:text-on-secondary">
+          <button type="submit" className="shrink-0 rounded-none bg-primary px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-on-primary transition-all hover:bg-primary/90">
             <PaperPlaneRight className="size-4" weight="fill" />
           </button>
         </form>
