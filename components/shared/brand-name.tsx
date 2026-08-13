@@ -8,14 +8,14 @@ interface BrandNameProps {
 }
 
 const sizeClasses = {
-  sm: "font-headline-lg text-base sm:text-headline-lg-mobile tracking-tight",
-  md: "font-headline-lg text-headline-lg tracking-tight",
-  lg: "font-headline-xl text-headline-xl tracking-tight",
-  xl: "font-display-lg text-display-lg tracking-tight",
+  sm: "font-serif text-xs sm:text-sm font-bold tracking-wider whitespace-nowrap",
+  md: "font-serif text-sm sm:text-base md:text-xl font-bold tracking-wider whitespace-nowrap",
+  lg: "font-serif text-base sm:text-xl md:text-2xl font-bold tracking-wider whitespace-nowrap",
+  xl: "font-serif text-xl sm:text-2xl md:text-4xl font-bold tracking-wider whitespace-nowrap",
 };
 
 const colorClasses = {
-  primary: "text-primary",
+  primary: "text-on-surface",
   white: "text-white",
 };
 

@@ -45,14 +45,12 @@ export function HeaderClient() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
-  const { user, signOut } = useSession();
+  const { user } = useSession();
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(`/pencarian?q=${encodeURIComponent(searchQuery.trim())}`);
-      setMobileSearchOpen(false);
     }
   };
 
@@ -61,15 +59,15 @@ export function HeaderClient() {
       
       {/* TINGKAT 1: Top Bar Header Utama */}
       <div className="border-b border-outline-variant/70 bg-background">
-        <div className="max-w-[1280px] mx-auto px-4 md:px-8 py-3 flex items-center justify-between gap-4">
+        <div className="max-w-[1280px] mx-auto px-4 md:px-8 py-2.5 flex items-center justify-between gap-3">
           
-          {/* Left: Mobile Sheet Trigger + Logo */}
-          <div className="flex items-center gap-3">
+          {/* Left: Mobile Sheet Trigger + Logo (Clean Mobile Layout) */}
+          <div className="flex items-center gap-2.5 min-w-0">
             <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
               <SheetTrigger asChild>
                 <button
                   aria-label="Buka Menu Navigation"
-                  className="lg:hidden p-2 rounded-none text-on-surface hover:bg-surface-container-low transition-colors"
+                  className="p-1.5 rounded-none text-on-surface hover:bg-surface-container-low transition-colors shrink-0"
                 >
                   <List className="size-6 text-on-surface" weight="bold" />
                 </button>
@@ -80,8 +78,8 @@ export function HeaderClient() {
               </SheetContent>
             </Sheet>
 
-            <Link href="/" className="flex items-center shrink-0">
-              <BrandName size="md" className="uppercase" />
+            <Link href="/" className="flex items-center shrink-0 min-w-0">
+              <BrandName size="sm" className="uppercase truncate max-w-[200px] sm:max-w-none text-xs sm:text-sm md:text-xl" />
             </Link>
           </div>
 
@@ -108,20 +106,11 @@ export function HeaderClient() {
             </div>
           </form>
 
-          {/* Right: Actions */}
-          <div className="flex items-center gap-2 shrink-0">
-            {/* Mobile Search Toggle */}
-            <button
-              onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-              className="lg:hidden p-2 text-on-surface hover:bg-surface-container-low rounded-none transition-colors"
-              aria-label="Cari Berita"
-            >
-              <MagnifyingGlass className="size-5 text-on-surface" />
-            </button>
-
+          {/* Right: Actions (Hidden on Mobile, Displayed on Desktop) */}
+          <div className="hidden md:flex items-center gap-3 shrink-0">
             <Link
               href="/saved"
-              className="hidden md:flex items-center gap-1.5 px-3 py-2 text-xs font-bold uppercase tracking-wider text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-none"
+              className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold uppercase tracking-wider text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-none"
             >
               <BookmarkSimple className="size-4" />
               <span>Disimpan</span>
@@ -133,7 +122,7 @@ export function HeaderClient() {
                 className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-none hover:bg-primary/90 transition-all active:scale-[0.99] shadow-2xs"
               >
                 <User className="size-4 text-white" />
-                <span className="hidden sm:inline text-white">Dashboard</span>
+                <span className="text-white">Dashboard</span>
               </Link>
             ) : (
               <Link
@@ -146,28 +135,6 @@ export function HeaderClient() {
             )}
           </div>
         </div>
-
-        {/* Mobile Search Form (Expandable) */}
-        {mobileSearchOpen && (
-          <div className="lg:hidden px-4 py-3 bg-surface-container-lowest border-t border-outline-variant">
-            <form onSubmit={handleSearchSubmit} className="flex gap-2">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Cari berita, topik, tokoh..."
-                className="flex-1 px-3 py-2 text-xs border border-outline-variant bg-background text-on-surface rounded-none outline-none focus:border-primary"
-                autoFocus
-              />
-              <button
-                type="submit"
-                className="px-4 py-2 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-none shrink-0 cursor-pointer shadow-2xs"
-              >
-                Cari
-              </button>
-            </form>
-          </div>
-        )}
       </div>
 
       {/* TINGKAT 2: Bar Navigasi Kategori */}
