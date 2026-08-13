@@ -15,7 +15,6 @@ import {
   BookmarkSimple,
   Sparkle,
   SignOut,
-  Sliders,
 } from "@phosphor-icons/react/dist/ssr";
 import { BrandName } from "@/components/shared/brand-name";
 import { Divider } from "@/components/shared/divider";
@@ -60,13 +59,11 @@ export function HeaderClient() {
   return (
     <header className="w-full bg-background border-b border-outline-variant sticky top-0 z-50 shadow-2xs">
       
-      {/* ============================================================ */}
-      {/* TINGKAT 1: Top Bar (Header Utama)                            */}
-      {/* ============================================================ */}
+      {/* TINGKAT 1: Top Bar Header Utama */}
       <div className="border-b border-outline-variant/70 bg-background">
         <div className="max-w-[1280px] mx-auto px-4 md:px-8 py-3 flex items-center justify-between gap-4">
           
-          {/* Left: Mobile Sheet Menu Trigger + Brand Logo */}
+          {/* Left: Mobile Sheet Trigger + Logo */}
           <div className="flex items-center gap-3">
             <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
               <SheetTrigger asChild>
@@ -74,7 +71,7 @@ export function HeaderClient() {
                   aria-label="Buka Menu Navigation"
                   className="lg:hidden p-2 rounded-none text-on-surface hover:bg-surface-container-low transition-colors"
                 >
-                  <List className="size-6" weight="bold" />
+                  <List className="size-6 text-on-surface" weight="bold" />
                 </button>
               </SheetTrigger>
               <SheetContent side="left" className="w-full sm:w-[320px] p-0 border-r border-outline-variant bg-background" showCloseButton={false}>
@@ -99,19 +96,19 @@ export function HeaderClient() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Cari berita, topik, atau daerah..."
-                className="w-full pl-9 pr-20 py-2 text-xs font-medium rounded-none border border-outline-variant bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary transition-all"
+                className="w-full pl-9 pr-22 py-2 text-xs font-medium rounded-none border border-outline-variant bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary transition-all"
               />
               <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-on-surface-variant" />
               <button
                 type="submit"
-                className="absolute right-0 top-0 bottom-0 px-4 bg-primary text-on-primary text-xs font-bold uppercase tracking-wider rounded-none hover:bg-primary/90 transition-all cursor-pointer"
+                className="absolute right-0 top-0 bottom-0 px-4 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-none hover:bg-primary/90 transition-all cursor-pointer shadow-2xs"
               >
                 Cari
               </button>
             </div>
           </form>
 
-          {/* Right: Actions (Desktop CTA & Mobile Search Trigger) */}
+          {/* Right: Actions */}
           <div className="flex items-center gap-2 shrink-0">
             {/* Mobile Search Toggle */}
             <button
@@ -119,7 +116,7 @@ export function HeaderClient() {
               className="lg:hidden p-2 text-on-surface hover:bg-surface-container-low rounded-none transition-colors"
               aria-label="Cari Berita"
             >
-              <MagnifyingGlass className="size-5" />
+              <MagnifyingGlass className="size-5 text-on-surface" />
             </button>
 
             <Link
@@ -133,24 +130,24 @@ export function HeaderClient() {
             {user ? (
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-on-primary text-xs font-bold uppercase tracking-wider rounded-none hover:bg-primary/90 transition-all active:scale-[0.99]"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-none hover:bg-primary/90 transition-all active:scale-[0.99] shadow-2xs"
               >
-                <User className="size-4" />
-                <span className="hidden sm:inline">Dashboard</span>
+                <User className="size-4 text-white" />
+                <span className="hidden sm:inline text-white">Dashboard</span>
               </Link>
             ) : (
               <Link
                 href="/login"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-on-primary text-xs font-bold uppercase tracking-wider rounded-none hover:bg-primary/90 transition-all active:scale-[0.99]"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-none hover:bg-primary/90 transition-all active:scale-[0.99] shadow-2xs"
               >
-                <User className="size-4" />
-                <span>Masuk</span>
+                <User className="size-4 text-white" />
+                <span className="text-white">Masuk</span>
               </Link>
             )}
           </div>
         </div>
 
-        {/* Mobile Search Expandable Form */}
+        {/* Mobile Search Form (Expandable) */}
         {mobileSearchOpen && (
           <div className="lg:hidden px-4 py-3 bg-surface-container-lowest border-t border-outline-variant">
             <form onSubmit={handleSearchSubmit} className="flex gap-2">
@@ -164,7 +161,7 @@ export function HeaderClient() {
               />
               <button
                 type="submit"
-                className="px-4 py-2 bg-primary text-on-primary text-xs font-bold uppercase tracking-wider rounded-none shrink-0"
+                className="px-4 py-2 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-none shrink-0 cursor-pointer shadow-2xs"
               >
                 Cari
               </button>
@@ -173,9 +170,7 @@ export function HeaderClient() {
         )}
       </div>
 
-      {/* ============================================================ */}
-      {/* TINGKAT 2: Bar Navigasi Kategori (Desktop & Mobile Scroll)   */}
-      {/* ============================================================ */}
+      {/* TINGKAT 2: Bar Navigasi Kategori */}
       <div className="bg-background">
         <div className="max-w-[1280px] mx-auto px-4 md:px-8 flex items-center overflow-x-auto scrollbar-hide">
           <nav className="flex items-center gap-1 py-1 text-xs font-bold uppercase tracking-wider">
@@ -253,7 +248,7 @@ function PremiumMobileSheet({ onClose }: { onClose: () => void }) {
                     <Image src={user.avatar} alt={user.name} fill className="object-cover" />
                   </div>
                 ) : (
-                  <div className="flex size-10 items-center justify-center bg-primary text-on-primary text-sm font-bold rounded-none uppercase">
+                  <div className="flex size-10 items-center justify-center bg-primary text-white text-sm font-bold rounded-none uppercase">
                     {user.name?.charAt(0) || "U"}
                   </div>
                 )}
@@ -265,7 +260,7 @@ function PremiumMobileSheet({ onClose }: { onClose: () => void }) {
               <Link
                 href="/dashboard"
                 onClick={onClose}
-                className="w-full text-center py-2 bg-primary text-on-primary text-xs font-bold uppercase tracking-wider rounded-none block hover:bg-primary/90 transition-all"
+                className="w-full text-center py-2 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-none block hover:bg-primary/90 transition-all shadow-2xs"
               >
                 Ke CMS Dashboard
               </Link>
@@ -274,10 +269,10 @@ function PremiumMobileSheet({ onClose }: { onClose: () => void }) {
             <Link
               href="/login"
               onClick={onClose}
-              className="flex items-center justify-center gap-2 w-full py-3 bg-primary text-on-primary text-xs font-bold uppercase tracking-wider rounded-none hover:bg-primary/90 transition-all"
+              className="flex items-center justify-center gap-2 w-full py-3 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-none hover:bg-primary/90 transition-all shadow-2xs"
             >
-              <User className="size-4" />
-              <span>Masuk / Daftar Akun</span>
+              <User className="size-4 text-white" />
+              <span className="text-white">Masuk / Daftar Akun</span>
             </Link>
           )}
         </div>
