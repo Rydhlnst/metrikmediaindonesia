@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { SITE_CONFIG, NAVIGATION } from "@/lib/constants";
+import { SITE_CONFIG } from "@/lib/constants";
 import { useSession } from "@/lib/use-session";
 import Image from "next/image";
 import {
@@ -15,269 +15,241 @@ import {
   House,
   BookmarkSimple,
   Sparkle,
+  Building,
+  Video,
+  Camera,
+  Flame,
 } from "@phosphor-icons/react/dist/ssr";
 import { BrandName } from "@/components/shared/brand-name";
-import { Divider } from "@/components/shared/divider";
-import { SubNav } from "@/components/layout/sub-nav";
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
   SheetTitle,
 } from "@/components/ui/sheet";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+
+const TIER_2_NAV = [
+  { label: "Beranda", href: "/" },
+  { label: "Nasional", href: "/category/nasional" },
+  { label: "Politik", href: "/category/politik" },
+  { label: "Bisnis", href: "/category/bisnis" },
+  { label: "Teknologi", href: "/category/teknologi" },
+  { label: "Lifestyle", href: "/category/lifestyle" },
+  { label: "Entertainment", href: "/category/entertainment" },
+  { label: "Sports", href: "/category/sports" },
+  { label: "Daerah", href: "/category/daerah" },
+  { label: "Video", href: "/video", badge: "HD" },
+  { label: "Foto", href: "/foto" },
+  { label: "Publish Business", href: "/business-publication", highlight: true },
+];
 
 export function HeaderClient() {
   const pathname = usePathname();
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
   const [sheetOpen, setSheetOpen] = useState(false);
   const { user, isLoading, signOut } = useSession();
 
-  return (
-    <>
-      {/* Sticky Header */}
-      <div className="sticky top-0 z-50">
-        {/* Top Header Bar */}
-        <header className="bg-background w-full border-b border-outline-variant">
-          <div className="max-w-[1280px] mx-auto px-4 md:px-16 py-4 flex justify-between items-center">
-            {/* Left: hamburger + brand (desktop) */}
-            <div className="flex items-center gap-6">
-              <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-                <SheetTrigger asChild>
-                  <button aria-label="Open menu" className="md:hidden text-primary">
-                    <List className="size-7" weight="bold" />
-                  </button>
-                </SheetTrigger>
-                <SheetContent side="left" className="w-full p-0 sm:w-[260px]" showCloseButton={false}>
-                  <SheetTitle className="sr-only">Navigation</SheetTitle>
-                  <MobileSidebar onClose={() => setSheetOpen(false)} />
-                </SheetContent>
-              </Sheet>
-              <Link href="/" className="hidden md:block">
-                <BrandName size="md" className="uppercase" />
-              </Link>
-            </div>
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/pencarian?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
-            {/* Center: brand (mobile) */}
+  return (
+    <header className="w-full bg-background border-b border-outline-variant sticky top-0 z-50 shadow-xs">
+      
+      {/* ============================================================ */}
+      /* TINGKAT 1: Top Bar (Logo + Search Input + Actions)            */
+      {/* ============================================================ */}
+      <div className="border-b border-outline-variant/60 bg-background/95 backdrop-blur-md">
+        <div className="max-w-[1280px] mx-auto px-4 md:px-8 py-3 flex items-center justify-between gap-4">
+          
+          {/* Left: Mobile Menu Trigger & Logo */}
+          <div className="flex items-center gap-3">
+            <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+              <SheetTrigger asChild>
+                <button
+                  aria-label="Buka Menu Navigation"
+                  className="lg:hidden p-2 rounded-lg text-on-surface hover:bg-surface-container-low transition-colors"
+                >
+                  <List className="size-6" weight="bold" />
+                </button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-full p-0 sm:w-[280px]" showCloseButton={false}>
+                <SheetTitle className="sr-only">Navigasi Utama</SheetTitle>
+                <MobileSidebar onClose={() => setSheetOpen(false)} />
+              </SheetContent>
+            </Sheet>
+
+            <Link href="/" className="flex items-center gap-2 shrink-0">
+              <BrandName size="md" className="uppercase" />
+            </Link>
+          </div>
+
+          {/* Center: Search Bar Interaktif */}
+          <form
+            onSubmit={handleSearchSubmit}
+            className="hidden sm:flex flex-1 max-w-lg items-center relative mx-4"
+          >
+            <div className="relative w-full">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Cari berita, topik, tokoh, atau wilayah..."
+                className="w-full pl-10 pr-20 py-2 text-sm rounded-full border border-outline-variant bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all shadow-xs"
+              />
+              <MagnifyingGlass className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-on-surface-variant" />
+              <button
+                type="submit"
+                className="absolute right-1 top-1/2 -translate-y-1/2 px-3 py-1 bg-secondary text-on-secondary text-xs font-semibold rounded-full hover:bg-secondary/90 transition-colors"
+              >
+                Cari
+              </button>
+            </div>
+          </form>
+
+          {/* Right: Quick Actions & User Profile */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <Link
-              href="/"
-              className="md:hidden text-center flex-1"
+              href="/pencarian"
+              className="sm:hidden p-2 text-on-surface hover:bg-surface-container rounded-full transition-colors"
+              aria-label="Cari Berita"
             >
-              <BrandName size="sm" className="uppercase" />
+              <MagnifyingGlass className="size-5" />
             </Link>
 
-            {/* Center: nav links (desktop) */}
-            <nav className="hidden md:flex gap-8 items-center">
-              {NAVIGATION.main.map((item) => (
+            <Link
+              href="/saved"
+              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-on-surface-variant hover:text-secondary hover:bg-surface-container-low rounded-lg transition-colors"
+            >
+              <BookmarkSimple className="size-4" />
+              <span>Disimpan</span>
+            </Link>
+
+            {user ? (
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-2 px-3 py-1.5 bg-secondary/10 text-secondary hover:bg-secondary/20 rounded-lg text-xs font-bold transition-colors"
+              >
+                <User className="size-4" />
+                <span className="hidden sm:inline">Dashboard</span>
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 bg-primary text-on-primary hover:bg-primary/90 text-xs font-semibold rounded-lg shadow-xs transition-colors"
+              >
+                <User className="size-4" />
+                <span>Masuk</span>
+              </Link>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ============================================================ */}
+      /* TINGKAT 2: Category Navigation Bar (Single Clean Bar)         */
+      {/* ============================================================ */}
+      <div className="bg-background">
+        <div className="max-w-[1280px] mx-auto px-4 md:px-8 flex items-center overflow-x-auto scrollbar-hide">
+          <nav className="flex items-center gap-1 py-1 text-xs font-bold uppercase tracking-wider">
+            {TIER_2_NAV.map((item) => {
+              const isActive =
+                item.href === "/"
+                  ? pathname === "/"
+                  : pathname === item.href || pathname.startsWith(item.href + "/");
+
+              return (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "font-label-md text-label-md uppercase tracking-wider transition-all duration-200 scale-95",
-                    pathname === item.href
-                      ? "text-secondary font-bold border-b-2 border-secondary pb-1"
-                      : "text-on-surface hover:text-secondary"
+                    "px-3 py-2.5 whitespace-nowrap transition-all duration-150 border-b-2 flex items-center gap-1",
+                    isActive
+                      ? "text-secondary font-bold border-secondary bg-secondary/5"
+                      : "text-on-surface-variant border-transparent hover:text-secondary hover:border-secondary/40",
+                    item.highlight && "text-amber-600 font-extrabold hover:text-amber-700"
                   )}
                 >
                   {item.label}
+                  {item.badge && (
+                    <span className="px-1.5 py-0.5 text-[9px] font-black uppercase rounded bg-red-600 text-white animate-pulse">
+                      {item.badge}
+                    </span>
+                  )}
                 </Link>
-              ))}
-            </nav>
-
-            {/* Right: search */}
-            <div className="flex items-center gap-4">
-              <Link href="/pencarian" className="text-primary hidden md:block">
-                <MagnifyingGlass className="size-5" />
-              </Link>
-            </div>
-          </div>
-        </header>
+              );
+            })}
+          </nav>
+        </div>
       </div>
 
-      {/* Sub-Navigation Bar (below navbar, above ticker) */}
-      <SubNav pathname={pathname} />
-      <nav className="fixed bottom-0 left-0 right-0 z-40 flex h-14 items-center justify-around border-t border-outline-variant bg-background md:hidden">
-        <Link
-          href="/"
-          className={cn(
-            "flex size-12 items-center justify-center transition-colors",
-            pathname === "/" ? "text-secondary" : "text-on-surface-variant"
-          )}
-        >
-          <House className="size-6" weight={pathname === "/" ? "fill" : "regular"} />
-        </Link>
-        <Link
-          href="/pencarian"
-          className={cn(
-            "flex size-12 items-center justify-center transition-colors",
-            pathname === "/pencarian" ? "text-secondary" : "text-on-surface-variant"
-          )}
-        >
-          <MagnifyingGlass className="size-6" />
-        </Link>
-        <Link
-          href="/saved"
-          className={cn(
-            "flex size-12 items-center justify-center transition-colors",
-            pathname === "/saved" ? "text-secondary" : "text-on-surface-variant"
-          )}
-        >
-          <BookmarkSimple
-            className="size-6"
-            weight={pathname === "/saved" ? "fill" : "regular"}
-          />
-        </Link>
-        <Link
-          href="/profile"
-          className={cn(
-            "flex size-12 items-center justify-center transition-colors",
-            pathname === "/profile" ? "text-secondary" : "text-on-surface-variant"
-          )}
-        >
-          <User
-            className="size-6"
-            weight={pathname === "/profile" ? "fill" : "regular"}
-          />
-        </Link>
-      </nav>
-    </>
+    </header>
   );
 }
 
 function MobileSidebar({ onClose }: { onClose: () => void }) {
   const pathname = usePathname();
-  const { user, isLoading, signOut } = useSession();
-
-  const navItems = [
-    { label: "Home", href: "/", icon: House },
-    { label: "For You", href: "/pencarian", icon: Sparkle },
-    { label: "Following", href: "/saved", icon: BookmarkSimple },
-  ];
-
-  const categories = [
-    { label: "Bisnis", href: "/bisnis" },
-    { label: "Olahraga", href: "/olahraga" },
-    { label: "Pendidikan", href: "/pendidikan" },
-    { label: "Sosial & Budaya", href: "/sosial-dan-budaya" },
-    { label: "Teknologi", href: "/teknologi" },
-  ];
+  const { user, signOut } = useSession();
 
   return (
     <div className="flex h-full flex-col bg-background">
-      <div className="flex h-[62px] items-center justify-between border-b border-outline-variant px-5">
-        <Link href="/" className="flex items-center gap-2" onClick={onClose}>
-          <BrandName size="sm" />
-        </Link>
+      <div className="flex h-[60px] items-center justify-between border-b border-outline-variant px-4">
+        <BrandName size="sm" />
         <button
           onClick={onClose}
-          className="flex size-8 items-center justify-center text-on-surface-variant hover:bg-surface-container"
+          className="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg"
         >
           <X className="size-5" />
         </button>
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-5 py-4">
-        <div className="mb-6">
-          {isLoading ? (
-            <div className="flex items-center gap-3">
-              <div className="size-12 shrink-0 animate-pulse rounded-full bg-surface-container" />
-              <div className="flex flex-1 flex-col gap-1.5">
-                <div className="h-4 w-24 animate-pulse rounded bg-surface-container" />
-                <div className="h-3 w-32 animate-pulse rounded bg-surface-container-low" />
-              </div>
-            </div>
-          ) : user ? (
-            <Link href="/profile" onClick={onClose} className="flex items-center gap-3">
-              {user.avatar ? (
-                <div className="relative size-12 shrink-0 overflow-hidden rounded-full bg-surface-container">
-                  <Image src={user.avatar} alt={user.name} fill className="object-cover" />
-                </div>
-              ) : (
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-secondary-container text-base font-bold text-on-secondary-container">
-                  {user.name?.charAt(0)?.toUpperCase() || "?"}
-                </div>
-              )}
-              <div className="flex flex-1 flex-col min-w-0">
-                <span className="text-sm font-semibold truncate">{user.name}</span>
-                <span className="text-xs text-on-surface-variant truncate">{user.email}</span>
-              </div>
-            </Link>
-          ) : (
-            <Link href="/login" onClick={onClose} className="flex items-center gap-3">
-              <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-surface-container text-on-surface-variant">
-                <User className="size-6" />
-              </div>
-              <div className="flex flex-1 flex-col">
-                <span className="text-sm font-medium">Masuk</span>
-                <span className="text-xs text-on-surface-variant">Untuk fitur lengkap</span>
-              </div>
-            </Link>
-          )}
-        </div>
+      <nav className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="space-y-1">
+          {TIER_2_NAV.map((item) => {
+            const isActive =
+              item.href === "/"
+                ? pathname === "/"
+                : pathname === item.href || pathname.startsWith(item.href + "/");
 
-        <div className="space-y-0.5">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={onClose}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-3 text-[15px] font-medium transition-all",
+                  "flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors",
                   isActive
-                    ? "bg-surface-container text-on-surface font-semibold"
+                    ? "bg-secondary/10 text-secondary font-bold"
                     : "text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface"
                 )}
               >
-                <item.icon
-                  className={cn("size-5 shrink-0", isActive ? "text-on-surface" : "text-on-surface-variant")}
-                  weight={isActive ? "fill" : "regular"}
-                />
-                {item.label}
-              </Link>
-            );
-          })}
-        </div>
-
-        <Divider className="my-4" />
-
-        <div className="space-y-0.5">
-          {categories.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={onClose}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-3 text-[15px] font-medium transition-all",
-                  isActive
-                    ? "bg-surface-container text-on-surface font-semibold"
-                    : "text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface"
+                <span>{item.label}</span>
+                {item.badge && (
+                  <span className="px-1.5 py-0.5 text-[10px] bg-red-600 text-white rounded font-bold">
+                    {item.badge}
+                  </span>
                 )}
-              >
-                {item.label}
               </Link>
             );
           })}
         </div>
 
         {user && (
-          <>
-            <Divider className="my-4" />
+          <div className="pt-4 border-t border-outline-variant">
             <button
-              onClick={() => { signOut(); onClose(); }}
-              className="flex w-full items-center gap-3 px-3 py-3 text-[15px] font-medium text-destructive hover:bg-error-container transition-colors"
+              onClick={() => {
+                signOut();
+                onClose();
+              }}
+              className="w-full text-left px-3 py-2.5 text-sm font-bold text-destructive hover:bg-error-container/20 rounded-lg transition-colors"
             >
-              Keluar
+              Keluar dari Akun
             </button>
-          </>
+          </div>
         )}
       </nav>
     </div>

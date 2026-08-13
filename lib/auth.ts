@@ -1,17 +1,13 @@
 import { betterAuth } from "better-auth";
-import { config } from "dotenv";
-import { resolve } from "path";
+import postgres from "postgres";
 
-config({ path: resolve(process.cwd(), ".env.local") });
+const connectionString = process.env.POSTGRES_URL || "postgresql://postgres:postgres@localhost:5432/metrikmedia";
 
 export const auth = betterAuth({
-  database: {
-    provider: "postgresql",
-    url: process.env.POSTGRES_URL!,
-  },
+  database: postgres(connectionString),
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: true,
+    requireEmailVerification: false,
     sendResetPassword: async ({ user, url, token }: { user: any; url: string; token: string }) => {
       console.log(`Password reset for ${user.email}: ${url}`);
     },
