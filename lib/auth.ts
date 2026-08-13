@@ -1,10 +1,17 @@
 import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
+import * as schema from "@/db/schema/index";
 
 const connectionString = process.env.POSTGRES_URL || "postgresql://postgres:postgres@localhost:5432/metrikmedia";
+const client = postgres(connectionString);
+const db = drizzle(client, { schema });
 
 export const auth = betterAuth({
-  database: postgres(connectionString),
+  database: drizzleAdapter(db, {
+    provider: "pg",
+  }),
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false,

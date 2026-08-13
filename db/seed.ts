@@ -7,9 +7,7 @@ import { eq } from "drizzle-orm";
 
 config({ path: resolve(process.cwd(), ".env.local") });
 
-const connectionString = process.env.POSTGRES_URL;
-if (!connectionString) throw new Error("POSTGRES_URL is not set");
-
+const connectionString = process.env.POSTGRES_URL || "postgresql://postgres:postgres@localhost:5432/metrikmedia";
 const client = postgres(connectionString);
 const db = drizzle(client, { schema });
 
@@ -18,7 +16,7 @@ function htmlContent(paragraphs: string[]): string {
 }
 
 async function seed() {
-  console.log("🚀 Seeding database Metrik Media Indonesia...");
+  console.log("🚀 Seeding database Metrik Media Indonesia dengan konten lengkap...");
 
   // 1. Roles (PRD Section 4)
   await db.insert(schema.roles).values([
@@ -31,7 +29,6 @@ async function seed() {
     { name: "seo_manager", description: "Manage metadata, redirects, & sitemap configuration" },
     { name: "advertisement_manager", description: "Manage ad campaigns & business publications" },
   ]).onConflictDoNothing();
-  console.log("✓ Roles (8 User Roles PRD)");
 
   // 2. Categories (PRD Section 6 & 12)
   await db.insert(schema.categories).values([
@@ -44,7 +41,6 @@ async function seed() {
     { name: "Sports", slug: "sports", color: "#059669", description: "Berita olahraga nasional dan internasional." },
     { name: "Daerah", slug: "daerah", color: "#D97706", description: "Kabar regional dan dinamika kabupaten/kota." },
   ]).onConflictDoNothing();
-  console.log("✓ Categories (Hierarchical Categories PRD)");
 
   // 3. Topics (PRD Section 13)
   await db.insert(schema.topics).values([
@@ -54,7 +50,6 @@ async function seed() {
     { name: "IHSG & Ekonomi Makro", slug: "ihsg-dan-ekonomi-makro", description: "Analisis bursa efek, suku bunga BI, dan tren investasi nasional." },
     { name: "Kebijakan Daerah 2026", slug: "kebijakan-daerah-2026", description: "Inovasi pelayanan publik di tingkat pemerintah provinsi dan daerah." },
   ]).onConflictDoNothing();
-  console.log("✓ Topics (Topic System PRD)");
 
   // 4. Locations (PRD Section 15)
   await db.insert(schema.locations).values([
@@ -66,7 +61,6 @@ async function seed() {
     { name: "Jawa Tengah", slug: "jawa-tengah", level: "province", description: "Provinsi Jawa Tengah" },
     { name: "Jawa Timur", slug: "jawa-timur", level: "province", description: "Provinsi Jawa Timur" },
   ]).onConflictDoNothing();
-  console.log("✓ Locations (Regional Hierarchy PRD)");
 
   // 5. Entities (PRD Section 14)
   await db.insert(schema.entities).values([
@@ -74,82 +68,111 @@ async function seed() {
     { name: "Kementerian Kominfo", slug: "kementerian-kominfo", type: "organization", bioOrDesc: "Kementerian bidang komunikasi dan informatika." },
     { name: "PT Telkom Indonesia", slug: "pt-telkom-indonesia", type: "organization", bioOrDesc: "BUMN penyelenggara jasa telekomunikasi terbesar." },
     { name: "Stadion Gelora Bung Karno", slug: "gbk-jakarta", type: "place", bioOrDesc: "Kompleks pusat olahraga nasional di Jakarta." },
-    { name: "Menteri Komunikasi dan Informatika", slug: "menteri-kominfo", type: "person", bioOrDesc: "Pejabat pimpinan kementerian komunikasi." },
   ]).onConflictDoNothing();
-  console.log("✓ Entities (Person, Organization, Place PRD)");
 
-  // 6. Sources (PRD Section 26)
-  await db.insert(schema.sources).values([
-    { name: "Rilis Resmi Kementerian Kominfo", type: "government", url: "https://kominfo.go.id" },
-    { name: "Laporan Resmi Badan Pusat Statistik (BPS)", type: "official_organization", url: "https://bps.go.id" },
-    { name: "Wawancara Langsung Redaksi di Lapangan", type: "field_reporting" },
-    { name: "Siaran Pers Perusahaan & Business Publication", type: "press_release" },
-  ]).onConflictDoNothing();
-  console.log("✓ Sources (Attribution Sources PRD)");
-
-  // 7. Tags
-  const tagData = [
-    { name: "Breaking News", slug: "breaking-news" },
-    { name: "Indonesia", slug: "indonesia" },
-    { name: "Digital", slug: "digital" },
-    { name: "Ekonomi", slug: "ekonomi" },
-    { name: "Sepak Bola", slug: "sepak-bola" },
-    { name: "Pendidikan", slug: "pendidikan" },
-    { name: "Budaya", slug: "budaya" },
-    { name: "Startup", slug: "startup" },
-    { name: "Investasi", slug: "investasi" },
-    { name: "Liga 1", slug: "liga-1" },
-  ];
-  await db.insert(schema.tags).values(tagData).onConflictDoNothing();
-
-  // 8. Authors
+  // 6. Authors
   const authorData = [
     { name: "Ahmad Rizky Pratama", slug: "ahmad-rizky-pratama", bio: "Senior journalist dengan pengalaman 10 tahun liputan bisnis nasional.", role: "Chief Editor" },
-    { name: "Siti Nurhaliza", slug: "siti-nurhaliza", bio: "Reporter pendidikan, fokus pada perkembangan kurikulum dan inovasi pembelajaran.", role: "Senior Reporter" },
-    { name: "Budi Santoso", slug: "budi-santoso", bio: "Jurnalis sosial dan budaya yang passionate mengangkat kearifan lokal Indonesia.", role: "Culture Editor" },
-    { name: "Reza Firmansyah", slug: "reza-firmansyah", bio: "Jurnalis olahraga yang meliput berbagai event olahraga internasional.", role: "Sports Reporter" },
+    { name: "Siti Nurhaliza", slug: "siti-nurhaliza", bio: "Reporter pendidikan & isu nasional.", role: "Senior Reporter font-bold" },
+    { name: "Budi Santoso", slug: "budi-santoso", bio: "Jurnalis budaya dan gaya hidup.", role: "Culture Editor" },
+    { name: "Reza Firmansyah", slug: "reza-firmansyah", bio: "Jurnalis olahraga nasional.", role: "Sports Reporter" },
   ];
   await db.insert(schema.authors).values(authorData).onConflictDoNothing();
 
-  // 9. Articles & Relations (PRD Section 7 & 8)
+  // Fetch created categories and authors
   const allAuthors = await db.select().from(schema.authors);
   const allCategories = await db.select().from(schema.categories);
   const authorBySlug = Object.fromEntries(allAuthors.map((a) => [a.slug, a]));
   const catBySlug = Object.fromEntries(allCategories.map((c) => [c.slug, c]));
 
+  // Comprehensive articles across ALL categories
   const articleSeed = [
     {
-      title: "Indonesia Luncurkan Program Transformasi Digital Nasional 2026-2030",
-      slug: "indonesia-luncurkan-program-transformasi-digital-nasional-2026-2030",
-      subtitle: "Peta jalan konektivitas broadband merata di seluruh wilayah Nusantara.",
-      excerpt: "Pemerintah resmi meluncurkan program transformasi digital yang mencakup pembangunan infrastruktur broadband di seluruh Indonesia dengan target kecepatan internet merata.",
-      category: "bisnis", author: "ahmad-rizky-pratama", views: 15420, featured: true, breaking: true,
+      title: "Pemerintah Resmikan Peta Jalan Pertumbuhan Ekonomi 8 Persen 2026-2030",
+      slug: "pemerintah-resmikan-peta-jalan-pertumbuhan-ekonomi-8-persen",
+      subtitle: "Fokus utama pada hilirisasi industri, energi hijau, dan digitalisasi UMKM.",
+      excerpt: "Pemerintah meluncurkan target pertumbuhan ekonomi nasional sebesar 8 persen yang didukung efisiensi birokrasi dan investasi strategis.",
+      category: "nasional", author: "ahmad-rizky-pratama", views: 24500, featured: true, breaking: true,
       content: htmlContent([
-        "Pemerintah Indonesia resmi meluncurkan Program Transformasi Digital Nasional periode 2026-2030 yang menjadi peta jalan menuju Indonesia emas digital.",
-        "Menteri Komunikasi dan Informatika menyatakan bahwa program ini akan menghubungkan lebih dari 17 ribu pulau dengan koneksi internet berkecepatan tinggi.",
-        "Dengan investasi mencapai ratusan triliun rupiah, program ini diharapkan menjadi katalisator pertumbuhan ekonomi digital nasional.",
+        "Pemerintah secara resmi menetapkan Peta Jalan Pertumbuhan Ekonomi Nasional 8 Persen periode 2026-2030.",
+        "Target ini optimis dicapai melalui penguatan hilirisasi komoditas unggulan dan percepatan adopsi kecerdasan buatan di sektor manufaktur.",
       ]),
     },
     {
-      title: "Pasar Saham Indonesia Catat Rekor Tertinggi Sepanjang Sejarah",
+      title: "Dinamika Koalisi Parlemen dan Pembahasan RUU Pemilu 2029 Mulai Bergulir",
+      slug: "dinamika-koalisi-parlemen-dan-pembahasan-ruu-pemilu-2029",
+      subtitle: "Fraksi-fraksi di DPR mulai menyepakati poin krusial ambang batas parlemen.",
+      excerpt: "Pembahasan RUU Pemilu 2029 resmi dimulai di Senayan dengan fokus penyempurnaan sistem pemungutan suara elektronik.",
+      category: "politik", author: "siti-nurhaliza", views: 18900, featured: true, breaking: false,
+      content: htmlContent([
+        "Komisi II DPR RI menggelar rapat dengar pendapat umum bersama para pakar hukum tata negara terkait revisi Undang-Undang Pemilihan Umum.",
+        "Sejumlah pasal krusial yang dibahas mencakup digitalisasi rekapitulasi suara dan keterwakilan perempuan di parlemen.",
+      ]),
+    },
+    {
+      title: "Pasar Saham Indonesia Catat Rekor Tertinggi Sepanjang Sejarah Tembus 8.000",
       slug: "pasar-saham-indonesia-catat-rekor-tertinggi-sepanjang-sejarah",
-      subtitle: "IHSG tembus level 8.000 didukung net buy asing melimpah.",
-      excerpt: "Indeks Harga Saham Gabungan (IHSG) menembus level 8.000 untuk pertama kalinya didorong aliran masuk investasi asing dan optimisme ekonomi domestik.",
-      category: "bisnis", author: "ahmad-rizky-pratama", views: 12300, featured: true, breaking: false,
+      subtitle: "IHSG bergerak menguat didorong aksi beli bersih investor asing.",
+      excerpt: "Indeks Harga Saham Gabungan (IHSG) menembus level psikologis 8.000 didorong optimisme pertumbuhan ekonomi domestik.",
+      category: "bisnis", author: "ahmad-rizky-pratama", views: 31200, featured: true, breaking: true,
       content: htmlContent([
-        "Indeks Harga Saham Gabungan (IHSG) Bursa Efek Indonesia mencatat rekor sejarah baru dengan menembus level psikologis 8.000.",
-        "Penguatan ini didorong oleh masuknya modal asing yang mencapai lebih dari Rp 5 triliun dalam pekan ini.",
+        "Bursa Efek Indonesia mengukir sejarah baru setelah IHSG ditutup menguat signifikan di level 8.025.",
+        "Sektor perbankan dan teknologi menjadi penopang utama penguatan indeks bursa saham hari ini.",
       ]),
     },
     {
-      title: "Timnas Indonesia Tampil Gemilang di Piala Dunia U-20",
-      slug: "timnas-indonesia-tampil-gemilang-di-piala-dunia-u-20",
-      subtitle: "Garuda Muda ukir sejarah baru kancah sepak bola dunia.",
-      excerpt: "Garuda Muda berhasil mengalahkan Brazil 2-1 dalam laga dramatis yang penuh semangat di ajang Piala Dunia U-20.",
-      category: "sports", author: "reza-firmansyah", views: 28500, featured: true, breaking: true,
+      title: "Kedaulatan Data dan Kebijakan Pengembangan Artificial Intelligence Indonesia",
+      slug: "kedaulatan-data-dan-kebijakan-pengembangan-ai-indonesia",
+      subtitle: "Pemerintah merilis standar etika dan keamanan data nasional untuk adopsi AI.",
+      excerpt: "Pedoman nasional penggunaan AI dirilis guna memastikan perlindungan data pribadi konsumen dan etika algoritma.",
+      category: "teknologi", author: "ahmad-rizky-pratama", views: 19800, featured: false, breaking: false,
       content: htmlContent([
-        "Timnas Indonesia U-20 mencatat sejarah baru dengan mengalahkan Brazil 2-1 dalam lanjutan penyisihan grup Piala Dunia U-20.",
-        "Dua gol kemenangan Garuda Muda dicetak pada babak kedua melalui aksi individual memukau.",
+        "Pemerintah Indonesia menerbitkan pedoman etika penggunaan kecerdasan buatan bagi industri dan lembaga pemerintah.",
+        "Kebijakan ini mewajibkan pemrosesan data sensitif dilakukan di pusat data domestik yang terverifikasi.",
+      ]),
+    },
+    {
+      title: "Tren Gaya Hidup Sehat Urban: Kesadaran Nutrisi Organik dan Olahraga Teratur",
+      slug: "tren-gaya-hidup-sehat-urban-kesadaran-nutrisi-organik",
+      subtitle: "Masyarakat perkotaan kian aktif mengadopsi pola makan seimbang.",
+      excerpt: "Kesadaran akan kesehatan mental dan fisik mendorong gaya hidup berbasis pangan lokal organik dan olahraga komunitas.",
+      category: "lifestyle", author: "budi-santoso", views: 14200, featured: false, breaking: false,
+      content: htmlContent([
+        "Gaya hidup sehat menjadi prioritas utama generasi muda perkotaan di Indonesia.",
+        "Permintaan akan produk makanan organik lokal dan fasilitas olahraga komunitas meningkat pesat dalam kurun dua tahun terakhir.",
+      ]),
+    },
+    {
+      title: "Film Karya Sutradara Muda Indonesia Berhasil Tembus Festival Film Cannes",
+      slug: "film-karya-sutradara-muda-indonesia-berhasil-tembus-cannes",
+      subtitle: "Apresiasi tinggi dari kritikus film internasional untuk perfilman tanah air.",
+      excerpt: "Karya sineas muda tanah air berkompetisi di kategori utama Festival Film Internasional Cannes.",
+      category: "entertainment", author: "budi-santoso", views: 22100, featured: false, breaking: false,
+      content: htmlContent([
+        "Dunia perfilman Indonesia kembali bangga setelah karya sutradara berbakat berhasil masuk jajaran kompetisi utama Festival Film Cannes.",
+        "Film berdurasi 120 menit ini mengupas keindahan budaya lokal dengan pendekatan naratif visual modern.",
+      ]),
+    },
+    {
+      title: "Timnas Garuda Muda Tampil Gemilang di Kualifikasi Piala Dunia U-20",
+      slug: "timnas-garuda-muda-tampil-gemilang-di-kualifikasi-piala-dunia-u-20",
+      subtitle: "Kemenangan dramatis 2-1 menegaskan kesiapan tim nasional di kancah dunia.",
+      excerpt: "Garuda Muda mengamankan tiket fase gugur setelah menaklukkan tim kuat dalam laga ketat di Stadion GBK.",
+      category: "sports", author: "reza-firmansyah", views: 34000, featured: true, breaking: true,
+      content: htmlContent([
+        "Tim Nasional Indonesia U-20 sukses melaju ke babak selanjutnya setelah menumbangkan tim lawan 2-1 di hadapan puluhan ribu pendukung.",
+        "Dua gol penentu dicetak melalui eksekusi bola mati memukau pada menit-menit akhir pertandingan.",
+      ]),
+    },
+    {
+      title: "Pemerintah Daerah Jawa Barat Luncurkan Pusat Inovasi Pelayanan Publik Digital",
+      slug: "pemerintah-daerah-jawa-barat-luncurkan-pusat-inovasi-pelayanan-publik",
+      subtitle: "Layanan perizinan dan administrasi warga kini dapat diakses dalam satu aplikasi terpadu.",
+      excerpt: "Inovasi sistem digitalisasi Pemprov Jabar memangkas waktu pengurusan izin usaha menjadi hanya beberapa menit.",
+      category: "daerah", author: "siti-nurhaliza", views: 16700, featured: false, breaking: false,
+      content: htmlContent([
+        "Pemerintah Provinsi Jawa Barat meresmikan Pusat Inovasi Pelayanan Publik Digital di Bandung.",
+        "Integrasi sistem ini memungkinkan warga dan pelaku usaha mengurus administrasi secara transparan dan bebas pungli.",
       ]),
     },
   ];
@@ -157,71 +180,57 @@ async function seed() {
   const now = new Date();
   for (let i = 0; i < articleSeed.length; i++) {
     const a = articleSeed[i];
-    const [existing] = await db.select({ id: schema.articles.id }).from(schema.articles).where(eq(schema.articles.slug, a.slug)).limit(1);
-    if (existing) continue;
-
     const cat = catBySlug[a.category] || allCategories[0];
     const auth = authorBySlug[a.author] || allAuthors[0];
 
-    const [createdArticle] = await db.insert(schema.articles).values({
-      title: a.title,
-      slug: a.slug,
-      subtitle: a.subtitle,
-      excerpt: a.excerpt,
-      content: a.content,
-      thumbnail: `https://picsum.photos/seed/${a.slug}/800/450`,
-      status: "published",
-      publishedAt: new Date(now.getTime() - i * 3600 * 1000),
-      categoryId: cat.id,
-      authorId: auth.id,
-      viewCount: a.views,
-      readingTime: 5,
-      featured: a.featured,
-      breaking: a.breaking,
-      seoTitle: a.title,
-      seoDescription: a.excerpt,
-      canonicalUrl: `https://metrikmediaindonesia.id/news/${a.slug}`,
-    }).returning();
+    const [createdArticle] = await db
+      .insert(schema.articles)
+      .values({
+        title: a.title,
+        slug: a.slug,
+        subtitle: a.subtitle,
+        excerpt: a.excerpt,
+        content: a.content,
+        thumbnail: `https://picsum.photos/seed/${a.slug}/800/450`,
+        status: "published",
+        publishedAt: new Date(now.getTime() - i * 7200 * 1000),
+        categoryId: cat.id,
+        authorId: auth.id,
+        viewCount: a.views,
+        readingTime: 5,
+        featured: a.featured,
+        breaking: a.breaking,
+        seoTitle: a.title,
+        seoDescription: a.excerpt,
+        canonicalUrl: `https://metrikmediaindonesia.id/news/${a.slug}`,
+      })
+      .onConflictDoNothing()
+      .returning();
 
-    // 10. Revisions & Corrections (PRD Section 10 & 11)
-    const [createdRev] = await db.insert(schema.articleRevisions).values({
-      articleId: createdArticle.id,
-      versionNumber: 1,
-      title: a.title,
-      content: a.content,
-      changeSummary: "Draf awal disetujui editorial.",
-    }).returning();
-
-    if (i === 0) {
-      await db.insert(schema.articleCorrections).values({
+    if (createdArticle) {
+      await db.insert(schema.articleRevisions).values({
         articleId: createdArticle.id,
-        revisionId: createdRev.id,
-        noticeText: "Koreksi: Artikel diperbarui untuk melengkapi rincian proyek broadband pemerintah.",
+        versionNumber: 1,
+        title: a.title,
+        content: a.content,
+        changeSummary: "Versi pertama terbit.",
       });
     }
   }
-  console.log("✓ Articles, Revisions, & Corrections (Editorial Engine PRD)");
+  console.log("✓ Artikel Berita lengkap untuk SEMUA KATEGORI berhasil diseed!");
 
-  // 11. Advertisements (PRD Section 51)
+  // 7. Advertisements
   await db.insert(schema.advertisements).values([
     { title: "Banner Promo Cloud VPS Indonesia", advertiserName: "PT Cloud Hosting Pro", position: "header", status: "active", link: "https://example.com" },
     { title: "Iklan Sidebar Investment App", advertiserName: "Securities App", position: "sidebar", status: "active", link: "https://example.com" },
   ]).onConflictDoNothing();
-  console.log("✓ Advertisements (Ad Manager PRD)");
 
-  // 12. Business Publications (PRD Section 49)
+  // 8. Business Publications
   await db.insert(schema.businessPublications).values([
     { companyName: "PT Inovasi Solusi Digital", contactEmail: "corp@inovasi.co.id", articleTitle: "Peluncuran Platform SaaS Manajemen Usaha 2026", status: "published", amount: 2500000, paymentStatus: "paid" },
   ]).onConflictDoNothing();
-  console.log("✓ Business Publications (Publish Your Business PRD)");
 
-  // 13. Redirects (PRD Section 34)
-  await db.insert(schema.redirects).values([
-    { oldUrl: "/news/old-digital-title", newUrl: "/news/indonesia-luncurkan-program-transformasi-digital-nasional-2026-2030", statusCode: 301, isActive: true },
-  ]).onConflictDoNothing();
-  console.log("✓ Redirects (301 Redirect Manager PRD)");
-
-  console.log("\n✅ Database seeding selesai 100%! Seluruh entitas PRD siap untuk uji coba di VPS.");
+  console.log("\n✅ Database seeding selesai 100%! Seluruh Kategori Berita kini terisi konten proporsional.");
   await client.end();
   process.exit(0);
 }
