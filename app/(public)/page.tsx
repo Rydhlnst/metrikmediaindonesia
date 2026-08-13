@@ -11,13 +11,11 @@ import {
 } from "@/lib/article-helpers";
 import { AnimateOnScroll } from "@/components/shared/animate-on-scroll";
 import { CategoryBadge } from "@/components/shared/category-badge";
-import { SectionHeading } from "@/components/shared/section-heading";
-import { Divider } from "@/components/shared/divider";
 import { NewsletterForm } from "@/components/shared/newsletter-form";
 import { LoadMoreArticles } from "@/components/home/load-more-articles";
 import type { Metadata } from "next";
 import { SITE_CONFIG } from "@/lib/constants";
-import { Flame, Lightning, Play, Camera, TrendUp, Newspaper } from "@phosphor-icons/react/dist/ssr";
+import { Lightning, Play, TrendUp, Newspaper } from "@phosphor-icons/react/dist/ssr";
 
 export const metadata: Metadata = {
   title: `${SITE_CONFIG.name} - Media Berita Digital Profesional Indonesia`,
@@ -33,7 +31,7 @@ export const metadata: Metadata = {
   },
 };
 
-export const revalidate = 60; // 1 minute revalidate
+export const revalidate = 60;
 
 const FALLBACK_ARTICLES = [
   {
@@ -142,23 +140,23 @@ export default async function HomePage() {
     <div className="w-full bg-background">
       
       {/* ============================================================ */}
-      {/* 1. HERO FEATURED SPOTLIGHT SECTION (Hitam, Emas, Putih)       */}
+      {/* 1. HERO FEATURED SPOTLIGHT SECTION (Smooth Borders & Gold)    */}
       {/* ============================================================ */}
-      <section className="max-w-[1280px] mx-auto px-4 md:px-8 pt-6 pb-12">
+      <section className="max-w-[1280px] mx-auto px-4 md:px-8 pt-6 pb-10">
         {heroArticle && (
           <AnimateOnScroll animation="fade-in">
-            <article className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch border border-outline-variant/80 bg-surface-container-lowest p-5 md:p-8 shadow-xs">
+            <article className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch border border-black/10 bg-white rounded-xl p-6 md:p-8 shadow-xs hover:shadow-md transition-shadow">
               
               {/* Left Column: Headline Info */}
               <div className="lg:col-span-7 flex flex-col justify-between space-y-4">
                 <div>
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider bg-amber-600 text-white rounded-none">
+                    <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-[#B8860B] text-white rounded-md shadow-2xs">
                       {getCategoryName(heroArticle) || "UTAMA"}
                     </span>
                     {heroArticle.breaking && (
-                      <span className="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider bg-black text-white rounded-none flex items-center gap-1 border border-amber-600/50">
-                        <Lightning className="size-3 text-amber-500 fill-current" /> BREAKING
+                      <span className="px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider bg-black text-white rounded-md flex items-center gap-1 border border-[#B8860B]/40">
+                        <Lightning className="size-3 text-yellow-400 fill-current" /> BREAKING
                       </span>
                     )}
                   </div>
@@ -166,14 +164,14 @@ export default async function HomePage() {
                   <h1 className="font-headline-lg-mobile md:font-headline-xl text-2xl md:text-4xl font-serif leading-tight text-on-surface mb-3">
                     <Link
                       href={`/${getCategorySlug(heroArticle)}/${heroArticle.slug}`}
-                      className="hover:text-amber-700 transition-colors"
+                      className="hover:text-[#A16207] transition-colors"
                     >
                       {heroArticle.title}
                     </Link>
                   </h1>
 
                   {heroArticle.subtitle && (
-                    <p className="text-sm md:text-base font-semibold text-amber-900/80 dark:text-amber-400 mb-3 italic">
+                    <p className="text-sm md:text-base font-semibold text-[#A16207] mb-3 italic">
                       {heroArticle.subtitle}
                     </p>
                   )}
@@ -186,7 +184,7 @@ export default async function HomePage() {
                 </div>
 
                 {/* Meta Author & Time */}
-                <div className="pt-4 border-t border-outline-variant/60 flex items-center text-on-surface-variant text-xs font-semibold gap-3 flex-wrap">
+                <div className="pt-4 border-t border-black/10 flex items-center text-on-surface-variant text-xs font-semibold gap-3 flex-wrap">
                   {getAuthorName(heroArticle) && (
                     <span className="uppercase text-on-surface">Oleh {getAuthorName(heroArticle)}</span>
                   )}
@@ -195,12 +193,12 @@ export default async function HomePage() {
                   <span>•</span>
                   <span>{heroArticle.readingTime || 5} Menit Baca</span>
                   <span>•</span>
-                  <span className="text-amber-700 font-bold">{formatViews(heroArticle.viewCount || 0)} Pembaca</span>
+                  <span className="text-[#A16207] font-bold">{formatViews(heroArticle.viewCount || 0)} Pembaca</span>
                 </div>
               </div>
 
-              {/* Right Column: Hero Image */}
-              <div className="lg:col-span-5 relative min-h-[260px] md:min-h-[360px] overflow-hidden border border-outline-variant">
+              {/* Right Column: Hero Image (Smooth Rounded Corners) */}
+              <div className="lg:col-span-5 relative min-h-[260px] md:min-h-[360px] overflow-hidden border border-black/10 rounded-lg shadow-2xs">
                 <Link href={`/${getCategorySlug(heroArticle)}/${heroArticle.slug}`} className="block size-full relative">
                   <Image
                     src={getImageUrl(heroArticle.thumbnail || heroArticle.featuredImage)}
@@ -220,17 +218,17 @@ export default async function HomePage() {
       {/* ============================================================ */}
       {/* 2. SECONDARY GRID + TRENDING SIDEBAR                          */}
       {/* ============================================================ */}
-      <section className="max-w-[1280px] mx-auto px-4 md:px-8 py-8 border-t border-outline-variant">
+      <section className="max-w-[1280px] mx-auto px-4 md:px-8 py-8 border-t border-black/10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* Main Content Area (8 Cols) */}
           <div className="lg:col-span-8 space-y-8">
             <div className="flex items-center justify-between border-b-2 border-black pb-2">
               <h2 className="text-sm font-bold uppercase tracking-wider text-on-surface flex items-center gap-2">
-                <Newspaper className="size-4 text-amber-600" />
+                <Newspaper className="size-4 text-[#B8860B]" />
                 <span>Berita Terkini & Populer</span>
               </h2>
-              <Link href="/pencarian" className="text-xs font-bold uppercase text-amber-700 hover:underline">
+              <Link href="/pencarian" className="text-xs font-bold uppercase text-[#A16207] hover:underline">
                 Lihat Semua Indeks &rarr;
               </Link>
             </div>
@@ -238,9 +236,9 @@ export default async function HomePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {secondaryArticles.map((article: any, index: number) => (
                 <AnimateOnScroll key={article.id} animation="fade-up" delay={(index * 100) as 0 | 100 | 200}>
-                  <article className="flex flex-col border border-outline-variant bg-surface-container-lowest p-4 hover:border-amber-600/50 transition-all group h-full justify-between">
+                  <article className="flex flex-col border border-black/10 bg-white rounded-xl p-5 hover:border-[#B8860B]/50 hover:shadow-md transition-all group h-full justify-between">
                     <div>
-                      <div className="relative aspect-[16/9] w-full overflow-hidden border border-outline-variant mb-3">
+                      <div className="relative aspect-[16/9] w-full overflow-hidden border border-black/10 rounded-lg mb-3 shadow-2xs">
                         <Link href={`/${getCategorySlug(article)}/${article.slug}`}>
                           <Image
                             src={getImageUrl(article.thumbnail || article.featuredImage)}
@@ -251,11 +249,11 @@ export default async function HomePage() {
                         </Link>
                       </div>
                       <div className="mb-2">
-                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-700">
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#A16207]">
                           {getCategoryName(article)}
                         </span>
                       </div>
-                      <h3 className="font-serif text-base font-bold text-on-surface group-hover:text-amber-700 transition-colors line-clamp-2 mb-2 leading-snug">
+                      <h3 className="font-serif text-base font-bold text-on-surface group-hover:text-[#A16207] transition-colors line-clamp-2 mb-2 leading-snug">
                         <Link href={`/${getCategorySlug(article)}/${article.slug}`}>
                           {article.title}
                         </Link>
@@ -266,7 +264,7 @@ export default async function HomePage() {
                         </p>
                       )}
                     </div>
-                    <div className="text-[11px] font-semibold text-on-surface-variant/80 pt-2 border-t border-outline-variant/40 flex justify-between items-center">
+                    <div className="text-[11px] font-semibold text-on-surface-variant/80 pt-3 border-t border-black/5 flex justify-between items-center">
                       <span>{getTimeAgo(article.publishedAt || new Date())}</span>
                       <span>{formatViews(article.viewCount || 0)} views</span>
                     </div>
@@ -286,9 +284,9 @@ export default async function HomePage() {
           <aside className="lg:col-span-4 space-y-8">
             
             {/* Trending Box */}
-            <div className="border border-outline-variant bg-surface-container-low p-5">
-              <div className="flex items-center gap-2 pb-3 border-b-2 border-amber-600 mb-4">
-                <TrendUp className="size-5 text-amber-600" weight="bold" />
+            <div className="border border-black/10 bg-white rounded-xl p-6 shadow-xs">
+              <div className="flex items-center gap-2 pb-3 border-b-2 border-[#B8860B] mb-4">
+                <TrendUp className="size-5 text-[#B8860B]" weight="bold" />
                 <h3 className="text-xs font-bold uppercase tracking-wider text-on-surface">
                   Paling Banyak Dibaca (#Trending)
                 </h3>
@@ -296,15 +294,15 @@ export default async function HomePage() {
 
               <div className="space-y-4">
                 {trending.map((item: any, idx: number) => (
-                  <div key={item.id} className="flex items-start gap-3 pb-3 border-b border-outline-variant/60 last:border-0 last:pb-0 group">
-                    <span className="text-2xl font-black text-amber-600 w-6 shrink-0 leading-none">
+                  <div key={item.id} className="flex items-start gap-3 pb-3 border-b border-black/5 last:border-0 last:pb-0 group">
+                    <span className="text-2xl font-black text-[#B8860B] w-6 shrink-0 leading-none">
                       0{idx + 1}
                     </span>
                     <div className="flex-1 min-w-0">
-                      <span className="text-[9px] font-bold uppercase tracking-wider text-amber-700 block mb-1">
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-[#A16207] block mb-1">
                         {getCategoryName(item)}
                       </span>
-                      <h4 className="text-xs font-bold leading-snug text-on-surface group-hover:text-amber-700 transition-colors line-clamp-2">
+                      <h4 className="text-xs font-bold leading-snug text-on-surface group-hover:text-[#A16207] transition-colors line-clamp-2">
                         <Link href={`/${getCategorySlug(item)}/${item.slug}`}>
                           {item.title}
                         </Link>
@@ -318,21 +316,21 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Multimedia Spotlight Card (Dark Onyx Container) */}
-            <div className="bg-[#18181B] text-white p-6 border border-zinc-800 space-y-4 shadow-md">
+            {/* Multimedia Spotlight Card (Dark Onyx Container with Smooth Corners) */}
+            <div className="bg-[#18181B] text-white p-6 border border-zinc-800 rounded-xl space-y-4 shadow-md">
               <div className="flex items-center justify-between border-b border-zinc-700 pb-3">
                 <div className="flex items-center gap-2">
-                  <Play className="size-4 text-amber-500 fill-current" />
+                  <Play className="size-4 text-yellow-400 fill-current" />
                   <h3 className="text-xs font-bold uppercase tracking-wider text-white">
                     Metrik Video HD
                   </h3>
                 </div>
-                <Link href="/video" className="text-[10px] font-bold uppercase text-amber-400 hover:underline">
+                <Link href="/video" className="text-[10px] font-bold uppercase text-yellow-400 hover:underline">
                   Lihat Video &rarr;
                 </Link>
               </div>
 
-              <div className="relative aspect-video w-full bg-zinc-900 border border-zinc-700 group overflow-hidden cursor-pointer">
+              <div className="relative aspect-video w-full bg-zinc-900 border border-zinc-700 rounded-lg group overflow-hidden cursor-pointer shadow-2xs">
                 <Image
                   src="https://picsum.photos/seed/videodark/800/450"
                   alt="Video Liputan Khusus"
@@ -340,13 +338,13 @@ export default async function HomePage() {
                   className="object-cover opacity-80 group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                  <div className="p-3 bg-amber-600 text-white rounded-none shadow-lg group-hover:bg-amber-700 transition-colors">
+                  <div className="p-3 bg-[#B8860B] text-white rounded-md shadow-lg group-hover:bg-[#A16207] transition-colors">
                     <Play className="size-6 fill-current" />
                   </div>
                 </div>
               </div>
 
-              <h4 className="text-xs font-bold leading-snug text-zinc-100 hover:text-amber-400 transition-colors">
+              <h4 className="text-xs font-bold leading-snug text-zinc-100 hover:text-yellow-400 transition-colors">
                 <Link href="/video">
                   Potensi Masa Depan Inovasi Teknologi & Broadband Indonesia 2026-2030
                 </Link>
@@ -364,7 +362,7 @@ export default async function HomePage() {
       <section className="bg-[#141414] text-white py-14 border-y border-zinc-800">
         <div className="max-w-[1280px] mx-auto px-4 md:px-8">
           <div className="max-w-3xl mx-auto text-center space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-600/20 text-amber-400 border border-amber-600/40 text-[10px] font-bold uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#B8860B]/20 text-yellow-400 border border-[#B8860B]/40 text-[10px] font-bold uppercase tracking-widest rounded-md">
               <span>METRIK MEDIA ESSENTIAL</span>
             </div>
             <h2 className="font-serif text-2xl md:text-4xl font-bold leading-tight text-white">

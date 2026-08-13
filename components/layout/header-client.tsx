@@ -55,24 +55,24 @@ export function HeaderClient() {
   };
 
   return (
-    <header className="w-full bg-background border-b border-outline-variant sticky top-0 z-50 shadow-2xs">
+    <header className="w-full bg-background border-b border-black/10 sticky top-0 z-50 shadow-2xs">
       
       {/* TINGKAT 1: Top Bar Header Utama */}
-      <div className="border-b border-outline-variant/70 bg-background">
+      <div className="border-b border-black/5 bg-background">
         <div className="max-w-[1280px] mx-auto px-4 md:px-8 py-2.5 flex items-center justify-between gap-3">
           
-          {/* Left: Mobile Sheet Trigger + Logo (Clean Mobile Layout) */}
+          {/* Left: Mobile Sheet Trigger + Logo */}
           <div className="flex items-center gap-2.5 min-w-0">
             <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
               <SheetTrigger asChild>
                 <button
                   aria-label="Buka Menu Navigation"
-                  className="p-1.5 rounded-none text-on-surface hover:bg-surface-container-low transition-colors shrink-0"
+                  className="p-1.5 rounded-md text-on-surface hover:bg-black/5 transition-colors shrink-0"
                 >
                   <List className="size-6 text-on-surface" weight="bold" />
                 </button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-full sm:w-[320px] p-0 border-r border-outline-variant bg-background" showCloseButton={false}>
+              <SheetContent side="left" className="w-full sm:w-[320px] p-0 border-r border-black/10 bg-background" showCloseButton={false}>
                 <SheetTitle className="sr-only">Navigasi Utama</SheetTitle>
                 <PremiumMobileSheet onClose={() => setSheetOpen(false)} />
               </SheetContent>
@@ -83,7 +83,7 @@ export function HeaderClient() {
             </Link>
           </div>
 
-          {/* Center: Desktop Search Bar (Hidden on Mobile) */}
+          {/* Center: Desktop Search Bar */}
           <form
             onSubmit={handleSearchSubmit}
             className="hidden lg:flex flex-1 max-w-md items-center relative mx-4"
@@ -94,23 +94,23 @@ export function HeaderClient() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Cari berita, topik, atau daerah..."
-                className="w-full pl-9 pr-22 py-2 text-xs font-medium rounded-none border border-outline-variant bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-primary transition-all"
+                className="w-full pl-9 pr-22 py-2 text-xs font-medium rounded-md border border-black/15 bg-white text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:border-[#B8860B] transition-all shadow-2xs"
               />
               <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-on-surface-variant" />
               <button
                 type="submit"
-                className="absolute right-0 top-0 bottom-0 px-4 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-none hover:bg-primary/90 transition-all cursor-pointer shadow-2xs"
+                className="absolute right-0 top-0 bottom-0 px-4 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-r-md hover:bg-primary/90 transition-all cursor-pointer shadow-2xs"
               >
                 Cari
               </button>
             </div>
           </form>
 
-          {/* Right: Actions (Hidden on Mobile, Displayed on Desktop) */}
+          {/* Right: Actions */}
           <div className="hidden md:flex items-center gap-3 shrink-0">
             <Link
               href="/saved"
-              className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold uppercase tracking-wider text-on-surface-variant hover:text-amber-700 hover:bg-surface-container-low transition-colors rounded-none"
+              className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold uppercase tracking-wider text-on-surface-variant hover:text-[#A16207] hover:bg-black/5 transition-colors rounded-md"
             >
               <BookmarkSimple className="size-4" />
               <span>Disimpan</span>
@@ -119,7 +119,7 @@ export function HeaderClient() {
             {user ? (
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-none hover:bg-primary/90 transition-all active:scale-[0.99] shadow-2xs"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-md hover:bg-primary/90 transition-all active:scale-[0.99] shadow-2xs"
               >
                 <User className="size-4 text-white" />
                 <span className="text-white">Dashboard</span>
@@ -127,7 +127,7 @@ export function HeaderClient() {
             ) : (
               <Link
                 href="/login"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-none hover:bg-primary/90 transition-all active:scale-[0.99] shadow-2xs"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-md hover:bg-primary/90 transition-all active:scale-[0.99] shadow-2xs"
               >
                 <User className="size-4 text-white" />
                 <span className="text-white">Masuk</span>
@@ -152,16 +152,16 @@ export function HeaderClient() {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "px-3 py-2.5 whitespace-nowrap transition-all duration-150 border-b-2 flex items-center gap-1.5 rounded-none",
+                    "px-3 py-2 whitespace-nowrap transition-all duration-150 border-b-2 flex items-center gap-1.5 rounded-t-md",
                     isActive
-                      ? "text-amber-700 font-bold border-amber-600 bg-amber-600/5"
-                      : "text-on-surface-variant border-transparent hover:text-amber-700 hover:border-amber-600/40",
-                    item.highlight && "text-amber-600 font-extrabold hover:text-amber-700"
+                      ? "text-[#A16207] font-bold border-[#B8860B] bg-[#B8860B]/10"
+                      : "text-on-surface-variant border-transparent hover:text-[#A16207] hover:border-[#B8860B]/40",
+                    item.highlight && "text-[#A16207] font-extrabold hover:text-[#854D0E]"
                   )}
                 >
                   {item.label}
                   {item.badge && (
-                    <span className="px-1.5 py-0.5 text-[9px] font-black uppercase rounded-none bg-amber-600 text-white animate-pulse">
+                    <span className="px-1.5 py-0.5 text-[9px] font-black uppercase rounded-md bg-[#B8860B] text-white animate-pulse">
                       {item.badge}
                     </span>
                   )}
@@ -192,11 +192,11 @@ function PremiumMobileSheet({ onClose }: { onClose: () => void }) {
   return (
     <div className="flex h-full flex-col bg-background text-on-surface">
       {/* Sheet Header */}
-      <div className="flex h-[62px] items-center justify-between border-b border-outline-variant px-5">
+      <div className="flex h-[62px] items-center justify-between border-b border-black/10 px-5">
         <BrandName size="sm" className="uppercase" />
         <button
           onClick={onClose}
-          className="p-2 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-none"
+          className="p-2 text-on-surface-variant hover:bg-black/5 transition-colors rounded-md"
           aria-label="Tutup Menu"
         >
           <X className="size-5" />
@@ -208,14 +208,14 @@ function PremiumMobileSheet({ onClose }: { onClose: () => void }) {
         {/* User Account Section */}
         <div>
           {user ? (
-            <div className="flex flex-col gap-3 p-3 bg-surface-container-low border border-outline-variant rounded-none">
+            <div className="flex flex-col gap-3 p-3 bg-white border border-black/10 rounded-lg shadow-2xs">
               <div className="flex items-center gap-3">
                 {user.avatar ? (
-                  <div className="relative size-10 overflow-hidden rounded-none bg-surface-container">
+                  <div className="relative size-10 overflow-hidden rounded-md bg-surface-container">
                     <Image src={user.avatar} alt={user.name} fill className="object-cover" />
                   </div>
                 ) : (
-                  <div className="flex size-10 items-center justify-center bg-primary text-white text-sm font-bold rounded-none uppercase">
+                  <div className="flex size-10 items-center justify-center bg-primary text-white text-sm font-bold rounded-md uppercase">
                     {user.name?.charAt(0) || "U"}
                   </div>
                 )}
@@ -227,7 +227,7 @@ function PremiumMobileSheet({ onClose }: { onClose: () => void }) {
               <Link
                 href="/dashboard"
                 onClick={onClose}
-                className="w-full text-center py-2 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-none block hover:bg-primary/90 transition-all shadow-2xs"
+                className="w-full text-center py-2 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-md block hover:bg-primary/90 transition-all shadow-2xs"
               >
                 Ke CMS Dashboard
               </Link>
@@ -236,7 +236,7 @@ function PremiumMobileSheet({ onClose }: { onClose: () => void }) {
             <Link
               href="/login"
               onClick={onClose}
-              className="flex items-center justify-center gap-2 w-full py-3 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-none hover:bg-primary/90 transition-all shadow-2xs"
+              className="flex items-center justify-center gap-2 w-full py-3 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-md hover:bg-primary/90 transition-all shadow-2xs"
             >
               <User className="size-4 text-white" />
               <span className="text-white">Masuk / Daftar Akun</span>
@@ -258,10 +258,10 @@ function PremiumMobileSheet({ onClose }: { onClose: () => void }) {
                 href={item.href}
                 onClick={onClose}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 text-xs font-bold uppercase tracking-wider transition-colors rounded-none",
+                  "flex items-center gap-3 px-3 py-2.5 text-xs font-bold uppercase tracking-wider transition-colors rounded-md",
                   isActive
-                    ? "bg-amber-600/10 text-amber-700 border-l-2 border-amber-600"
-                    : "text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface"
+                    ? "bg-[#B8860B]/10 text-[#A16207] border-l-2 border-[#B8860B]"
+                    : "text-on-surface-variant hover:bg-black/5 hover:text-on-surface"
                 )}
               >
                 <Icon className="size-4" weight={isActive ? "fill" : "regular"} />
@@ -290,16 +290,16 @@ function PremiumMobileSheet({ onClose }: { onClose: () => void }) {
                 href={item.href}
                 onClick={onClose}
                 className={cn(
-                  "flex items-center justify-between px-3 py-2 text-xs font-bold uppercase tracking-wider transition-colors rounded-none",
+                  "flex items-center justify-between px-3 py-2 text-xs font-bold uppercase tracking-wider transition-colors rounded-md",
                   isActive
-                    ? "text-amber-700 font-extrabold bg-amber-600/5"
-                    : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low",
-                  item.highlight && "text-amber-600"
+                    ? "text-[#A16207] font-extrabold bg-[#B8860B]/10"
+                    : "text-on-surface-variant hover:text-on-surface hover:bg-black/5",
+                  item.highlight && "text-[#A16207]"
                 )}
               >
                 <span>{item.label}</span>
                 {item.badge && (
-                  <span className="px-1.5 py-0.5 text-[9px] bg-amber-600 text-white rounded-none font-bold">
+                  <span className="px-1.5 py-0.5 text-[9px] bg-[#B8860B] text-white rounded-md font-bold">
                     {item.badge}
                   </span>
                 )}
@@ -317,7 +317,7 @@ function PremiumMobileSheet({ onClose }: { onClose: () => void }) {
                 signOut();
                 onClose();
               }}
-              className="flex w-full items-center justify-center gap-2 py-2.5 text-xs font-bold uppercase tracking-wider text-destructive bg-error-container/20 hover:bg-error-container/40 rounded-none transition-colors"
+              className="flex w-full items-center justify-center gap-2 py-2.5 text-xs font-bold uppercase tracking-wider text-destructive bg-error-container/20 hover:bg-error-container/40 rounded-md transition-colors"
             >
               <SignOut className="size-4" />
               <span>Keluar</span>
