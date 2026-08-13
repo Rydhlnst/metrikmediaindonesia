@@ -1,6 +1,7 @@
 import { HeaderServer } from "@/components/layout/header-server";
 import { FooterServer } from "@/components/layout/footer-server";
 import { BreakingNewsTicker } from "@/components/layout/breaking-news-ticker";
+import { BottomNavMobile } from "@/components/layout/bottom-nav-mobile";
 import { WebsiteJsonLd, OrganizationJsonLd } from "@/components/seo/json-ld";
 
 export default function PublicLayout({
@@ -9,7 +10,7 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-14 md:pb-0">
       <WebsiteJsonLd />
       <OrganizationJsonLd />
       <HeaderServer />
@@ -18,6 +19,7 @@ export default function PublicLayout({
         {children}
       </main>
       <FooterServer />
+      <BottomNavMobile />
     </div>
   );
 }
