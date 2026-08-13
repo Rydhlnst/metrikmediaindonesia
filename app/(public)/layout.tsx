@@ -10,7 +10,7 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-background pb-14 md:pb-0">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       <WebsiteJsonLd />
       <OrganizationJsonLd />
       <HeaderServer />
