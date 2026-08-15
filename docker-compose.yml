@@ -1,7 +1,44 @@
 services:
-  # ============================================
-  # PostgreSQL (Default)
-  # ============================================
+  # ==============================================================================
+  # 1. Next.js Web Application
+  # ==============================================================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        DATABASE_TYPE: ${DATABASE_TYPE:-postgresql}
+    container_name: metrikmedia-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_TYPE=${DATABASE_TYPE:-postgresql}
+      - POSTGRES_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-metrikmedia_db_secure_password_2026}@postgres:5432/${POSTGRES_DB:-metrikmedia}
+      - MINIO_ENDPOINT=minio
+      - MINIO_PORT=9000
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER:-minioadmin}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD:-minio_storage_secure_password_2026}
+      - MINIO_BUCKET=${MINIO_BUCKET:-metrikmedia}
+      - MINIO_USE_SSL=false
+      - MINIO_PUBLIC_URL=${MINIO_PUBLIC_URL:-http://localhost:9000}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-super_secret_better_auth_token_change_in_production_xyz123}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    networks:
+      - metrikmedia-net
+
+  # ==============================================================================
+  # 2. PostgreSQL Database
+  # ==============================================================================
   postgres:
     image: postgres:16-alpine
     container_name: metrikmedia-postgres
@@ -9,42 +46,41 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: metrikmedia
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_DB:-metrikmedia}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-metrikmedia_db_secure_password_2026}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d metrikmedia"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-metrikmedia}"]
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - metrikmedia-net
 
-  # ============================================
-  # MySQL (Optional - uncomment to use)
-  # ============================================
-  # mysql:
-  #   image: mysql:8.0
-  #   container_name: metrikmedia-mysql
-  #   restart: unless-stopped
-  #   ports:
-  #     - "3306:3306"
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: root
-  #     MYSQL_DATABASE: metrikmedia
-  #     MYSQL_USER: admin
-  #     MYSQL_PASSWORD: admin
-  #   volumes:
-  #     - mysql_data:/var/lib/mysql
-  #   healthcheck:
-  #     test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-  #     interval: 5s
-  #     timeout: 5s
-  #     retries: 5
+  # ==============================================================================
+  # 3. Redis In-Memory Cache
+  # ==============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: metrikmedia-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - metrikmedia-net
 
-  # ============================================
-  # MinIO (Object Storage)
-  # ============================================
+  # ==============================================================================
+  # 4. MinIO Object Storage (S3 Compatible)
+  # ==============================================================================
   minio:
     image: minio/minio:latest
     container_name: metrikmedia-minio
@@ -53,29 +89,88 @@ services:
       - "9000:9000"
       - "9001:9001"
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minio_storage_secure_password_2026}
     command: server /data --console-address ":9001"
     volumes:
       - minio_data:/data
+    networks:
+      - metrikmedia-net
 
-  # ============================================
-  # pgAdmin (Optional - PostgreSQL GUI)
-  # ============================================
-  # pgadmin:
-  #   image: dpage/pgadmin4:latest
-  #   container_name: metrikmedia-pgadmin
-  #   restart: unless-stopped
-  #   ports:
-  #     - "5050:80"
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: admin@metrikmedia.id
-  #     PGADMIN_DEFAULT_PASSWORD: admin
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
+  # ==============================================================================
+  # 5. MinIO Auto-Bucket & Public Read Initializer
+  # ==============================================================================
+  minio-init:
+    image: minio/mc:latest
+    container_name: metrikmedia-minio-init
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      echo 'Waiting for MinIO...';
+      until /usr/bin/mc alias set myminio http://minio:9000 $${MINIO_ROOT_USER:-minioadmin} $${MINIO_ROOT_PASSWORD:-minio_storage_secure_password_2026}; do
+        echo 'MinIO is initializing, retrying in 2 seconds...';
+        sleep 2;
+      done;
+      echo 'Ensuring bucket exists...';
+      /usr/bin/mc mb --ignore-existing myminio/$${MINIO_BUCKET:-metrikmedia};
+      echo 'Setting public download policy...';
+      /usr/bin/mc anonymous set download myminio/$${MINIO_BUCKET:-metrikmedia};
+      echo 'MinIO initialization complete!';
+      exit 0;
+      "
+    networks:
+      - metrikmedia-net
+
+  # ==============================================================================
+  # 6. Caddy Reverse Proxy (Auto Let's Encrypt SSL)
+  # ==============================================================================
+  caddy:
+    image: caddy:2-alpine
+    container_name: metrikmedia-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - DOMAIN=${DOMAIN:-localhost}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+      - minio
+    networks:
+      - metrikmedia-net
+
+  # ==============================================================================
+  # 7. pgAdmin (Database GUI - Optional Profile)
+  # ==============================================================================
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: metrikmedia-pgadmin
+    profiles:
+      - tools
+    restart: unless-stopped
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@metrikmediaindonesia.id
+      PGADMIN_DEFAULT_PASSWORD: admin
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - metrikmedia-net
 
 volumes:
   postgres_data:
+  redis_data:
   minio_data:
-  # mysql_data:
+  caddy_data:
+  caddy_config:
+
+networks:
+  metrikmedia-net:
+    driver: bridge

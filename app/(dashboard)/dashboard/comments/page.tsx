@@ -5,8 +5,8 @@ import { DashboardTopbar } from "@/components/dashboard/topbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Check, X, Trash, CircleNotch, Warning, ArrowBendUpLeft } from "@phosphor-icons/react/dist/ssr";
 import { toast } from "sonner";
+import { Check, X, Trash, CircleNotch, Warning, ArrowBendUpLeft, CheckCircle, ShieldWarning, ArrowUUpLeft } from "@phosphor-icons/react/dist/ssr";
 import dynamic from "next/dynamic";
 
 const TiptapEditor = dynamic(
@@ -122,17 +122,17 @@ export default function CommentsPage() {
   };
 
   return (
-    <main className="flex-1 px-4 pb-7 lg:px-8">
+    <div className="flex min-h-screen w-full flex-col bg-[#f8f9fa]">
       <DashboardTopbar />
-      <div className="mx-auto">
-        <Card className="rounded-none bg-card ring-0 shadow-sm">
-          <CardHeader className="flex items-center justify-between px-6 py-4">
-            <CardTitle className="text-lg font-bold">Moderasi Komentar Pembaca</CardTitle>
+      <div className="w-full flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
+        <Card className="rounded-none border border-black/10 bg-white shadow-2xs">
+          <CardHeader className="flex flex-row items-center justify-between border-b border-black/5 px-6 py-4">
+            <CardTitle className="text-base font-bold text-foreground">Moderasi Komentar Pembaca</CardTitle>
             <div className="flex items-center gap-2">
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="h-8 border border-outline-variant bg-muted px-2 text-xs"
+                className="h-8 border border-black/15 bg-white px-2 text-xs rounded-none font-medium text-foreground focus:outline-none focus:border-[#B8860B]"
               >
                 <option value="">Semua Status</option>
                 <option value="pending">Pending</option>
@@ -142,13 +142,13 @@ export default function CommentsPage() {
               </select>
             </div>
           </CardHeader>
-          <CardContent className="px-6 pb-4">
+          <CardContent className="p-6">
             {isLoading ? (
               <div className="flex h-48 items-center justify-center">
-                <CircleNotch className="size-8 animate-spin text-news-red" />
+                <CircleNotch className="size-8 animate-spin text-primary" />
               </div>
             ) : commentsList.length === 0 ? (
-              <div className="flex h-32 flex-col items-center justify-center text-muted-foreground border border-dashed border-border p-6 text-center">
+              <div className="flex h-32 flex-col items-center justify-center text-muted-foreground border border-dashed border-black/15 p-6 text-center">
                 <p className="text-sm font-medium">Belum ada komentar pembaca untuk dimoderasi</p>
               </div>
             ) : (
@@ -156,7 +156,7 @@ export default function CommentsPage() {
                 {commentsList.map((comment) => {
                   const status = statusConfig[comment.status] || statusConfig.pending;
                   return (
-                    <div key={comment.id} className="border border-border/50 p-4">
+                    <div key={comment.id} className="border border-black/10 bg-white p-4 space-y-3">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
@@ -164,86 +164,87 @@ export default function CommentsPage() {
                             <Badge variant="outline" className={`text-[10px] font-medium rounded-none ${status.className}`}>
                               {status.label}
                             </Badge>
-                            <span className="text-[10px] text-muted-foreground">
-                              {new Date(comment.createdAt).toLocaleDateString("id-ID")}
-                            </span>
                           </div>
-                          <div
-                            className="mt-1 text-xs text-muted-foreground prose prose-xs max-w-none"
-                            dangerouslySetInnerHTML={{ __html: comment.content }}
-                          />
-                          {comment.articleTitle && (
-                            <p className="mt-1 text-[10px] text-muted-foreground">
-                              di artikel: <span className="font-medium text-foreground">{comment.articleTitle}</span>
-                            </p>
+                          {comment.authorEmail && (
+                            <p className="text-[10px] text-muted-foreground font-mono">{comment.authorEmail}</p>
                           )}
+                          <p className="mt-2 text-sm text-foreground">{comment.content}</p>
+                          <div className="mt-2 flex items-center gap-2 text-[10px] text-muted-foreground">
+                            <span>di artikel: <strong className="text-foreground">{comment.articleTitle || "Artikel"}</strong></span>
+                            <span>&middot;</span>
+                            <span>{new Date(comment.createdAt).toLocaleDateString("id-ID")}</span>
+                          </div>
                         </div>
+
                         <div className="flex items-center gap-1 shrink-0">
+                          {comment.status !== "approved" && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="size-7 p-0 rounded-none text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700"
+                              title="Setujui"
+                              onClick={() => handleUpdateStatus(comment.id, "approved")}
+                            >
+                              <CheckCircle className="size-4" />
+                            </Button>
+                          )}
+                          {comment.status !== "spam" && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="size-7 p-0 rounded-none text-amber-600 hover:bg-amber-50 hover:text-amber-700"
+                              title="Tandai Spam"
+                              onClick={() => handleUpdateStatus(comment.id, "spam")}
+                            >
+                              <ShieldWarning className="size-4" />
+                            </Button>
+                          )}
                           <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-7 text-blue-600"
+                            size="sm"
+                            variant="outline"
+                            className="size-7 p-0 rounded-none text-primary hover:bg-primary/10"
+                            title="Balas"
                             onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
-                            title="Balas Komentar"
                           >
-                            <ArrowBendUpLeft className="size-3.5" />
+                            <ArrowUUpLeft className="size-4" />
                           </Button>
                           <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-7 text-emerald-600"
-                            onClick={() => handleUpdateStatus(comment.id, "approved")}
-                            title="Setujui (Approve)"
-                          >
-                            <Check className="size-3.5" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-7 text-amber-600"
-                            onClick={() => handleUpdateStatus(comment.id, "spam")}
-                            title="Tandai Spam"
-                          >
-                            <Warning className="size-3.5" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-7 text-destructive"
+                            size="sm"
+                            variant="outline"
+                            className="size-7 p-0 rounded-none text-destructive hover:bg-destructive/10"
+                            title="Hapus"
                             onClick={() => handleDelete(comment.id)}
-                            title="Hapus Komentar"
                           >
-                            <Trash className="size-3.5" />
+                            <Trash className="size-4" />
                           </Button>
                         </div>
                       </div>
 
                       {replyingTo === comment.id && (
-                        <div className="mt-4 border-t border-border/50 pt-4">
-                          <p className="mb-2 text-xs font-medium text-muted-foreground">Balas komentar:</p>
-                          <TiptapEditor
-                            content={replyContent}
-                            onChange={setReplyContent}
-                            placeholder="Tulis balasan..."
+                        <div className="mt-3 border-t border-black/5 pt-3 space-y-2">
+                          <textarea
+                            value={replyContent}
+                            onChange={(e) => setReplyContent(e.target.value)}
+                            placeholder="Tulis balasan resmi redaksi..."
+                            className="w-full border border-black/15 bg-white p-2.5 text-xs rounded-none focus:outline-none focus:border-[#B8860B]"
+                            rows={3}
                           />
-                          <div className="mt-2 flex items-center gap-2">
+                          <div className="flex items-center gap-2 justify-end">
                             <Button
                               size="sm"
-                              className="rounded-none gap-1"
+                              className="rounded-none bg-primary text-white hover:bg-primary/90 text-xs font-bold uppercase tracking-wider"
+                              disabled={isSubmitting || !replyContent.trim()}
                               onClick={() => handleReply(comment.id, comment.articleId)}
-                              disabled={isSubmitting}
                             >
-                              {isSubmitting ? (
-                                <CircleNotch className="size-3 animate-spin" />
-                              ) : (
-                                <ArrowBendUpLeft className="size-3" />
+                              {isSubmitting && (
+                                <CircleNotch className="mr-1 size-3 animate-spin" />
                               )}
                               Kirim Balasan
                             </Button>
                             <Button
                               size="sm"
                               variant="ghost"
-                              className="rounded-none"
+                              className="rounded-none text-xs"
                               onClick={() => {
                                 setReplyingTo(null);
                                 setReplyContent("");
@@ -262,6 +263,6 @@ export default function CommentsPage() {
           </CardContent>
         </Card>
       </div>
-    </main>
+    </div>
   );
 }

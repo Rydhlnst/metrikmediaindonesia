@@ -8,6 +8,9 @@ import { CategoryBadge } from "@/components/shared/category-badge";
 import { Divider } from "@/components/shared/divider";
 import type { Metadata } from "next";
 
+import { PublicPageHeader } from "@/components/shared/public-page-header";
+import { SectionHeader } from "@/components/shared/section-header";
+
 interface CategoryPageProps {
   params: Promise<{ category: string }>;
 }
@@ -23,7 +26,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   if (!cat) return {};
   const name = cat.name;
   return {
-    title: `Berita ${name} Terkini`,
+    title: `Berita ${name} Terkini | Metrik Media Indonesia`,
     description: `Berita terbaru seputar ${name} di ${SITE_CONFIG.name}. Ikuti perkembangan terkini ${name.toLowerCase()} Indonesia dan dunia.`,
     openGraph: {
       title: `Berita ${name} Terkini | ${SITE_CONFIG.shortName}`,
@@ -78,27 +81,25 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
       {/* Main Content Canvas */}
       <section className="container-editorial py-8 pb-20 md:pb-8">
-        {/* Category Header */}
-        <div className="mb-12 border-b border-outline-variant pb-6">
-          <h1 className="font-display-lg text-display-lg text-primary leading-tight">{cat.name}</h1>
-          <p className="font-body-xl text-body-xl text-on-surface-variant mt-4 max-w-2xl">
-            Berita terbaru seputar {cat.name.toLowerCase()} di Indonesia dan dunia.
-          </p>
-        </div>
+        {/* Standardized Reusable Category Header */}
+        <PublicPageHeader
+          title={cat.name}
+          description={`Berita terbaru seputar ${cat.name.toLowerCase()} di Indonesia dan dunia.`}
+        />
 
         {/* Featured Story (Asymmetric Layout) */}
         {featured && (
-          <article className="grid grid-cols-1 md:grid-cols-12 gap-[24px] mb-[80px]">
+          <article className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-16">
             <div className="md:col-span-8 group cursor-pointer">
-              <div className="relative w-full aspect-[4/3] mb-6 overflow-hidden bg-surface-variant">
+              <div className="relative w-full aspect-[4/3] mb-6 overflow-hidden bg-muted">
                 <Image
                   src={featured.thumbnail || "/og-image.jpg"}
                   alt={featured.title}
                   fill
                   sizes="(max-width: 768px) 100vw, 66vw"
-                  className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
-                <div className="absolute top-4 left-4 bg-surface px-3 py-1 border border-outline-variant">
+                <div className="absolute top-4 left-4 bg-white px-3 py-1 border border-black/10">
                   <CategoryBadge>
                     {cat.name}
                   </CategoryBadge>
@@ -110,22 +111,22 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                 <CategoryBadge variant="bordered">
                   {cat.name}
                 </CategoryBadge>
-                <span className="text-on-surface-variant text-sm">&bull;</span>
-                <span className="font-label-md text-label-md text-on-surface-variant">
+                <span className="text-muted-foreground text-sm">&bull;</span>
+                <span className="font-label-md text-label-md text-muted-foreground">
                   {featured.readingTime} MENIT BACA
                 </span>
               </div>
-              <h2 className="font-headline-xl text-headline-xl text-primary mb-4 group-hover:text-secondary transition-colors duration-300">
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-4 group-hover:text-gold-deep transition-colors duration-300">
                 <Link href={`/${category}/${featured.slug}`}>
                   {featured.title}
                 </Link>
               </h2>
-              <p className="font-body-md text-body-md text-on-surface-variant mb-6">
+              <p className="text-sm leading-relaxed text-muted-foreground mb-6">
                 {featured.excerpt}
               </p>
-              <div className="mt-auto pt-6 border-t border-outline-variant">
-                <p className="font-label-md text-label-md text-primary">
-                  BY {featured.author.name.toUpperCase()}
+              <div className="mt-auto pt-6 border-t border-black/10">
+                <p className="font-label-md text-label-md text-gold-deep">
+                  OLEH {featured.author.name.toUpperCase()}
                 </p>
               </div>
             </div>
@@ -133,17 +134,17 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         )}
 
         {/* Editorial Grid (Secondary Stories) */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-[24px] gap-y-16">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 gap-y-12">
           {/* Story 1 */}
           {secondary[0] && (
             <article className="md:col-span-4 group cursor-pointer flex flex-col">
-              <div className="w-full aspect-[3/4] mb-4 overflow-hidden bg-surface-variant">
+              <div className="w-full aspect-[3/4] mb-4 overflow-hidden bg-muted">
                 <Image
                   src={secondary[0].thumbnail || "/og-image.jpg"}
                   alt={secondary[0].title}
                   fill
                   sizes="(max-width: 768px) 100vw, 33vw"
-                  className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
               <div className="flex items-center gap-2 mb-3">
@@ -151,17 +152,17 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                   {cat.name}
                 </CategoryBadge>
               </div>
-              <h3 className="font-headline-lg text-headline-lg text-primary mb-3 leading-tight group-hover:text-secondary transition-colors duration-300">
+              <h3 className="font-serif text-2xl font-bold text-foreground mb-3 leading-tight group-hover:text-gold-deep transition-colors duration-300">
                 <Link href={`/${category}/${secondary[0].slug}`}>
                   {secondary[0].title}
                 </Link>
               </h3>
-              <p className="font-body-md text-body-md text-on-surface-variant mb-4 flex-grow">
+              <p className="text-sm leading-relaxed text-muted-foreground mb-4 flex-grow">
                 {secondary[0].excerpt}
               </p>
-              <div className="mt-auto pt-4 border-t border-outline-variant">
-                <p className="font-label-md text-label-md text-primary">
-                  BY {secondary[0].author.name.toUpperCase()}
+              <div className="mt-auto pt-4 border-t border-black/10">
+                <p className="font-label-md text-label-md text-gold-deep">
+                  OLEH {secondary[0].author.name.toUpperCase()}
                 </p>
               </div>
             </article>
@@ -170,31 +171,31 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           {/* Story 2 */}
           {secondary[1] && (
             <article className="md:col-span-4 group cursor-pointer flex flex-col">
-              <div className="w-full aspect-square mb-4 overflow-hidden bg-surface-variant">
+              <div className="w-full aspect-square mb-4 overflow-hidden bg-muted">
                 <Image
                   src={secondary[1].thumbnail || "/og-image.jpg"}
                   alt={secondary[1].title}
                   fill
                   sizes="(max-width: 768px) 100vw, 33vw"
-                  className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
               <div className="flex items-center gap-2 mb-3">
-                <CategoryBadge variant="bordered" className="text-on-surface-variant border-on-surface-variant">
+                <CategoryBadge variant="bordered" className="text-muted-foreground border-muted-foreground">
                   {cat.name}
                 </CategoryBadge>
               </div>
-              <h3 className="font-headline-lg text-headline-lg text-primary mb-3 leading-tight group-hover:text-secondary transition-colors duration-300">
+              <h3 className="font-serif text-2xl font-bold text-foreground mb-3 leading-tight group-hover:text-gold-deep transition-colors duration-300">
                 <Link href={`/${category}/${secondary[1].slug}`}>
                   {secondary[1].title}
                 </Link>
               </h3>
-              <p className="font-body-md text-body-md text-on-surface-variant mb-4 flex-grow">
+              <p className="text-sm leading-relaxed text-muted-foreground mb-4 flex-grow">
                 {secondary[1].excerpt}
               </p>
-              <div className="mt-auto pt-4 border-t border-outline-variant">
-                <p className="font-label-md text-label-md text-primary">
-                  BY {secondary[1].author.name.toUpperCase()}
+              <div className="mt-auto pt-4 border-t border-black/10">
+                <p className="font-label-md text-label-md text-gold-deep">
+                  OLEH {secondary[1].author.name.toUpperCase()}
                 </p>
               </div>
             </article>
@@ -203,21 +204,21 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           {/* Text-Only Stories List */}
           <div className="md:col-span-4 flex flex-col gap-8">
             <div className="border-b-2 border-primary pb-2 mb-4">
-              <h4 className="font-label-md text-label-md text-primary uppercase tracking-widest">
-                Latest Profiles
+              <h4 className="font-label-md text-label-md text-foreground uppercase tracking-widest">
+                Terbaru dari Kanal Ini
               </h4>
             </div>
             {latest.map((article: any) => (
-              <article key={article.id} className="group cursor-pointer border-b border-outline-variant pb-6 last:border-b-0 last:pb-0">
-                <CategoryBadge variant="bordered" className="mb-2 border-on-surface-variant text-on-surface-variant">
+              <article key={article.id} className="group cursor-pointer border-b border-black/10 pb-6 last:border-b-0 last:pb-0">
+                <CategoryBadge variant="bordered" className="mb-2 border-muted-foreground text-muted-foreground">
                   {cat.name}
                 </CategoryBadge>
-                <h3 className="font-headline-lg text-headline-lg text-primary mb-2 group-hover:text-secondary transition-colors duration-300 text-2xl">
+                <h3 className="font-serif text-xl font-bold text-foreground mb-2 group-hover:text-gold-deep transition-colors duration-300">
                   <Link href={`/${category}/${article.slug}`}>
                     {article.title}
                   </Link>
                 </h3>
-                <p className="font-body-md text-body-md text-on-surface-variant line-clamp-3">
+                <p className="text-sm leading-relaxed text-muted-foreground line-clamp-3">
                   {article.excerpt}
                 </p>
               </article>

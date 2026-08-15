@@ -160,22 +160,24 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md rounded-none">
-        <DialogHeader>
-          <DialogTitle>{isEditing ? "Edit Pengguna" : "Pengguna Baru"}</DialogTitle>
+      <DialogContent className="sm:max-w-md rounded-none border border-black/10 bg-white">
+        <DialogHeader className="border-b border-black/5 pb-4">
+          <DialogTitle className="text-base font-bold text-foreground">
+            {isEditing ? "Edit Pengguna Redaksi" : "Tambah Pengguna Baru"}
+          </DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 pt-2">
           {/* Avatar */}
           <div className="flex items-center gap-4">
-            <Avatar className="size-16">
+            <Avatar className="size-14 rounded-none border border-black/10">
               <AvatarImage src={avatar || undefined} />
-              <AvatarFallback className="bg-news-red text-white text-lg">
+              <AvatarFallback className="bg-primary/10 text-primary font-bold text-base rounded-none">
                 {name ? getInitials(name) : "?"}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
-              <label className="text-xs font-medium">Avatar</label>
-              <div className="mt-1 flex items-center gap-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-on-surface">Avatar Foto</label>
+              <div className="mt-1.5 flex items-center gap-2">
                 <label className="cursor-pointer">
                   <input
                     type="file"
@@ -187,12 +189,12 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
                     type="button"
                     variant="outline"
                     size="sm"
-                    className="rounded-none gap-1"
+                    className="rounded-none gap-1.5 text-xs border-black/15"
                     disabled={isUploading}
                     asChild
                   >
                     <span>
-                      <UploadSimple className="size-3" />
+                      <UploadSimple className="size-3.5" />
                       {isUploading ? "Upload..." : "Upload"}
                     </span>
                   </Button>
@@ -202,10 +204,10 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="rounded-none gap-1 text-destructive"
+                    className="rounded-none gap-1 text-xs text-destructive hover:bg-destructive/10"
                     onClick={() => setAvatar(null)}
                   >
-                    <X className="size-3" />
+                    <X className="size-3.5" />
                     Hapus
                   </Button>
                 )}
@@ -214,33 +216,33 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
           </div>
 
           {/* Name */}
-          <div className="space-y-2">
-            <label className="text-xs font-medium">Nama</label>
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold uppercase tracking-wider text-on-surface">Nama Lengkap</label>
             <Input
               placeholder="Nama lengkap"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="rounded-none"
+              className="rounded-none border-black/15 bg-white text-sm focus:border-[#B8860B]"
               required
             />
           </div>
 
           {/* Email */}
-          <div className="space-y-2">
-            <label className="text-xs font-medium">Email</label>
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold uppercase tracking-wider text-on-surface">Email Redaksi</label>
             <Input
               type="email"
               placeholder="email@metrikmedia.id"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="rounded-none"
+              className="rounded-none border-black/15 bg-white text-sm focus:border-[#B8860B]"
               required
             />
           </div>
 
           {/* Password */}
-          <div className="space-y-2">
-            <label className="text-xs font-medium">
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold uppercase tracking-wider text-on-surface">
               Password {isEditing && "(kosongkan jika tidak ingin mengubah)"}
             </label>
             <Input
@@ -248,22 +250,22 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
               placeholder={isEditing ? "••••••••" : "Minimal 8 karakter"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="rounded-none"
+              className="rounded-none border-black/15 bg-white text-sm focus:border-[#B8860B]"
               minLength={isEditing ? 0 : 8}
               required={!isEditing}
             />
           </div>
 
           {/* Role */}
-          <div className="space-y-2">
-            <label className="text-xs font-medium">Role</label>
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold uppercase tracking-wider text-on-surface">Role Redaksi (RBAC)</label>
             <Select value={roleId} onValueChange={setRoleId}>
-              <SelectTrigger className="rounded-none">
+              <SelectTrigger className="rounded-none border-black/15 bg-white text-xs">
                 <SelectValue placeholder="Pilih role" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="rounded-none border-black/10">
                 {roles.map((role) => (
-                  <SelectItem key={role.id} value={role.id.toString()}>
+                  <SelectItem key={role.id} value={role.id.toString()} className="text-xs">
                     {role.name.replace(/_/g, " ")}
                   </SelectItem>
                 ))}
@@ -272,24 +274,24 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
           </div>
 
           {/* Status */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 pt-1">
             <input
               type="checkbox"
               id="isActive"
               checked={isActive}
               onChange={(e) => setIsActive(e.target.checked)}
-              className="size-4"
+              className="size-4 rounded-none accent-[#B8860B]"
             />
-            <label htmlFor="isActive" className="text-xs font-medium">
-              Aktif
+            <label htmlFor="isActive" className="text-xs font-semibold text-foreground cursor-pointer">
+              Akun Aktif (Dapat Login)
             </label>
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="pt-2 border-t border-black/5">
             <Button
               type="button"
               variant="outline"
-              className="rounded-none"
+              className="rounded-none text-xs"
               onClick={() => onOpenChange(false)}
             >
               Batal
@@ -297,9 +299,9 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
             <Button
               type="submit"
               disabled={isSaving}
-              className="rounded-none bg-news-red text-white hover:bg-news-red/90"
+              className="rounded-none bg-primary text-white hover:bg-primary/90 font-bold uppercase tracking-wider text-xs px-5 py-2 shadow-2xs"
             >
-              {isSaving ? "Menyimpan..." : isEditing ? "Simpan" : "Buat"}
+              {isSaving ? "Menyimpan..." : isEditing ? "Simpan Perubahan" : "Buat Pengguna"}
             </Button>
           </DialogFooter>
         </form>

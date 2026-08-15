@@ -1,5 +1,9 @@
 import { Metadata } from "next";
-import { Hash, Plus, Edit, Trash2, Search, FileText } from "lucide-react";
+import { DashboardTopbar } from "@/components/dashboard/topbar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Plus, TagSimple, PencilSimple, Trash } from "@phosphor-icons/react/dist/ssr";
 
 export const metadata: Metadata = {
   title: "Manajemen Topik Berita - Metrik Media CMS",
@@ -15,63 +19,67 @@ const MOCK_TOPICS = [
 
 export default function TopicsManagementPage() {
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-            <Hash className="w-6 h-6 text-blue-600" />
-            Manajemen Topik Berita (Topic System)
-          </h1>
-          <p className="text-xs text-slate-500">
-            Topik membangun topical authority di Google News melalui pengelompokan entitas berita lintas kategori.
-          </p>
-        </div>
-
-        <button className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow transition-colors flex items-center gap-1.5 self-start sm:self-auto">
-          <Plus className="w-4 h-4" />
-          Tambah Topik Baru
-        </button>
-      </div>
-
-      {/* Topics Table */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 text-xs uppercase border-b border-slate-200 dark:border-slate-800 font-bold">
-              <th className="p-4">Nama Topik</th>
-              <th className="p-4">Slug URL</th>
-              <th className="p-4">Deskripsi</th>
-              <th className="p-4">Jumlah Artikel</th>
-              <th className="p-4 text-right">Aksi</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
-            {MOCK_TOPICS.map((topic) => (
-              <tr key={topic.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-                <td className="p-4 font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                  <Hash className="w-4 h-4 text-blue-600" />
-                  {topic.name}
-                </td>
-                <td className="p-4 text-xs font-mono text-slate-500">/topic/{topic.slug}</td>
-                <td className="p-4 text-xs text-slate-600 dark:text-slate-400 max-w-xs truncate">{topic.description}</td>
-                <td className="p-4 text-xs font-semibold">
-                  <span className="px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300">
-                    {topic.articlesCount} artikel
-                  </span>
-                </td>
-                <td className="p-4 text-right space-x-2">
-                  <button className="p-2 text-slate-500 hover:text-blue-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <Edit className="w-4 h-4" />
-                  </button>
-                  <button className="p-2 text-slate-500 hover:text-red-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="flex min-h-screen w-full flex-col bg-[#f8f9fa]">
+      <DashboardTopbar />
+      <div className="w-full flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
+        <Card className="rounded-none border border-black/10 bg-white shadow-2xs">
+          <CardHeader className="flex flex-row items-center justify-between border-b border-black/5 px-6 py-4">
+            <div>
+              <CardTitle className="text-base font-bold text-foreground">Topik Berita (Topical Authority)</CardTitle>
+              <p className="text-xs text-muted-foreground mt-0.5">Membangun topical authority di Google News melalui pengelompokan entitas berita.</p>
+            </div>
+            <Button className="gap-2 rounded-none bg-primary text-white hover:bg-primary/90 font-bold uppercase tracking-wider text-xs">
+              <Plus className="size-4" weight="bold" />
+              Tambah Topik
+            </Button>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="border border-black/10 rounded-none overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/40 hover:bg-muted/40">
+                    <TableHead className="h-10 text-xs font-bold uppercase tracking-wider text-on-surface">Nama Topik</TableHead>
+                    <TableHead className="h-10 text-xs font-bold uppercase tracking-wider text-on-surface">Slug URL</TableHead>
+                    <TableHead className="h-10 text-xs font-bold uppercase tracking-wider text-on-surface">Deskripsi</TableHead>
+                    <TableHead className="h-10 text-xs font-bold uppercase tracking-wider text-on-surface text-right">Jumlah Artikel</TableHead>
+                    <TableHead className="h-10 text-xs font-bold uppercase tracking-wider text-on-surface text-right">Aksi</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {MOCK_TOPICS.map((topic) => (
+                    <TableRow key={topic.id} className="border-black/5 hover:bg-black/2">
+                      <TableCell className="py-3 font-semibold text-sm">
+                        <div className="flex items-center gap-2">
+                          <TagSimple className="size-4 text-primary" weight="bold" />
+                          <span>{topic.name}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-3 text-xs font-mono text-muted-foreground">
+                        /topic/{topic.slug}
+                      </TableCell>
+                      <TableCell className="py-3 text-xs text-muted-foreground max-w-xs truncate">
+                        {topic.description}
+                      </TableCell>
+                      <TableCell className="py-3 text-right text-xs font-mono">
+                        {topic.articlesCount.toLocaleString("id-ID")}
+                      </TableCell>
+                      <TableCell className="py-3 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button variant="ghost" size="icon" className="size-7 rounded-none">
+                            <PencilSimple className="size-3.5" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="size-7 rounded-none text-destructive hover:bg-destructive/10">
+                            <Trash className="size-3.5" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

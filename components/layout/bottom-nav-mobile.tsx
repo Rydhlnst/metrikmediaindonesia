@@ -23,7 +23,7 @@ export function BottomNavMobile() {
   ];
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-t border-outline-variant/80 shadow-lg h-16 px-4 py-2 flex items-center justify-around">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-t border-black/10 shadow-lg h-16 px-4 py-2 flex items-center justify-around">
       {navItems.map((item) => {
         const isActive =
           item.href === "/"
@@ -39,8 +39,8 @@ export function BottomNavMobile() {
             className={cn(
               "flex flex-col items-center justify-center py-1 px-4 flex-1 transition-all rounded-none",
               isActive
-                ? "text-secondary font-bold scale-105"
-                : "text-on-surface-variant hover:text-on-surface"
+                ? "text-gold-deep font-bold scale-105"
+                : "text-muted-foreground hover:text-foreground"
             )}
           >
             <Icon

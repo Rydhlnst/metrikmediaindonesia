@@ -36,6 +36,21 @@ export async function ensureBucketExists(bucket: string): Promise<void> {
   }
 }
 
+export function getMinioPublicBaseUrl(): string {
+  if (process.env.MINIO_PUBLIC_URL) {
+    return process.env.MINIO_PUBLIC_URL.replace(/\/+$/, "");
+  }
+  if (process.env.NEXT_PUBLIC_STORAGE_URL) {
+    return process.env.NEXT_PUBLIC_STORAGE_URL.replace(/\/+$/, "");
+  }
+  const endpoint = process.env.MINIO_ENDPOINT || "localhost";
+  const port = process.env.MINIO_PORT || "9000";
+  const useSsl = process.env.MINIO_USE_SSL === "true";
+  const protocol = useSsl ? "https" : "http";
+
+  return `${protocol}://${endpoint}:${port}`;
+}
+
 export async function uploadToMinio(
   bucket: string,
   key: string,
@@ -49,12 +64,9 @@ export async function uploadToMinio(
     "Content-Type": mimeType,
   });
 
-  const endpoint = process.env.MINIO_ENDPOINT || "localhost";
-  const port = process.env.MINIO_PORT || "9000";
-  const useSsl = process.env.MINIO_USE_SSL === "true";
-  const protocol = useSsl ? "https" : "http";
-
-  return `${protocol}://${endpoint}:${port}/${bucket}/${key}`;
+  const baseUrl = getMinioPublicBaseUrl();
+  const cleanKey = key.startsWith("/") ? key.slice(1) : key;
+  return `${baseUrl}/${bucket}/${cleanKey}`;
 }
 
 export async function deleteFromMinio(
@@ -62,17 +74,16 @@ export async function deleteFromMinio(
   key: string
 ): Promise<void> {
   const client = getMinioClient();
-  await client.removeObject(bucket, key);
+  const cleanKey = key.startsWith("/") ? key.slice(1) : key;
+  await client.removeObject(bucket, cleanKey);
 }
 
 export async function getMinioUrl(
   bucket: string,
   key: string
 ): Promise<string> {
-  const endpoint = process.env.MINIO_ENDPOINT || "localhost";
-  const port = process.env.MINIO_PORT || "9000";
-  const useSsl = process.env.MINIO_USE_SSL === "true";
-  const protocol = useSsl ? "https" : "http";
-
-  return `${protocol}://${endpoint}:${port}/${bucket}/${key}`;
+  const baseUrl = getMinioPublicBaseUrl();
+  const cleanKey = key.startsWith("/") ? key.slice(1) : key;
+  return `${baseUrl}/${bucket}/${cleanKey}`;
 }
+

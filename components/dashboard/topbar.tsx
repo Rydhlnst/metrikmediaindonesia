@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -12,36 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { ArrowClockwise, User, Gear, SignOut } from "@phosphor-icons/react/dist/ssr";
-
-function formatAdminDate(date: Date): string {
-  const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-  const months = [
-    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-    "Juli", "Agustus", "September", "Oktober", "November", "Desember",
-  ];
-  return `${days[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
-}
-
-function AdminClock() {
-  const [now, setNow] = useState<Date | null>(null);
-
-  useEffect(() => {
-    setNow(new Date());
-    const timer = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const time = now
-    ? now.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })
-    : "--:--";
-
-  return (
-    <span className="flex items-center gap-1.5 text-[13px] font-medium text-gray-600">
-      Jam Admin: {time}
-    </span>
-  );
-}
+import { User, Gear, SignOut, ArrowSquareOut } from "@phosphor-icons/react/dist/ssr";
 
 export function DashboardTopbar() {
   const [userName, setUserName] = useState("Admin");
@@ -55,10 +25,6 @@ export function DashboardTopbar() {
       .catch(() => {});
   }, []);
 
-  const handleRefresh = () => {
-    window.location.reload();
-  };
-
   const handleSignOut = async () => {
     try {
       await fetch("/api/auth/sign-out", { method: "POST" });
@@ -69,61 +35,74 @@ export function DashboardTopbar() {
   };
 
   return (
-    <header className="flex min-h-16 items-center justify-between border-b border-gray-100 bg-white px-4 sm:px-6">
+    <header className="h-16 flex items-center justify-between border-b border-black/10 bg-white px-4 sm:px-6 lg:px-8 w-full shrink-0">
+      {/* Left: Mobile Sidebar Trigger + System Title */}
       <div className="flex items-center gap-3">
-        <SidebarTrigger className="shrink-0 lg:hidden" />
+        <SidebarTrigger className="shrink-0 lg:hidden text-muted-foreground hover:text-foreground" />
+        <div className="hidden sm:flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+          <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-foreground">Sistem Manajemen Berita</span>
+          <span className="text-black/20">•</span>
+          <span className="text-[#B8860B]">Panel Redaksi</span>
+        </div>
+      </div>
+
+      {/* Right: Portal Link + User Profile Dropdown (Alinged to the FAR RIGHT) */}
+      <div className="flex items-center gap-3 sm:gap-4">
+        <Link
+          href="/"
+          target="_blank"
+          className="hidden md:inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors"
+        >
+          <span>Kunjungi Situs</span>
+          <ArrowSquareOut className="size-3.5" />
+        </Link>
+
+        <div className="h-4 w-px bg-black/10 hidden md:block" />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-3 rounded-md p-1.5 transition-colors hover:bg-gray-50">
-              <Avatar className="size-10 shrink-0">
+            <button className="flex items-center gap-2.5 rounded-none p-1 transition-colors hover:bg-black/5 outline-none cursor-pointer">
+              <Avatar className="size-9 shrink-0 rounded-none border border-black/10">
                 <AvatarImage src="/avatar-admin.png" alt={userName} />
-                <AvatarFallback className="bg-gray-200 text-sm font-semibold text-gray-600">
+                <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs rounded-none">
                   {userName.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex flex-col items-start">
-                <span className="text-[15px] font-bold leading-tight text-foreground">
-                  Halo, {userName.toUpperCase()}
+              <div className="hidden flex-col items-start text-left sm:flex">
+                <span className="text-xs font-bold leading-tight text-foreground">
+                  {userName}
                 </span>
-                <span className="text-[12px] text-gray-400">
-                  {formatAdminDate(new Date())}
+                <span className="text-[10px] font-semibold text-[#B8860B] uppercase tracking-wider leading-tight">
+                  Panel Admin
                 </span>
               </div>
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-48">
+          <DropdownMenuContent align="end" className="w-52 rounded-none border border-black/10 bg-white shadow-md p-1">
+            <div className="px-3 py-2 border-b border-black/5 mb-1">
+              <p className="text-xs font-bold text-foreground">{userName}</p>
+              <p className="text-[10px] text-muted-foreground font-mono">admin@metrikmedia.id</p>
+            </div>
             <DropdownMenuItem asChild>
-              <Link href="/dashboard/settings" className="flex items-center gap-2 cursor-pointer">
-                <User className="size-4" />
-                Profil
+              <Link href="/dashboard/settings" className="flex items-center gap-2 cursor-pointer text-xs font-medium px-3 py-2 rounded-none hover:bg-black/5">
+                <User className="size-4 text-muted-foreground" />
+                Profil Saya
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/dashboard/settings" className="flex items-center gap-2 cursor-pointer">
-                <Gear className="size-4" />
-                Pengaturan
+              <Link href="/dashboard/settings" className="flex items-center gap-2 cursor-pointer text-xs font-medium px-3 py-2 rounded-none hover:bg-black/5">
+                <Gear className="size-4 text-muted-foreground" />
+                Pengaturan Sistem
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleSignOut} className="flex items-center gap-2 cursor-pointer text-red-600 focus:text-red-600">
+            <DropdownMenuSeparator className="bg-black/10 my-1" />
+            <DropdownMenuItem onClick={handleSignOut} className="flex items-center gap-2 cursor-pointer text-xs font-medium px-3 py-2 rounded-none text-destructive hover:bg-destructive/10 focus:text-destructive">
               <SignOut className="size-4" />
               Keluar
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      </div>
-
-      <div className="flex items-center gap-3">
-        <AdminClock />
-        <span className="h-5 w-px bg-gray-200" />
-        <button
-          onClick={handleRefresh}
-          className="flex size-9 items-center justify-center rounded-md text-gray-400 transition-colors hover:bg-gray-50 hover:text-foreground"
-          title="Refresh"
-        >
-          <ArrowClockwise className="size-5" />
-        </button>
       </div>
     </header>
   );

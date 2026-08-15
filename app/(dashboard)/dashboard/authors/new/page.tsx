@@ -5,7 +5,7 @@ import { DashboardTopbar } from "@/components/dashboard/topbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, FloppyDisk, CircleNotch, Image as ImageIcon, Trash } from "@phosphor-icons/react/dist/ssr";
+import { ArrowLeft, FloppyDisk, CircleNotch, Image as ImageIcon, Trash, UploadSimple } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -105,55 +105,58 @@ export default function NewAuthorPage() {
   };
 
   return (
-    <main className="flex-1 px-4 pb-7 lg:px-8">
+    <div className="flex min-h-screen w-full flex-col bg-[#f8f9fa]">
       <DashboardTopbar />
-      <div className="mx-auto max-w-2xl space-y-4">
-        <div className="flex items-center justify-between">
+      <div className="w-full flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
+        <div className="flex items-center justify-between border-b border-black/5 pb-4">
           <div className="flex items-center gap-3">
             <Link href="/dashboard/authors">
-              <Button variant="ghost" size="icon" className="size-8">
+              <Button variant="ghost" size="icon" className="size-8 rounded-none">
                 <ArrowLeft className="size-4" />
               </Button>
             </Link>
-            <h1 className="text-lg font-bold">Penulis Baru</h1>
+            <div>
+              <h1 className="text-xl font-bold text-foreground">Penulis Baru</h1>
+              <p className="text-xs text-muted-foreground">Tambah profil jurnalis, editor, atau reporter baru ke tim redaksi.</p>
+            </div>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Card className="rounded-none bg-card ring-0 shadow-sm">
-            <CardHeader className="px-6 py-4">
-              <CardTitle className="text-base font-bold">Profil Penulis / Reporter</CardTitle>
+        <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
+          <Card className="rounded-none border border-black/10 bg-white shadow-2xs">
+            <CardHeader className="border-b border-black/5 px-6 py-4">
+              <CardTitle className="text-base font-bold text-foreground">Profil Penulis / Reporter</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 px-6 pb-6">
+            <CardContent className="space-y-4 p-6">
               <div>
-                <label className="mb-1.5 block text-xs font-semibold">Nama Lengkap</label>
+                <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-on-surface">Nama Lengkap</label>
                 <Input
                   placeholder="Contoh: Budi Santoso"
                   value={name}
                   onChange={(e) => handleNameChange(e.target.value)}
-                  className="rounded-none"
+                  className="rounded-none border-black/15 bg-white text-sm focus:border-[#B8860B]"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="mb-1.5 block text-xs font-semibold">Slug URL</label>
+                  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-on-surface">Slug URL</label>
                   <Input
                     placeholder="budi-santoso"
                     value={slug}
                     onChange={(e) => setSlug(e.target.value)}
-                    className="rounded-none font-mono text-xs"
+                    className="rounded-none border-black/15 bg-white font-mono text-xs focus:border-[#B8860B]"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-xs font-semibold">Role Redaksi</label>
+                  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-on-surface">Role Redaksi</label>
                   <select
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
-                    className="w-full rounded-none border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-news-red"
+                    className="w-full rounded-none border border-black/15 bg-white px-3 py-2 text-xs font-medium text-foreground outline-none focus:border-[#B8860B]"
                   >
                     <option value="Pemred">Pemred (Editor-in-Chief)</option>
                     <option value="Redaktur">Redaktur</option>
@@ -165,101 +168,98 @@ export default function NewAuthorPage() {
               </div>
 
               <div>
-                <label className="mb-1.5 block text-xs font-semibold">Biografi Singkat</label>
+                <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-on-surface">Bio / Deskripsi Profil</label>
                 <textarea
                   rows={3}
-                  placeholder="Jurnalis senior berfokus pada isu ekonomi dan keungan..."
+                  placeholder="Profil singkat pengalaman jurnalisme..."
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
-                  className="w-full resize-none rounded-none border border-border bg-background px-3 py-2 text-sm outline-none focus:border-news-red"
+                  className="w-full resize-none rounded-none border border-black/15 bg-white p-3 text-sm outline-none focus:border-[#B8860B]"
                 />
               </div>
 
               <div>
-                <label className="mb-1.5 block text-xs font-semibold">Foto Profil Avatar</label>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleAvatarUpload}
-                />
-                {avatar ? (
-                  <div className="relative size-24 border border-border bg-muted overflow-hidden">
-                    <img src={avatar} alt="Avatar" className="h-full w-full object-cover" />
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="icon"
-                      className="absolute right-1 top-1 size-6 rounded-none"
-                      onClick={() => setAvatar("")}
-                    >
-                      <Trash className="size-3" />
-                    </Button>
-                  </div>
-                ) : (
-                  <div
+                <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-on-surface">URL Foto Avatar</label>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="https://..."
+                    value={avatar}
+                    onChange={(e) => setAvatar(e.target.value)}
+                    className="rounded-none border-black/15 bg-white font-mono text-xs focus:border-[#B8860B]"
+                  />
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleAvatarUpload}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="gap-2 shrink-0 rounded-none text-xs border-black/15"
                     onClick={() => fileInputRef.current?.click()}
-                    className="flex size-24 cursor-pointer flex-col items-center justify-center border-2 border-dashed border-border bg-muted transition-colors hover:border-news-red/50"
+                    disabled={isUploading}
                   >
                     {isUploading ? (
-                      <CircleNotch className="size-6 animate-spin text-news-red" />
+                      <CircleNotch className="size-4 animate-spin text-primary" />
                     ) : (
-                      <ImageIcon className="size-6 text-muted-foreground/50" />
+                      <UploadSimple className="size-4" />
                     )}
-                  </div>
-                )}
+                    Upload
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="rounded-none bg-card ring-0 shadow-sm">
-            <CardHeader className="px-6 py-4">
-              <CardTitle className="text-base font-bold">Media Sosial (Opsional)</CardTitle>
+          <Card className="rounded-none border border-black/10 bg-white shadow-2xs">
+            <CardHeader className="border-b border-black/5 px-6 py-4">
+              <CardTitle className="text-base font-bold text-foreground">Media Sosial</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 px-6 pb-6">
+            <CardContent className="space-y-3 p-6">
               <Input
                 placeholder="Twitter / X handle (@username)"
                 value={twitter}
                 onChange={(e) => setTwitter(e.target.value)}
-                className="rounded-none"
+                className="rounded-none border-black/15 bg-white text-xs focus:border-[#B8860B]"
               />
               <Input
                 placeholder="Instagram handle (@username)"
                 value={instagram}
                 onChange={(e) => setInstagram(e.target.value)}
-                className="rounded-none"
+                className="rounded-none border-black/15 bg-white text-xs focus:border-[#B8860B]"
               />
               <Input
                 placeholder="LinkedIn URL"
                 value={linkedin}
                 onChange={(e) => setLinkedin(e.target.value)}
-                className="rounded-none"
+                className="rounded-none border-black/15 bg-white text-xs focus:border-[#B8860B]"
               />
             </CardContent>
           </Card>
 
           <div className="flex justify-end gap-2">
             <Link href="/dashboard/authors">
-              <Button type="button" variant="outline" className="rounded-none">
+              <Button type="button" variant="outline" className="rounded-none text-xs">
                 Batal
               </Button>
             </Link>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="gap-2 rounded-none bg-news-red text-white hover:bg-news-red/90"
+              className="gap-2 rounded-none bg-primary text-white hover:bg-primary/90 font-bold uppercase tracking-wider text-xs px-5 py-2.5 shadow-2xs"
             >
               {isSubmitting ? (
                 <CircleNotch className="size-4 animate-spin" />
               ) : (
-                <FloppyDisk className="size-4" />
+                <FloppyDisk className="size-4" weight="bold" />
               )}
               Simpan Penulis
             </Button>
           </div>
         </form>
       </div>
-    </main>
+    </div>
   );
 }

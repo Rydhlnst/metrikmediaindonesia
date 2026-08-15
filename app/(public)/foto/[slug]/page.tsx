@@ -1,10 +1,11 @@
 import { Metadata } from "next";
+import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getArticleBySlug } from "@/lib/mock-data";
 import { generateMetadata as createSeoMetadata } from "@/lib/seo";
 import { SITE_CONFIG } from "@/lib/constants";
-import { Camera, Calendar, User } from "lucide-react";
+import { Camera, CalendarBlank, User, ArrowLeft } from "@phosphor-icons/react/dist/ssr";
 
 interface PhotoPageProps {
   params: Promise<{ slug: string }>;
@@ -13,10 +14,10 @@ interface PhotoPageProps {
 export async function generateMetadata({ params }: PhotoPageProps): Promise<Metadata> {
   const { slug } = await params;
   const article = getArticleBySlug(slug);
-  if (!article) return { title: "Foto Tidak Ditemukan" };
+  if (!article) return { title: "Foto Tidak Ditemukan | Metrik Media" };
 
   return createSeoMetadata({
-    title: `[FOTO] ${article.title}`,
+    title: `[FOTO] ${article.title} | Metrik Media Indonesia`,
     description: article.excerpt,
     canonical: `${SITE_CONFIG.url}/foto/${article.slug}`,
     ogImage: article.thumbnail,
@@ -40,55 +41,66 @@ export default async function PhotoDetailPage({ params }: PhotoPageProps) {
   ];
 
   return (
-    <article className="min-h-screen bg-slate-950 text-slate-100 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto space-y-8">
+    <article className="container-editorial py-8 pb-20 md:pb-8">
+      <div className="max-w-4xl mx-auto w-full space-y-6">
         
-        {/* Header */}
-        <div className="space-y-4">
-          <div className="flex items-center space-x-2 text-amber-400 font-bold text-xs uppercase tracking-wider">
-            <Camera className="w-4 h-4" />
-            <span>{article.category.name} PHOTO STORY</span>
-          </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight">
-            {article.title}
-          </h1>
-          <p className="text-slate-300 text-base sm:text-lg">
-            {article.excerpt}
-          </p>
-          <div className="flex items-center space-x-4 text-xs text-slate-400 pt-2 border-t border-slate-800">
-            <span className="flex items-center gap-1">
-              <User className="w-3.5 h-3.5 text-amber-400" />
-              Pewarta Foto: {article.author.name}
+        {/* Navigation Breadcrumb */}
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Link href="/foto" className="hover:text-gold-deep transition-colors flex items-center gap-1 font-bold">
+            <ArrowLeft className="size-3.5" /> Kembali ke Galeri Foto
+          </Link>
+          <span>/</span>
+          <span className="text-gold-deep font-bold uppercase">{article.category.name}</span>
+        </div>
+
+        {/* Header Container */}
+        <div className="rounded-none border border-black/10 bg-white p-6 sm:p-8 space-y-6">
+          <div className="space-y-3">
+            <span className="inline-block px-2.5 py-0.5 bg-gold text-white text-[10px] font-bold uppercase tracking-wider">
+              {article.category.name} PHOTO STORY
             </span>
-            <span>•</span>
-            <span className="flex items-center gap-1">
-              <Calendar className="w-3.5 h-3.5 text-amber-400" />
-              {new Date(article.publishedAt).toLocaleDateString("id-ID", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}
-            </span>
+            <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground leading-tight">
+              {article.title}
+            </h1>
+            <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+              {article.excerpt}
+            </p>
+            <div className="flex items-center gap-4 text-xs text-muted-foreground pt-3 border-t border-black/10">
+              <span className="flex items-center gap-1 font-bold text-foreground">
+                <User className="size-3.5 text-gold-deep" weight="bold" />
+                Pewarta Foto: {article.author.name}
+              </span>
+              <span>•</span>
+              <span className="flex items-center gap-1">
+                <CalendarBlank className="size-3.5 text-muted-foreground" />
+                {new Date(article.publishedAt).toLocaleDateString("id-ID", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Gallery Image Slides / List */}
-        <div className="space-y-12">
+        {/* Gallery Image Slides */}
+        <div className="space-y-6">
           {galleryImages.map((img, idx) => (
-            <figure key={idx} className="space-y-3 bg-slate-900 rounded-3xl p-4 sm:p-6 border border-slate-800">
-              <div className="relative aspect-16/10 w-full rounded-2xl overflow-hidden bg-slate-800">
+            <figure key={idx} className="rounded-none border border-black/10 bg-white p-4 sm:p-6 space-y-3">
+              <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
                 <Image
                   src={img.url}
                   alt={`Galeri foto ${idx + 1}`}
                   fill
+                  sizes="(max-width: 768px) 100vw, 896px"
                   className="object-cover"
                 />
-                <span className="absolute top-4 left-4 bg-black/80 px-3 py-1 text-xs font-mono text-amber-400 rounded-full">
+                <span className="absolute top-3 left-3 bg-black/85 px-2.5 py-1 text-[10px] font-bold text-white">
                   Foto {idx + 1} / {galleryImages.length}
                 </span>
               </div>
-              <figcaption className="text-sm text-slate-300 leading-relaxed pt-2">
-                <strong className="text-amber-400 mr-2">MetrikFoto:</strong>
+              <figcaption className="text-xs sm:text-sm text-foreground/90 leading-relaxed pt-1">
+                <strong className="text-gold-deep mr-2 uppercase tracking-wider text-xs">MetrikFoto:</strong>
                 {img.caption}
               </figcaption>
             </figure>

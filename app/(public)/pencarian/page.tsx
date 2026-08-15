@@ -5,7 +5,8 @@ import { Suspense, useState, useCallback, useEffect, useRef } from "react";
 import { ArticleCard } from "@/components/article/article-card";
 import { Breadcrumb } from "@/components/shared/breadcrumb";
 import { CategoryBadge } from "@/components/shared/category-badge";
-import { SectionHeading } from "@/components/shared/section-heading";
+import { SectionHeader } from "@/components/shared/section-header";
+import { PublicPageHeader } from "@/components/shared/public-page-header";
 import { CATEGORIES } from "@/lib/constants";
 import {
   MagnifyingGlass,
@@ -46,13 +47,13 @@ function SearchBar({ initialQuery }: { initialQuery: string }) {
 
   return (
     <form onSubmit={handleSubmit} className="relative">
-      <MagnifyingGlass className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-on-surface-variant" />
+      <MagnifyingGlass className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
       <input
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Cari berita, topik, atau kata kunci..."
-        className="h-12 w-full border border-outline-variant bg-surface-container-low pl-12 pr-12 text-base outline-none transition-colors placeholder:text-on-surface-variant focus:border-primary focus:bg-background"
+        className="h-12 w-full border border-black/10 bg-white pl-12 pr-12 text-base outline-none transition-colors placeholder:text-muted-foreground focus:border-gold"
         autoFocus
       />
       {query && (
@@ -62,7 +63,7 @@ function SearchBar({ initialQuery }: { initialQuery: string }) {
             setQuery("");
             router.push("/pencarian");
           }}
-          className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary"
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-gold-deep"
         >
           <X className="size-5" />
         </button>
@@ -96,17 +97,15 @@ function SearchRecommendations() {
     <div className="space-y-8">
       {/* Popular Searches */}
       <section>
-        <SectionHeading size="sm" className="mb-3 text-on-surface-variant">
-          Pencarian Populer
-        </SectionHeading>
+        <SectionHeader title="PENCARIAN POPULER" />
         <div className="flex flex-wrap gap-2">
           {popularSearches.map((term) => (
             <Link
               key={term}
               href={`/pencarian?q=${encodeURIComponent(term)}`}
-              className="inline-flex items-center gap-1.5 border border-outline-variant px-4 py-2 text-sm transition-colors hover:bg-surface-container-low hover:text-on-surface"
+              className="inline-flex items-center gap-1.5 border border-black/10 bg-white px-4 py-2 text-sm transition-colors hover:border-gold/50 hover:text-foreground"
             >
-              <TrendUp className="size-3.5 text-on-surface-variant" />
+              <TrendUp className="size-3.5 text-muted-foreground" />
               {term}
             </Link>
           ))}
@@ -115,18 +114,16 @@ function SearchRecommendations() {
 
       {/* Browse by Category */}
       <section>
-        <SectionHeading size="sm" className="mb-3 text-on-surface-variant">
-          Telusuri Berdasarkan Kategori
-        </SectionHeading>
+        <SectionHeader title="TELUSURI BERDASARKAN KATEGORI" />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {CATEGORIES.map((cat) => (
             <Link
               key={cat.slug}
               href={`/${cat.slug}`}
-              className="group flex items-center gap-3 border border-outline-variant p-4 transition-all hover:bg-surface-container-low"
+              className="group flex items-center gap-3 border border-black/10 bg-white p-4 transition-colors hover:border-gold/50"
             >
               <CategoryIcon slug={cat.slug} color={cat.color} />
-              <span className="text-sm font-medium transition-colors group-hover:text-primary">
+              <span className="text-sm font-medium transition-colors group-hover:text-gold-deep">
                 {cat.name}
               </span>
             </Link>
@@ -136,32 +133,22 @@ function SearchRecommendations() {
 
       {/* Trending Articles */}
       <section>
-        <div className="mb-3 flex items-center justify-between">
-          <SectionHeading size="sm" className="text-on-surface-variant">
-            Berita Trending
-          </SectionHeading>
-          <Link
-            href="/"
-            className="font-label-md text-label-md text-on-surface-variant transition-colors hover:text-primary"
-          >
-            Lihat Semua
-          </Link>
-        </div>
+        <SectionHeader title="BERITA TRENDING" href="/" actionText="Lihat Semua" />
         <div className="space-y-3">
           {trendingArticles.slice(0, 5).map((article: any, index: number) => (
             <Link
               key={article.id}
               href={`/${article.category?.slug || "berita"}/${article.slug}`}
-              className="group flex items-start gap-4 p-3 transition-colors hover:bg-surface-container-low"
+              className="group flex items-start gap-4 p-3 border border-black/10 bg-white transition-colors hover:border-gold/50"
             >
-              <span className="flex size-8 shrink-0 items-center justify-center bg-surface-container text-sm font-bold text-on-surface-variant">
+              <span className="flex size-8 shrink-0 items-center justify-center bg-black/5 text-sm font-bold text-muted-foreground">
                 {index + 1}
               </span>
               <div className="min-w-0 flex-1">
-                <h3 className="line-clamp-2 text-sm font-medium leading-snug transition-colors group-hover:text-primary">
+                <h3 className="line-clamp-2 text-sm font-medium leading-snug transition-colors group-hover:text-gold-deep">
                   {article.title}
                 </h3>
-                <div className="mt-1.5 flex items-center gap-2 text-xs text-on-surface-variant">
+                <div className="mt-1.5 flex items-center gap-2 text-xs text-muted-foreground">
                   <CategoryBadge variant="pill" className="text-[10px]">
                     {article.category?.name || "-"}
                   </CategoryBadge>
@@ -176,10 +163,8 @@ function SearchRecommendations() {
 
       {/* Recent Articles */}
       <section>
-        <SectionHeading size="sm" className="mb-3 text-on-surface-variant">
-          Berita Terkini
-        </SectionHeading>
-        <div className="grid gap-[24px] sm:grid-cols-2 lg:grid-cols-3">
+        <SectionHeader title="BERITA TERKINI" />
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {recentArticles.map((article: any) => (
             <ArticleCard key={article.id} article={article} />
           ))}
@@ -245,53 +230,43 @@ function SearchResults() {
 
       {query ? (
         <div className="mt-8">
-          <h1 className="font-headline-xl text-headline-xl text-primary">
-            Hasil Pencarian
-          </h1>
-          <p className="mt-2 font-label-md text-label-md text-on-surface-variant">
-            {loading ? (
-              <span className="flex items-center gap-2">
-                <CircleNotch className="size-4 animate-spin" />
-                Mencari...
-              </span>
-            ) : (
-              <>
-                {results.length} hasil untuk &ldquo;
-                <span className="font-medium text-on-surface">{query}</span>&rdquo;
-              </>
-            )}
-          </p>
+          <PublicPageHeader
+            title="Hasil Pencarian"
+            description={
+              loading
+                ? "Mencari artikel berita terkini..."
+                : `${results.length} hasil ditemukan untuk "${query}"`
+            }
+          />
 
           {!loading && hasSearched && results.length > 0 ? (
-            <div className="mt-6 grid gap-[24px] sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {results.map((article: any) => (
                 <ArticleCard key={article.id} article={article} />
               ))}
             </div>
           ) : !loading && hasSearched && results.length === 0 ? (
             <div className="py-20 text-center">
-              <MagnifyingGlass className="mx-auto mb-4 size-12 text-on-surface-variant/50" />
-              <p className="text-lg font-medium text-on-surface">Tidak ada hasil ditemukan</p>
-              <p className="mt-2 text-sm text-on-surface-variant">
+              <MagnifyingGlass className="mx-auto mb-4 size-12 text-muted-foreground/50" />
+              <p className="text-lg font-medium text-foreground">Tidak ada hasil ditemukan</p>
+              <p className="mt-2 text-sm text-muted-foreground">
                 Coba kata kunci lain atau periksa ejaan Anda
               </p>
             </div>
           ) : loading ? (
-            <div className="mt-6 grid gap-[24px] sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="aspect-[4/3] animate-pulse rounded bg-muted/30" />
+                <div key={i} className="aspect-[4/3] animate-pulse bg-muted/30" />
               ))}
             </div>
           ) : null}
         </div>
       ) : (
         <div className="mt-8">
-          <h1 className="font-headline-xl text-headline-xl text-primary">
-            Temukan Berita
-          </h1>
-          <p className="mt-2 font-label-md text-label-md text-on-surface-variant">
-            Cari berita terkini dari berbagai kategori
-          </p>
+          <PublicPageHeader
+            title="Pencarian"
+            description="Telusuri arsip berita, laporan investigasi, dan liputan khusus dari seluruh kategori."
+          />
           <div className="mt-6">
             <SearchRecommendations />
           </div>
@@ -306,7 +281,7 @@ export default function SearchPage() {
     <Suspense
       fallback={
         <div className="py-20 text-center">
-          <p className="text-sm text-on-surface-variant">Memuat...</p>
+          <p className="text-sm text-muted-foreground">Memuat...</p>
         </div>
       }
     >

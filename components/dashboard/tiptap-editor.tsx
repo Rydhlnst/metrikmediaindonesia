@@ -213,16 +213,21 @@ export function TiptapEditor({
     </Button>
   );
 
+  const plainText = content.replace(/<[^>]*>/g, " ").trim();
+  const wordCount = plainText ? plainText.split(/\s+/).filter(Boolean).length : 0;
+  const charCount = plainText.length;
+  const readingMinutes = Math.max(1, Math.ceil(wordCount / 200));
+
   return (
-    <div className="rounded-none border border-border">
+    <div className="rounded-none border border-black/10 bg-white shadow-2xs">
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-0.5 border-b border-border bg-muted/30 p-1">
+      <div className="flex flex-wrap items-center gap-0.5 border-b border-black/10 bg-muted/20 p-1.5">
         {/* Text Format */}
         <ToolButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           active={editor.isActive("bold")}
         >
-          <TextB className="size-4" />
+          <TextB className="size-4" weight="bold" />
         </ToolButton>
         <ToolButton
           onClick={() => editor.chain().focus().toggleItalic().run()}
@@ -243,41 +248,35 @@ export function TiptapEditor({
           <TextStrikethrough className="size-4" />
         </ToolButton>
         <ToolButton
-          onClick={() => editor.chain().focus().toggleCode().run()}
-          active={editor.isActive("code")}
-        >
-          <Code className="size-4" />
-        </ToolButton>
-        <ToolButton
           onClick={() => editor.chain().focus().toggleHighlight().run()}
           active={editor.isActive("highlight")}
         >
           <Highlighter className="size-4" />
         </ToolButton>
 
-        <Separator orientation="vertical" className="mx-1 h-6" />
+        <Separator orientation="vertical" className="mx-1 h-6 bg-black/10" />
 
         {/* Headings */}
         <ToolButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           active={editor.isActive("heading", { level: 1 })}
         >
-          <TextHOne className="size-4" />
+          <TextHOne className="size-4" weight="bold" />
         </ToolButton>
         <ToolButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           active={editor.isActive("heading", { level: 2 })}
         >
-          <TextHTwo className="size-4" />
+          <TextHTwo className="size-4" weight="bold" />
         </ToolButton>
         <ToolButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
           active={editor.isActive("heading", { level: 3 })}
         >
-          <TextHThree className="size-4" />
+          <TextHThree className="size-4" weight="bold" />
         </ToolButton>
 
-        <Separator orientation="vertical" className="mx-1 h-6" />
+        <Separator orientation="vertical" className="mx-1 h-6 bg-black/10" />
 
         {/* Lists */}
         <ToolButton
@@ -299,7 +298,7 @@ export function TiptapEditor({
           <ListChecks className="size-4" />
         </ToolButton>
 
-        <Separator orientation="vertical" className="mx-1 h-6" />
+        <Separator orientation="vertical" className="mx-1 h-6 bg-black/10" />
 
         {/* Alignment */}
         <ToolButton
@@ -321,9 +320,9 @@ export function TiptapEditor({
           <TextAlignRight className="size-4" />
         </ToolButton>
 
-        <Separator orientation="vertical" className="mx-1 h-6" />
+        <Separator orientation="vertical" className="mx-1 h-6 bg-black/10" />
 
-        {/* Block */}
+        {/* Quotes & Code */}
         <ToolButton
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           active={editor.isActive("blockquote")}
@@ -331,21 +330,19 @@ export function TiptapEditor({
           <Quotes className="size-4" />
         </ToolButton>
         <ToolButton
-          onClick={() => editor.chain().focus().setHorizontalRule().run()}
-        >
-          <Minus className="size-4" />
-        </ToolButton>
-        <ToolButton
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           active={editor.isActive("codeBlock")}
         >
-          <Code2 className="size-4" />
+          <Code className="size-4" />
         </ToolButton>
 
-        <Separator orientation="vertical" className="mx-1 h-6" />
+        <Separator orientation="vertical" className="mx-1 h-6 bg-black/10" />
 
-        {/* Insert */}
-        <ToolButton onClick={() => setLinkDialogOpen(true)}>
+        {/* Media & Links */}
+        <ToolButton
+          onClick={() => setLinkDialogOpen(true)}
+          active={editor.isActive("link")}
+        >
           <LinkIcon className="size-4" />
         </ToolButton>
         <ToolButton onClick={() => setImageDialogOpen(true)}>
@@ -356,7 +353,7 @@ export function TiptapEditor({
           disabled={isUploading}
         >
           {isUploading ? (
-            <CircleNotch className="size-4 animate-spin" />
+            <CircleNotch className="size-4 animate-spin text-primary" />
           ) : (
             <UploadSimple className="size-4" />
           )}
@@ -368,9 +365,9 @@ export function TiptapEditor({
           <TableIcon className="size-4" />
         </ToolButton>
 
-        <Separator orientation="vertical" className="mx-1 h-6" />
+        <Separator orientation="vertical" className="mx-1 h-6 bg-black/10" />
 
-        {/* Undo/Redo */}
+        {/* History */}
         <ToolButton
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editor.can().undo()}
@@ -394,27 +391,41 @@ export function TiptapEditor({
         onChange={handleFileUpload}
       />
 
-      {/* Editor Content */}
-      <EditorContent editor={editor} />
+      {/* Editor Content Area */}
+      <EditorContent editor={editor} className="min-h-[420px] p-2" />
+
+      {/* Live Status Bar / Word Counter & Reading Time */}
+      <div className="flex items-center justify-between border-t border-black/10 bg-[#fafafa] px-4 py-2 text-[11px] font-medium text-muted-foreground select-none">
+        <div className="flex items-center gap-3">
+          <span><strong className="text-foreground font-bold">{wordCount}</strong> Kata</span>
+          <span>•</span>
+          <span><strong className="text-foreground font-bold">{charCount}</strong> Karakter</span>
+          <span>•</span>
+          <span className="text-primary font-bold">~{readingMinutes} Menit Baca</span>
+        </div>
+        <div className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground hidden sm:block">
+          Rich Text & Media Markdown
+        </div>
+      </div>
 
       {/* Link Dialog */}
       <Dialog open={linkDialogOpen} onOpenChange={setLinkDialogOpen}>
-        <DialogContent className="sm:max-w-md rounded-none">
-          <DialogHeader>
-            <DialogTitle>Tambah Link</DialogTitle>
+        <DialogContent className="sm:max-w-md rounded-none border border-black/10 bg-white">
+          <DialogHeader className="border-b border-black/5 pb-3">
+            <DialogTitle className="text-sm font-bold text-foreground">Sisipkan Tautan Web (Link)</DialogTitle>
           </DialogHeader>
           <Input
-            placeholder="https://example.com"
+            placeholder="https://metrikmedia.id/berita/..."
             value={linkUrl}
             onChange={(e) => setLinkUrl(e.target.value)}
-            className="rounded-none"
+            className="rounded-none border-black/15 text-xs"
           />
-          <DialogFooter>
-            <Button variant="outline" className="rounded-none" onClick={() => setLinkDialogOpen(false)}>
+          <DialogFooter className="pt-2">
+            <Button variant="outline" className="rounded-none text-xs" onClick={() => setLinkDialogOpen(false)}>
               Batal
             </Button>
-            <Button className="rounded-none bg-news-red text-white" onClick={addLink}>
-              Tambah
+            <Button className="rounded-none bg-primary text-white hover:bg-primary/90 font-bold uppercase tracking-wider text-xs px-4 py-2" onClick={addLink}>
+              Simpan Link
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -422,22 +433,22 @@ export function TiptapEditor({
 
       {/* Image URL Dialog */}
       <Dialog open={imageDialogOpen} onOpenChange={setImageDialogOpen}>
-        <DialogContent className="sm:max-w-md rounded-none">
-          <DialogHeader>
-            <DialogTitle>Tambah Gambar dari URL</DialogTitle>
+        <DialogContent className="sm:max-w-md rounded-none border border-black/10 bg-white">
+          <DialogHeader className="border-b border-black/5 pb-3">
+            <DialogTitle className="text-sm font-bold text-foreground">Sisipkan Gambar dari URL</DialogTitle>
           </DialogHeader>
           <Input
-            placeholder="https://example.com/image.jpg"
+            placeholder="https://example.com/foto-berita.jpg"
             value={imageUrl}
             onChange={(e) => setImageUrl(e.target.value)}
-            className="rounded-none"
+            className="rounded-none border-black/15 text-xs"
           />
-          <DialogFooter>
-            <Button variant="outline" className="rounded-none" onClick={() => setImageDialogOpen(false)}>
+          <DialogFooter className="pt-2">
+            <Button variant="outline" className="rounded-none text-xs" onClick={() => setImageDialogOpen(false)}>
               Batal
             </Button>
-            <Button className="rounded-none bg-news-red text-white" onClick={addImage}>
-              Tambah
+            <Button className="rounded-none bg-primary text-white hover:bg-primary/90 font-bold uppercase tracking-wider text-xs px-4 py-2" onClick={addImage}>
+              Sisipkan Foto
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -445,22 +456,22 @@ export function TiptapEditor({
 
       {/* YouTube Dialog */}
       <Dialog open={youtubeDialogOpen} onOpenChange={setYoutubeDialogOpen}>
-        <DialogContent className="sm:max-w-md rounded-none">
-          <DialogHeader>
-            <DialogTitle>Embed YouTube</DialogTitle>
+        <DialogContent className="sm:max-w-md rounded-none border border-black/10 bg-white">
+          <DialogHeader className="border-b border-black/5 pb-3">
+            <DialogTitle className="text-sm font-bold text-foreground">Sematkan Video YouTube (Embed)</DialogTitle>
           </DialogHeader>
           <Input
-            placeholder="https://youtube.com/watch?v=..."
+            placeholder="https://www.youtube.com/watch?v=..."
             value={youtubeUrl}
             onChange={(e) => setYoutubeUrl(e.target.value)}
-            className="rounded-none"
+            className="rounded-none border-black/15 text-xs"
           />
-          <DialogFooter>
-            <Button variant="outline" className="rounded-none" onClick={() => setYoutubeDialogOpen(false)}>
+          <DialogFooter className="pt-2">
+            <Button variant="outline" className="rounded-none text-xs" onClick={() => setYoutubeDialogOpen(false)}>
               Batal
             </Button>
-            <Button className="rounded-none bg-news-red text-white" onClick={addYoutube}>
-              Tambah
+            <Button className="rounded-none bg-primary text-white hover:bg-primary/90 font-bold uppercase tracking-wider text-xs px-4 py-2" onClick={addYoutube}>
+              Sematkan Video
             </Button>
           </DialogFooter>
         </DialogContent>

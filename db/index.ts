@@ -4,8 +4,9 @@ import { drizzle, PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "@/db/schema/index";
 
-// Load .env.local
+// Load .env.local and .env
 config({ path: resolve(process.cwd(), ".env.local") });
+config({ path: resolve(process.cwd(), ".env") });
 
 export type DatabaseType = "postgresql" | "mysql";
 

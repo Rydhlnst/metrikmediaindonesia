@@ -42,8 +42,8 @@ export function ArticleCard({
         {rank !== undefined && (
           <span
             className={cn(
-              "flex shrink-0 items-start font-headline-lg text-headline-lg font-bold ranking-number",
-              rank < 3 ? "text-on-secondary-container" : "text-outline-variant"
+              "flex shrink-0 items-start font-serif text-3xl font-bold ranking-number",
+              rank < 3 ? "text-gold" : "text-black/20"
             )}
           >
             {String(rank + 1).padStart(2, "0")}
@@ -60,10 +60,10 @@ export function ArticleCard({
         </div>
         <div className="flex flex-1 min-w-0 flex-col justify-center gap-1">
           <CategoryBadge>{categoryName}</CategoryBadge>
-          <h3 className="text-[15px] font-semibold leading-snug line-clamp-2 text-on-surface group-hover:text-secondary transition-colors">
+          <h3 className="text-[15px] font-semibold leading-snug line-clamp-2 text-foreground group-hover:text-gold-deep transition-colors">
             {article.title}
           </h3>
-          <div className="flex items-center gap-2 text-xs text-on-surface-variant">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
             {authorName && <span>{authorName}</span>}
             {authorName && <span>·</span>}
             <span className="flex items-center gap-1">
@@ -89,7 +89,7 @@ export function ArticleCard({
     return (
       <Link
         href={`/${categorySlug}/${article.slug}`}
-        className={cn("group overflow-hidden border border-outline-variant", className)}
+        className={cn("group overflow-hidden border border-black/10 bg-white", className)}
       >
           <div className="relative aspect-[16/10] w-full overflow-hidden bg-surface-container">
             <Image
@@ -104,14 +104,14 @@ export function ArticleCard({
           <div className="absolute top-3 left-3 flex items-center gap-2">
             <CategoryBadge variant="pill">{categoryName}</CategoryBadge>
             {showBookmark && (
-              <button className="flex size-8 items-center justify-center bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-secondary-container hover:text-on-secondary-container">
+              <button className="flex size-8 items-center justify-center bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-gold hover:text-white">
                 <BookmarkSimple className="size-4" />
               </button>
             )}
           </div>
           <div className="absolute bottom-0 left-0 right-0 p-4">
             <h3
-              className="font-headline-lg text-headline-lg font-bold leading-snug text-white line-clamp-2"
+              className="font-serif text-3xl font-bold leading-snug text-white line-clamp-2"
             >
               {article.title}
             </h3>
@@ -122,7 +122,7 @@ export function ArticleCard({
               {showViews && (
                 <>
                   <span>·</span>
-                  <span>{formatViews(article.viewCount || 0)} views</span>
+                  <span>{formatViews(article.viewCount || 0)} dibaca</span>
                 </>
               )}
             </div>
@@ -133,14 +133,14 @@ export function ArticleCard({
   }
 
   // Default: vertical
-  const titleSize = size === "lg" ? "text-lg" : size === "sm" ? "text-[15px]" : "text-[15px]";
+  const titleSize = size === "lg" ? "text-lg" : "text-[15px]";
 
   return (
     <Link
       href={`/${categorySlug}/${article.slug}`}
-      className={cn("group overflow-hidden border border-outline-variant", className)}
+      className={cn("group overflow-hidden border border-black/10 bg-white", className)}
     >
-      <div className={cn("relative overflow-hidden bg-surface-container", size === "lg" ? "aspect-[16/10]" : "aspect-[16/10]")}>
+      <div className={cn("relative overflow-hidden bg-surface-container", "aspect-[16/10]")}>
         <Image
           src={getImageUrl(article.featuredImage, "card")}
           alt={article.title}
@@ -150,22 +150,22 @@ export function ArticleCard({
           priority={priority}
         />
         {showBookmark && (
-          <button className="absolute right-2 top-2 flex size-8 items-center justify-center bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-secondary-container hover:text-on-secondary-container">
+          <button className="absolute right-2 top-2 flex size-8 items-center justify-center bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-gold hover:text-white">
             <BookmarkSimple className="size-4" />
           </button>
         )}
       </div>
       <div className="flex flex-1 flex-col gap-1.5 p-4">
         <CategoryBadge>{categoryName}</CategoryBadge>
-        <h3 className={cn("font-semibold leading-snug line-clamp-2 group-hover:text-secondary transition-colors", titleSize)}>
+        <h3 className={cn("font-semibold leading-snug line-clamp-2 group-hover:text-gold-deep transition-colors", titleSize)}>
           {article.title}
         </h3>
         {showExcerpt && article.excerpt && (
-          <p className="text-sm leading-relaxed text-on-surface-variant line-clamp-2">
+          <p className="text-sm leading-relaxed text-muted-foreground line-clamp-2">
             {article.excerpt}
           </p>
         )}
-        <div className="mt-1 flex items-center gap-2 text-xs text-on-surface-variant">
+        <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
           {authorName && <span>{authorName}</span>}
           <span>·</span>
           <span className="flex items-center gap-1">

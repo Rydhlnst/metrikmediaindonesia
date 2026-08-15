@@ -1,9 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { NewspaperClipping, ChartBar, Users, FolderOpen } from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
 
 interface StatsData {
   totalArticles: number;
@@ -33,58 +31,49 @@ export function StatGrid() {
 
   const stats = [
     {
-      label: "Total Artikel Berita",
-      value: data.totalArticles.toLocaleString("id-ID"),
-      detail: "Terpublikasi & Draft",
+      label: "Artikel",
+      detail: "Semua berita yang sudah dibuat",
+      value: data.totalArticles,
       icon: NewspaperClipping,
-      tone: "bg-news-red",
     },
     {
-      label: "Total Views Pembaca",
-      value: data.totalViews.toLocaleString("id-ID"),
-      detail: "Total akumulasi pembaca",
+      label: "Dibaca",
+      detail: "Total kali artikel Anda dibaca orang",
+      value: data.totalViews,
       icon: ChartBar,
-      tone: "bg-blue-500",
     },
     {
-      label: "Penulis & Redaksi",
-      value: data.activeAuthors.toLocaleString("id-ID"),
-      detail: "Tim Jurnalis Aktif",
+      label: "Penulis",
+      detail: "Jumlah penulis dan redaksi aktif",
+      value: data.activeAuthors,
       icon: Users,
-      tone: "bg-emerald-500",
     },
     {
-      label: "Kategori Berita",
-      value: data.totalCategories.toLocaleString("id-ID"),
-      detail: "Kategori aktif",
+      label: "Kategori",
+      detail: "Kelompok rubrik berita Anda",
+      value: data.totalCategories,
       icon: FolderOpen,
-      tone: "bg-purple-500",
     },
   ];
 
   return (
-    <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <section className="grid gap-px border border-black/10 bg-black/10 sm:grid-cols-2 xl:grid-cols-4">
       {stats.map((stat) => (
-        <Card
+        <div
           key={stat.label}
-          className="min-h-28 rounded-none bg-card py-4 ring-0 shadow-sm"
+          className="flex flex-col gap-2 bg-white p-6 transition-colors hover:bg-[#B8860B]/[0.03]"
         >
-          <CardHeader className="flex items-center gap-2 px-4 pb-2">
-            <div
-              className={cn(
-                "flex items-center justify-center p-2 text-white",
-                stat.tone
-              )}
-            >
-              <stat.icon className="size-5" />
-            </div>
-            <CardTitle className="text-sm font-medium">{stat.label}</CardTitle>
-          </CardHeader>
-          <CardContent className="px-4 flex flex-col mt-auto">
-            <div className="text-3xl font-bold tracking-tight">{stat.value}</div>
-            <div className="mt-2 text-xs text-muted-foreground">{stat.detail}</div>
-          </CardContent>
-        </Card>
+          <div className="flex items-center gap-2.5">
+            <stat.icon className="size-4 shrink-0 text-[#B8860B]" weight="bold" />
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              {stat.label}
+            </span>
+          </div>
+          <div className="text-4xl font-extrabold tracking-tight text-foreground tabular-nums">
+            {stat.value.toLocaleString("id-ID")}
+          </div>
+          <div className="text-xs text-muted-foreground">{stat.detail}</div>
+        </div>
       ))}
     </section>
   );

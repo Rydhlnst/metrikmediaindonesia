@@ -48,7 +48,7 @@ export function SeoTracker({
 
     // Clean html tags from content
     const plainContent = content.replace(/<[^>]*>/g, " ").trim();
-    const wordCount = plainContent ? plainContent.split(/\s+/).length : 0;
+    const wordCount = plainContent ? plainContent.split(/\s+/).filter(Boolean).length : 0;
     const lowerKeyword = focusKeyword.trim().toLowerCase();
 
     // 1. Focus Keyword Provided (10 pts)
@@ -74,7 +74,7 @@ export function SeoTracker({
       status: titleOk ? "pass" : titleWarn ? "warn" : "fail",
       detail: titleLen
         ? `${titleLen} karakter (Ideal: 40-65)`
-        : "Judul belum diisi",
+        : "Judul artikel masih kosong",
       score: titleOk ? 15 : titleWarn ? 8 : 0,
     });
     score += titleOk ? 15 : titleWarn ? 8 : 0;
@@ -102,7 +102,7 @@ export function SeoTracker({
       label: "Focus Keyword dalam Judul",
       status: keywordInTitle ? "pass" : hasKeyword ? "warn" : "fail",
       detail: keywordInTitle
-        ? "Focus Keyword muncul di dalam Judul"
+        ? "Focus Keyword ditemukan di dalam Judul"
         : "Sertakan Focus Keyword di dalam Judul Artikel",
       score: keywordInTitle ? 15 : 0,
     });
@@ -116,7 +116,7 @@ export function SeoTracker({
       label: "Focus Keyword dalam Meta Description",
       status: keywordInDesc ? "pass" : hasKeyword ? "warn" : "fail",
       detail: keywordInDesc
-        ? "Focus Keyword muncul di dalam Meta Description"
+        ? "Focus Keyword ditemukan di dalam Meta Description"
         : "Sertakan Focus Keyword di dalam Meta Description",
       score: keywordInDesc ? 15 : 0,
     });
@@ -131,7 +131,7 @@ export function SeoTracker({
       status: keywordInContent ? "pass" : hasKeyword ? "warn" : "fail",
       detail: keywordInContent
         ? "Focus Keyword muncul di dalam teks artikel"
-        : "Gunakan Focus Keyword beberapa kali di dalam teks artikel",
+        : "Gunakan Focus Keyword beberapa kali di dalam teks naskah",
       score: keywordInContent ? 15 : 0,
     });
     if (keywordInContent) score += 15;
@@ -145,8 +145,8 @@ export function SeoTracker({
       status: wordCountOk ? "pass" : wordCountWarn ? "warn" : "fail",
       detail: `${wordCount} kata ${
         wordCountOk
-          ? "(Memenuhi syarat SEO Berita)"
-          : "(Disarankan min. 300 kata)"
+          ? "(Memenuhi standar indeks Google Berita)"
+          : "(Disarankan minimal 300 kata untuk liputan mendalam)"
       }`,
       score: wordCountOk ? 15 : wordCountWarn ? 7 : 0,
     });
@@ -156,11 +156,11 @@ export function SeoTracker({
     const hasImage = thumbnailUrl.length > 0;
     checks.push({
       id: "featured-image",
-      label: "Gambar Utama Terpasang",
+      label: "Gambar Utama Terpasang & Ter-optimasi",
       status: hasImage ? "pass" : "fail",
       detail: hasImage
-        ? "Gambar utama terpasang & ter-optimasi WebP"
-        : "Upload gambar utama untuk Open Graph & Google Image SEO",
+        ? "Gambar utama terpasang dengan format WebP (LCP Cepat)"
+        : "Upload foto utama untuk Open Graph & Google Discover",
       score: hasImage ? 10 : 0,
     });
     if (hasImage) score += 10;
@@ -170,7 +170,6 @@ export function SeoTracker({
 
     return { checks, score: finalScore };
   }, [
-    title,
     effectiveTitle,
     effectiveDesc,
     content,
@@ -186,82 +185,118 @@ export function SeoTracker({
 
   const getScoreBadge = (score: number) => {
     if (score >= 80)
-      return { label: "Sangat Bagus (Good)", color: "bg-emerald-500 text-white" };
+      return {
+        label: "Sangat Bagus (Optimal)",
+        className: "bg-emerald-500/10 text-emerald-700 border-emerald-500/30",
+      };
     if (score >= 50)
-      return { label: "Cukup (Needs Improvement)", color: "bg-amber-500 text-white" };
-    return { label: "Perlu Ditingkatkan (Poor)", color: "bg-red-500 text-white" };
+      return {
+        label: "Cukup (Needs Improvement)",
+        className: "bg-[#B8860B]/10 text-[#B8860B] border-[#B8860B]/30",
+      };
+    return {
+      label: "Belum Teroptimasi",
+      className: "bg-rose-500/10 text-rose-700 border-rose-500/20",
+    };
   };
 
   const badge = getScoreBadge(analysis.score);
 
   return (
-    <Card className="rounded-none bg-card ring-0 shadow-sm border border-border">
-      <CardHeader className="flex flex-row items-center justify-between px-4 py-3 border-b border-border">
+    <Card className="rounded-none border border-black/10 bg-white shadow-2xs">
+      <CardHeader className="flex flex-row items-center justify-between border-b border-black/5 px-6 py-4">
         <div className="flex items-center gap-2">
-          <Sparkle className="size-4 text-news-red" weight="fill" />
-          <CardTitle className="text-sm font-bold">SEO Tracker & Real-Time Analyzer</CardTitle>
+          <Sparkle className="size-4 text-[#B8860B]" weight="fill" />
+          <CardTitle className="text-base font-bold text-foreground">
+            Audit SEO & Indeks Mesin Pencari
+          </CardTitle>
         </div>
-        <Badge className={`rounded-none font-mono text-xs font-bold ${badge.color}`}>
-          SEO Score: {analysis.score} / 100
+        <Badge
+          variant="outline"
+          className={`rounded-none font-bold text-xs px-2.5 py-1 uppercase tracking-wider ${badge.className}`}
+        >
+          Skor SEO: {analysis.score} / 100
         </Badge>
       </CardHeader>
-      <CardContent className="p-4 space-y-4">
+
+      <CardContent className="p-6 space-y-6">
         {/* Focus Keyword Input */}
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-foreground">
+          <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-foreground">
             Focus Keyword (Kata Kunci Utama)
           </label>
           <Input
             placeholder="Masukkan kata kunci utama (contoh: Transformasi Digital)"
             value={focusKeyword}
             onChange={(e) => onFocusKeywordChange(e.target.value)}
-            className="rounded-none font-medium"
+            className="rounded-none border-black/15 bg-white text-xs font-semibold focus:border-[#B8860B]"
           />
           <p className="mt-1 text-[10px] text-muted-foreground">
-            Kata kunci target yang ingin dioptimasi agar artikel muncul di rangking teratas Google.
+            Kata kunci target yang ingin dioptimasi agar liputan muncul di peringkat teratas Google Search & Discover.
           </p>
         </div>
 
-        {/* Google SERP Live Preview */}
-        <div className="border border-border bg-muted/40 p-3">
-          <div className="flex items-center gap-1.5 mb-2 text-xs font-semibold text-muted-foreground">
-            <Globe className="size-3.5" />
-            <span>Google Search Result Live Preview</span>
+        {/* Minimalist Google SERP Live Preview */}
+        <div className="rounded-none border border-black/10 bg-[#fafafa] p-4 space-y-2">
+          <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground border-b border-black/5 pb-2">
+            <Globe className="size-3.5 text-primary" />
+            <span>Pratinjau Hasil Google Search (Live SERP Preview)</span>
           </div>
-          <div className="space-y-1 font-sans">
-            <p className="text-xs text-emerald-700 dark:text-emerald-400 font-mono truncate">
-              https://metrikmediaindonesia.id/berita/{slug || "url-artikel"}
+          <div className="space-y-1 pt-1">
+            <p className="text-[11px] text-muted-foreground font-mono truncate">
+              https://metrikmedia.id/berita/{slug || "url-artikel"}
             </p>
-            <p className="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer line-clamp-1">
-              {effectiveTitle || "Judul Artikel Terpasang di Google Search"} | Metrik Media
+            <p className="text-sm font-bold text-foreground hover:text-primary transition-colors cursor-pointer line-clamp-1">
+              {effectiveTitle || "Judul Artikel Terpasang di Google Search"} | Metrik Media Indonesia
             </p>
-            <p className="text-xs text-muted-foreground line-clamp-2">
-              {effectiveDesc || "Deskripsi artikel yang akan tampil di halaman pencarian Google..."}
+            <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+              {effectiveDesc || "Deskripsi ringkas artikel yang akan tampil pada cuplikan pencarian Google dan social share..."}
             </p>
           </div>
         </div>
 
-        {/* SEO Audit Checklist */}
-        <div className="space-y-2">
-          <p className="text-xs font-semibold text-foreground">Daftar Pemeriksaan SEO (Checklist):</p>
-          <div className="space-y-1.5">
+        {/* Minimalist SEO Audit Checklist */}
+        <div className="space-y-2.5">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-bold uppercase tracking-wider text-foreground">
+              Daftar Pemeriksaan SEO (Checklist):
+            </p>
+            <span className="text-[11px] text-muted-foreground font-medium">
+              {analysis.checks.filter((c) => c.status === "pass").length} dari {analysis.checks.length} Lolos
+            </span>
+          </div>
+
+          <div className="rounded-none border border-black/10 divide-y divide-black/5 bg-white overflow-hidden">
             {analysis.checks.map((item) => (
               <div
                 key={item.id}
-                className="flex items-start gap-2 text-xs p-2 border border-border/60 bg-background"
+                className="flex items-start gap-3 p-3 text-xs transition-colors hover:bg-black/[0.01]"
               >
                 {item.status === "pass" && (
                   <CheckCircle className="size-4 shrink-0 text-emerald-600 mt-0.5" weight="fill" />
                 )}
                 {item.status === "warn" && (
-                  <Warning className="size-4 shrink-0 text-amber-500 mt-0.5" weight="fill" />
+                  <Warning className="size-4 shrink-0 text-[#B8860B] mt-0.5" weight="fill" />
                 )}
                 {item.status === "fail" && (
-                  <XCircle className="size-4 shrink-0 text-red-500 mt-0.5" weight="fill" />
+                  <XCircle className="size-4 shrink-0 text-rose-500/80 mt-0.5" weight="fill" />
                 )}
                 <div className="flex-1 min-w-0">
-                  <span className="font-semibold text-foreground">{item.label}</span>
-                  <p className="text-[11px] text-muted-foreground">{item.detail}</p>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-bold text-foreground">{item.label}</span>
+                    <span
+                      className={`text-[10px] font-bold uppercase tracking-wider ${
+                        item.status === "pass"
+                          ? "text-emerald-700"
+                          : item.status === "warn"
+                          ? "text-[#B8860B]"
+                          : "text-rose-600"
+                      }`}
+                    >
+                      {item.status === "pass" ? "Lolos" : item.status === "warn" ? "Peringatan" : "Belum Memenuhi"}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">{item.detail}</p>
                 </div>
               </div>
             ))}

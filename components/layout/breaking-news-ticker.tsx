@@ -3,25 +3,35 @@ import { Lightning } from "@phosphor-icons/react/dist/ssr";
 
 export function BreakingNewsTicker() {
   return (
-    <div className="w-full bg-surface-container-lowest border-b border-black/10 py-2 shadow-2xs">
+    <div className="w-full bg-white border-b border-black/10 py-2">
       <div className="max-w-[1280px] mx-auto px-4 md:px-8 flex items-center gap-3">
         {/* Kuning Emas Breaking Badge */}
-        <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-[#B8860B] text-white font-bold text-[10px] uppercase tracking-wider shrink-0 shadow-2xs">
-          <Lightning className="size-3.5 fill-current animate-bounce" />
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-none bg-gold text-white font-bold text-[10px] uppercase tracking-wider shrink-0">
+          <Lightning className="size-3.5 fill-current" weight="fill" />
           <span>BREAKING</span>
         </div>
 
-        {/* Ticker Text Content */}
+        {/* Seamless Infinite Ticker */}
         <div className="ticker-wrap flex-1 overflow-hidden min-w-0">
-          <div className="ticker text-xs font-semibold uppercase text-on-surface tracking-wide flex items-center">
-            {BREAKING_NEWS.map((item, index) => (
-              <span key={index} className="ticker-item inline-flex items-center whitespace-nowrap">
-                {item}
-                {index < BREAKING_NEWS.length - 1 && (
-                  <span className="mx-3 text-black/20">•</span>
-                )}
-              </span>
-            ))}
+          <div className="ticker-content text-xs font-semibold uppercase text-foreground tracking-wide flex items-center">
+            {/* Track 1 */}
+            <div className="flex shrink-0 items-center">
+              {BREAKING_NEWS.map((item, index) => (
+                <span key={`t1-${index}`} className="ticker-item inline-flex items-center whitespace-nowrap">
+                  {item}
+                  <span className="mx-3 text-black/25 font-bold">•</span>
+                </span>
+              ))}
+            </div>
+            {/* Track 2 (Seamless loop clone) */}
+            <div className="flex shrink-0 items-center" aria-hidden="true">
+              {BREAKING_NEWS.map((item, index) => (
+                <span key={`t2-${index}`} className="ticker-item inline-flex items-center whitespace-nowrap">
+                  {item}
+                  <span className="mx-3 text-black/25 font-bold">•</span>
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </div>

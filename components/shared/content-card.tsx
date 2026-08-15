@@ -7,8 +7,8 @@ interface ContentCardProps {
 }
 
 const variantClasses = {
-  default: "border border-outline-variant bg-background p-6",
-  low: "border border-outline-variant bg-surface-container-low p-6",
+  default: "border border-black/10 bg-white p-6",
+  low: "border border-black/10 bg-surface-container-low p-6",
   flat: "bg-surface-container-low p-6",
 };
 

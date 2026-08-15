@@ -63,6 +63,9 @@
   --color-brand-text: var(--brand-text);
   --color-news-red: var(--news-red);
   --color-news-red-foreground: var(--news-red-foreground);
+  --color-gold: var(--gold);
+  --color-gold-deep: var(--gold-deep);
+  --color-surface-container-lowest: var(--surface-container-lowest);
 
   /* Font families */
   --font-body-md: var(--font-dm-sans), system-ui, sans-serif;
@@ -102,7 +105,7 @@
 }
 
 :root {
-  --background: #faf9f6;
+  --background: #f8f9fa;
   --foreground: #1a1c1a;
   --card: #ffffff;
   --card-foreground: #1a1c1a;
@@ -152,6 +155,10 @@
   --news-red: #dc2626;
   --news-red-foreground: #ffffff;
 
+  --gold: #b8860b;
+  --gold-deep: #a16207;
+  --surface-container-lowest: #ffffff;
+
   --sidebar: #ffffff;
   --sidebar-foreground: #1a1a1a;
   --sidebar-primary: #1a1a1a;
@@ -195,8 +202,8 @@
 
   @media (min-width: 768px) {
     .container-editorial {
-      padding-left: 64px;
-      padding-right: 64px;
+      padding-left: 32px;
+      padding-right: 32px;
     }
   }
 
@@ -241,41 +248,65 @@
     -webkit-backdrop-filter: blur(24px) saturate(200%);
     background-color: rgba(255, 255, 255, 0.92);
   }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.625rem;
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid var(--color-border);
+    transition: all 0.2s ease;
+  }
+  .pill-inactive {
+    background-color: #ffffff;
+    color: var(--muted-foreground);
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+  .pill-inactive:hover {
+    border-color: var(--gold);
+    color: var(--gold-deep);
+  }
+  .pill-active {
+    background-color: #000000;
+    color: #ffffff;
+    border-color: #000000;
+  }
 }
 
 /* ========== TICKER ========== */
-@keyframes ticker {
-  0% { transform: translate3d(0, 0, 0); }
-  100% { transform: translate3d(-100%, 0, 0); }
+@keyframes tickerMarquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
 }
 
 .ticker-wrap {
   width: 100%;
   overflow: hidden;
-  box-sizing: content-box;
 }
 
-.ticker {
-  display: inline-block;
-  white-space: nowrap;
-  padding-right: 100%;
-  animation: ticker 30s linear infinite;
+.ticker-content {
+  display: flex;
+  width: max-content;
+  animation: tickerMarquee 35s linear infinite;
+  will-change: transform;
 }
 
-.ticker:hover {
+.ticker-wrap:hover .ticker-content {
   animation-play-state: paused;
 }
 
 .ticker-item {
-  display: inline-block;
-  padding: 0 2rem;
-}
-
-.animate-ticker {
-  animation: ticker 30s linear infinite;
-}
-.animate-ticker:hover {
-  animation-play-state: paused;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.75rem;
 }
 
 /* ========== SCROLL REVEAL ANIMATIONS ========== */

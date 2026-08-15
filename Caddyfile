@@ -1,0 +1,34 @@
+{
+    # Global options
+    # email admin@metrikmediaindonesia.id # Optional: Let's Encrypt renewal email
+}
+
+# Main Application & Storage Proxy
+{$DOMAIN:localhost} {
+    encode gzip zstd
+
+    # Security Headers
+    header {
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    }
+
+    # Proxy public storage assets directly from MinIO
+    handle_path /storage/* {
+        reverse_proxy minio:9000 {
+            header_up Host {upstream_hostport}
+        }
+    }
+
+    # Proxy all other requests to Next.js Web App
+    handle {
+        reverse_proxy app:3000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+}

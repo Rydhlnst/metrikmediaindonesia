@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -19,29 +20,40 @@ import {
 } from "@/components/ui/sidebar";
 import { navSections } from "./data";
 import { cn } from "@/lib/utils";
-import { Lightning, CaretDown } from "@phosphor-icons/react/dist/ssr";
+import { CaretDown } from "@phosphor-icons/react/dist/ssr";
 
 export function DashboardSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar collapsible="icon" className="border-r overflow-hidden">
-      <SidebarHeader className="p-3">
-        <SidebarMenu>
-          <SidebarMenuItem className="flex items-center gap-2">
+    <Sidebar collapsible="icon" className="border-r border-black/10 overflow-hidden bg-background">
+      <SidebarHeader className="h-16 px-3 flex flex-row items-center border-b border-black/10 bg-background">
+        <SidebarMenu className="w-full">
+          <SidebarMenuItem className="flex items-center justify-between gap-2 w-full">
             <SidebarMenuButton
               asChild
               size="lg"
-              className="h-11 px-2 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:hidden"
+              className="h-12 px-2 hover:bg-black/5 transition-colors group-data-[collapsible=icon]:p-0"
             >
-              <Link href="/dashboard">
-                <div className="flex size-8 items-center justify-center bg-news-red text-white">
-                  <Lightning className="size-5" />
+              <Link href="/dashboard" className="flex items-center gap-2.5 min-w-0">
+                <Image
+                  src="/logo.png"
+                  alt="Metrik Media Indonesia"
+                  width={32}
+                  height={32}
+                  className="size-8 object-contain shrink-0"
+                />
+                <div className="flex flex-col min-w-0 group-data-[collapsible=icon]:hidden">
+                  <span className="font-serif text-xs sm:text-sm font-extrabold tracking-wider text-on-surface uppercase truncate leading-tight">
+                    METRIK MEDIA
+                  </span>
+                  <span className="text-[10px] font-bold text-[#B8860B] tracking-widest uppercase leading-tight">
+                    INDONESIA
+                  </span>
                 </div>
-                <span className="text-lg font-bold tracking-tight">Metrik Media Indonesia</span>
               </Link>
             </SidebarMenuButton>
-            <SidebarTrigger />
+            <SidebarTrigger className="shrink-0 text-muted-foreground hover:text-foreground" />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -66,17 +78,17 @@ export function DashboardSidebar() {
                         isActive={isActive}
                         tooltip={item.label}
                         className={cn(
-                          "h-9 gap-3 px-3 text-sm font-medium",
+                          "h-9 gap-3 px-3 text-sm font-medium transition-colors rounded-none",
                           isActive
-                            ? "bg-news-red/10 text-news-red"
-                            : "text-muted-foreground hover:text-foreground"
+                            ? "bg-[#B8860B]/10 text-[#B8860B] font-semibold border-r-2 border-[#B8860B]"
+                            : "text-muted-foreground hover:text-foreground hover:bg-black/5"
                         )}
                       >
                         <Link href={item.href}>
                           <item.icon
                             className={cn(
-                              "size-4",
-                              isActive ? "text-news-red" : ""
+                              "size-4 shrink-0",
+                              isActive ? "text-[#B8860B]" : "text-muted-foreground"
                             )}
                           />
                           <span>{item.label}</span>

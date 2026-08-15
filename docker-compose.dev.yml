@@ -1,0 +1,72 @@
+# ==============================================================================
+# METRIK MEDIA INDONESIA - LOCAL DEVELOPMENT INFRASTRUCTURE
+# Run with: docker compose -f docker-compose.dev.yml up -d
+# ==============================================================================
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: metrikmedia-dev-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: metrikmedia
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d metrikmedia"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: metrikmedia-dev-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    container_name: metrikmedia-dev-minio
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_dev_data:/data
+
+  minio-init:
+    image: minio/mc:latest
+    container_name: metrikmedia-dev-minio-init
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      echo 'Waiting for MinIO...';
+      until /usr/bin/mc alias set myminio http://minio:9000 minioadmin minioadmin; do
+        sleep 2;
+      done;
+      /usr/bin/mc mb --ignore-existing myminio/metrikmedia;
+      /usr/bin/mc anonymous set download myminio/metrikmedia;
+      echo 'MinIO ready for local development!';
+      exit 0;
+      "
+
+volumes:
+  postgres_dev_data:
+  redis_dev_data:
+  minio_dev_data:

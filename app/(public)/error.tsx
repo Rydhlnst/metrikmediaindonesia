@@ -1,7 +1,7 @@
 "use client";
 
-import { PrimaryButton } from "@/components/shared/primary-button";
-import { SectionHeading } from "@/components/shared/section-heading";
+import { useEffect } from "react";
+import { ErrorState } from "@/components/shared/error-state";
 
 export default function PublicError({
   error,
@@ -10,17 +10,20 @@ export default function PublicError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    console.error("Public portal error:", error);
+  }, [error]);
+
   return (
-    <div className="container-editorial py-8 pb-20 md:pb-8 flex flex-col items-center justify-center text-center">
-      <SectionHeading size="md" className="mb-2">
-        Terjadi kesalahan
-      </SectionHeading>
-      <p className="font-body-md text-body-md text-on-surface-variant">
-        {error.message || "Silakan coba lagi nanti"}
-      </p>
-      <PrimaryButton onClick={reset} size="md" className="mt-4">
-        Coba Lagi
-      </PrimaryButton>
+    <div className="max-w-[1280px] mx-auto px-4 md:px-8 py-16 flex items-center justify-center">
+      <div className="w-full max-w-xl">
+        <ErrorState
+          title="Halaman Berita Tidak Dapat Ditampilkan"
+          error={error}
+          reset={reset}
+          actionLabel="Muat Ulang Halaman"
+        />
+      </div>
     </div>
   );
 }

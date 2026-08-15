@@ -1,8 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { id } from "date-fns/locale";
@@ -17,8 +20,8 @@ interface Comment {
 }
 
 const statusConfig: Record<string, { label: string; className: string }> = {
-  approved: { label: "Approved", className: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" },
-  pending: { label: "Pending", className: "bg-amber-500/10 text-amber-600 border-amber-500/20" },
+  approved: { label: "Disetujui", className: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" },
+  pending: { label: "Menunggu", className: "bg-amber-500/10 text-amber-600 border-amber-500/20" },
   spam: { label: "Spam", className: "bg-red-500/10 text-red-600 border-red-500/20" },
 };
 
@@ -37,59 +40,60 @@ export function RecentCommentsTable() {
   }, []);
 
   return (
-    <Card className="rounded-none bg-card ring-0 shadow-sm">
-      <CardHeader className="px-6 py-4">
-        <CardTitle className="text-lg font-bold">Komentar Terbaru</CardTitle>
+    <Card className="rounded-none border border-black/10 bg-white py-0 shadow-none">
+      <CardHeader className="flex items-center justify-between border-b border-black/5 px-6 py-5">
+        <div className="space-y-1">
+          <h3 className="text-base font-bold text-foreground">Komentar Terbaru</h3>
+          <p className="text-xs text-muted-foreground">
+            Tanggapan pembaca yang masuk.
+          </p>
+        </div>
+        <Button variant="ghost" size="sm" className="gap-1.5 rounded-none text-xs text-muted-foreground hover:text-foreground" asChild>
+          <Link href="/dashboard/comments">
+            Lihat Semua
+            <ArrowRight className="size-3.5" />
+          </Link>
+        </Button>
       </CardHeader>
-      <CardContent className="px-6 pb-4">
-        <div className="space-y-4">
+      <CardContent className="px-0 pb-4">
+        <div className="divide-y divide-black/5">
           {loading ? (
             Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="border border-border/50 p-4">
-                <div className="h-4 animate-pulse rounded bg-muted/50 w-1/3" />
-                <div className="h-3 animate-pulse rounded bg-muted/50 mt-2 w-2/3" />
+              <div key={i} className="space-y-2 px-6 py-4">
+                <div className="h-4 w-1/3 animate-pulse bg-muted/50" />
+                <div className="h-3 w-2/3 animate-pulse bg-muted/50" />
               </div>
             ))
           ) : comments.length === 0 ? (
-            <div className="py-8 text-center text-sm text-muted-foreground">
+            <div className="py-10 text-center text-sm text-muted-foreground">
               Belum ada komentar
             </div>
           ) : (
             comments.map((comment) => {
               const status = statusConfig[comment.status] || statusConfig.pending;
               return (
-                <div
-                  key={comment.id}
-                  className="border border-border/50 p-4"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold">{comment.authorName || "Anonymous"}</span>
-                        <Badge
-                          variant="outline"
-                          className={cn("text-[10px] font-medium rounded-none", status.className)}
-                        >
-                          {status.label}
-                        </Badge>
-                      </div>
-                      <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
-                        {comment.content}
-                      </p>
-                      <div className="mt-2 flex items-center gap-2 text-[10px] text-muted-foreground">
-                        <span className="line-clamp-1">
-                          di artikel: <span className="font-medium text-foreground">{comment.articleTitle || "-"}</span>
-                        </span>
-                        <span>&middot;</span>
-                        <span>
-                          {formatDistanceToNow(new Date(comment.createdAt), {
-                            addSuffix: true,
-                            locale: id,
-                          })}
-                        </span>
-                      </div>
-                    </div>
+                <div key={comment.id} className="px-6 py-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-semibold text-foreground">{comment.authorName || "Anonim"}</span>
+                    <Badge
+                      variant="outline"
+                      className={cn("rounded-none border text-[10px] font-medium", status.className)}
+                    >
+                      {status.label}
+                    </Badge>
+                    <span className="ml-auto shrink-0 text-[10px] text-muted-foreground">
+                      {formatDistanceToNow(new Date(comment.createdAt), {
+                        addSuffix: true,
+                        locale: id,
+                      })}
+                    </span>
                   </div>
+                  <p className="mt-1.5 line-clamp-2 text-xs text-muted-foreground">
+                    {comment.content}
+                  </p>
+                  <p className="mt-1.5 line-clamp-1 text-[10px] text-muted-foreground">
+                    di artikel: <span className="font-medium text-foreground">{comment.articleTitle || "-"}</span>
+                  </p>
                 </div>
               );
             })

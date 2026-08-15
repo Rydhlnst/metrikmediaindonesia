@@ -313,7 +313,105 @@ export const articles: Article[] = [
     viewCount: 4200,
     tags: ["pendidikan", "beasiswa", "kuliah", "pemerintah"],
   },
+  {
+    id: "101",
+    title: "Pemerintah Resmikan Peta Jalan Pertumbuhan Ekonomi 8 Persen 2026-2030",
+    slug: "pemerintah-resmikan-peta-jalan-pertumbuhan-ekonomi-8-persen",
+    excerpt:
+      "Pemerintah meluncurkan target pertumbuhan ekonomi nasional sebesar 8 persen yang didukung efisiensi birokrasi dan investasi strategis industri hijau.",
+    content: "",
+    thumbnail: "https://picsum.photos/seed/ekonomi/800/450",
+    category: { name: "Nasional", slug: "nasional", color: "#1D4ED8" },
+    author: authors[0],
+    publishedAt: "2026-08-15T08:00:00Z",
+    readingTime: 5,
+    viewCount: 24500,
+    isFeatured: true,
+    isBreaking: true,
+    tags: ["nasional", "ekonomi", "pertumbuhan", "pemerintah"],
+  },
+  {
+    id: "102",
+    title: "Dinamika Koalisi Parlemen dan Pembahasan RUU Pemilu 2029 Mulai Bergulir",
+    slug: "dinamika-koalisi-parlemen-dan-pembahasan-ruu-pemilu-2029",
+    excerpt:
+      "Pembahasan RUU Pemilu 2029 resmi dimulai di Senayan dengan fokus penyempurnaan sistem pemungutan suara elektronik dan ambang batas parlemen.",
+    content: "",
+    thumbnail: "https://picsum.photos/seed/politik/800/450",
+    category: { name: "Politik", slug: "politik", color: "#B91C1C" },
+    author: authors[1],
+    publishedAt: "2026-08-15T07:00:00Z",
+    readingTime: 4,
+    viewCount: 18900,
+    tags: ["politik", "parlemen", "pemilu", "dpr"],
+  },
+  {
+    id: "104",
+    title: "Kedaulatan Data dan Kebijakan Pengembangan Artificial Intelligence Indonesia",
+    slug: "kedaulatan-data-dan-kebijakan-pengembangan-ai-indonesia",
+    excerpt:
+      "Pedoman nasional penggunaan AI dirilis guna memastikan perlindungan data pribadi konsumen, etika algoritma, dan kemandirian teknologi nasional.",
+    content: "",
+    thumbnail: "https://picsum.photos/seed/tekno/800/450",
+    category: { name: "Teknologi", slug: "teknologi", color: "#DC2626" },
+    author: authors[0],
+    publishedAt: "2026-08-15T05:00:00Z",
+    readingTime: 6,
+    viewCount: 19800,
+    tags: ["teknologi", "ai", "kedaulatan data", "digital"],
+  },
+  {
+    id: "105",
+    title: "Timnas Garuda Muda Tampil Gemilang di Kualifikasi Piala Dunia U-20",
+    slug: "timnas-garuda-muda-tampil-gemilang-di-kualifikasi-piala-dunia-u-20",
+    excerpt:
+      "Garuda Muda mengamankan tiket fase gugur setelah menaklukkan tim kuat dalam laga ketat di Stadion Gelora Bung Karno.",
+    content: "",
+    thumbnail: "https://picsum.photos/seed/timnas/800/450",
+    category: { name: "Sports", slug: "sports", color: "#059669" },
+    author: authors[4],
+    publishedAt: "2026-08-15T04:00:00Z",
+    readingTime: 5,
+    viewCount: 34200,
+    tags: ["sports", "timnas", "sepak bola", "garuda"],
+  },
 ];
+
+export function generateArticleHtml(
+  title: string,
+  excerpt: string,
+  categoryName: string,
+  authorName: string
+): string {
+  return `
+<p class="lead text-lg font-medium text-foreground/90 leading-relaxed mb-6">
+  <strong>JAKARTA, METRIK MEDIA</strong> — ${excerpt}
+</p>
+<p>
+  Perkembangan ini menarik perhatian luas dari para pengamat dan pelaku industri nasional. Langkah terintegrasi ini dinilai menjadi katalis esensial dalam memperkuat kerangka kerja berkelanjutan, mendorong modernisasi tata kelola, dan mengakselerasi kemajuan sektor <strong>${categoryName}</strong> di Tanah Air.
+</p>
+<h2>Fokus Utama dan Dampak Strategis</h2>
+<p>
+  Berdasarkan keterangan yang dihimpun oleh tim redaksi Metrik Media Indonesia, implementasi program telah disiapkan melalui serangkaian konsultasi publik dan kajian mendalam bersama pemangku kepentingan lintas sektoral. Aspek transparansi, efektivitas penyerapan sumber daya, serta keberlanjutan hasil menjadi tolok ukur utama keberhasilan.
+</p>
+<blockquote>
+  "Kami menempatkan akuntabilitas dan kepentingan publik sebagai prioritas terdepan. Kolaborasi yang solid dari seluruh elemen masyarakat adalah kunci agar hasil yang diraih memberi manfaat nyata," tutur narasumber dalam taklimat media di Jakarta.
+</blockquote>
+<h2>Kesiapan Implementasi & Evaluasi Berkala</h2>
+<p>
+  Guna memastikan seluruh tahapan terlaksana sesuai peta jalan (roadmap), tim monitoring terpadu akan melakukan evaluasi berkala secara transparan. Langkah-langkah penguatan yang dijalankan meliputi:
+</p>
+<ul>
+  <li>Standardisasi prosedur operasional berbasis praktik terbaik dan regulasi terkini.</li>
+  <li>Penyediaan kanal pengawasan dan aspirasi publik yang responsif.</li>
+  <li>Pemberdayaan talenta dan penguatan infrastruktur penunjang di tingkat regional.</li>
+</ul>
+<h2>Catatan Redaksi</h2>
+<p>
+  Redaksi Metrik Media Indonesia akan terus mengabarkan pembaruan fakta, analisis berimbang, serta perkembangan lanjutan seputar isu ini kepada seluruh pembaca.
+</p>
+`;
+}
 
 export const trendingArticles = articles
   .sort((a, b) => b.viewCount - a.viewCount)
@@ -326,7 +424,15 @@ export function getArticlesByCategory(categorySlug: string): Article[] {
 }
 
 export function getArticleBySlug(slug: string): Article | undefined {
-  return articles.find((a) => a.slug === slug);
+  const found = articles.find((a) => a.slug === slug || a.slug.toLowerCase() === slug.toLowerCase());
+  if (!found) return undefined;
+  if (!found.content || found.content.trim() === "") {
+    return {
+      ...found,
+      content: generateArticleHtml(found.title, found.excerpt, found.category.name, found.author.name),
+    };
+  }
+  return found;
 }
 
 export function getRelatedArticles(article: Article, limit = 4): Article[] {

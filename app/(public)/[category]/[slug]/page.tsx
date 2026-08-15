@@ -26,6 +26,9 @@ import {
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import type { Metadata } from "next";
+import type { Article } from "@/lib/types";
+
+
 
 interface ArticleDetailPageProps {
   params: Promise<{ category: string; slug: string }>;
@@ -82,21 +85,31 @@ export const revalidate = 300;
 
 export default async function ArticleDetailPage({ params }: ArticleDetailPageProps) {
   const { category, slug } = await params;
-  let article;
+  let article: Article | null = null;
   try {
     article = await getArticleBySlug(slug);
   } catch {
-    notFound();
+    article = null;
   }
-  if (!article || article.category.slug !== category) notFound();
+
+  if (!article) notFound();
 
   void incrementViewCount(slug);
 
-  let relatedArticles: Awaited<ReturnType<typeof getRelatedArticles>> = [];
+  let relatedArticles: Article[] = [];
   try {
     relatedArticles = await getRelatedArticles(article, 4);
   } catch {
     relatedArticles = [];
+  }
+
+  if (!relatedArticles || relatedArticles.length === 0) {
+    try {
+      const { getArticles } = await import("@/lib/queries");
+      relatedArticles = await getArticles({ limit: 4 });
+    } catch {
+      relatedArticles = [];
+    }
   }
 
   return (
@@ -123,7 +136,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
         {/* Back button */}
         <Link
           href={`/${article.category.slug}`}
-          className="mb-6 inline-flex items-center gap-2 font-label-md text-label-md text-on-surface-variant transition-colors hover:text-primary"
+          className="mb-6 inline-flex items-center gap-2 font-label-md text-label-md text-muted-foreground transition-colors hover:text-gold-deep"
         >
           <ArrowLeft className="size-4" />
           {article.category.name}
@@ -132,7 +145,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
         <article className="grid gap-8 lg:grid-cols-[1fr_320px]">
           <div>
             {/* Hero Image */}
-            <div className="relative aspect-[16/9] w-full overflow-hidden bg-surface-container">
+            <div className="relative aspect-[16/9] w-full overflow-hidden bg-muted border border-black/10">
               <Image
                 src={article.thumbnail || "/placeholder.png"}
                 alt={article.title}
@@ -162,11 +175,11 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
                 </CategoryBadge>
               </Link>
               <h1
-                className="mt-3 font-headline-xl text-headline-xl text-primary leading-tight"
+                className="mt-3 font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight tracking-tight"
               >
                 {article.title}
               </h1>
-              <p className="mt-3 font-body-xl text-body-xl text-on-surface-variant">
+              <p className="mt-3 text-base sm:text-lg text-muted-foreground leading-relaxed">
                 {article.excerpt}
               </p>
 
@@ -175,22 +188,22 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
                 <div className="flex items-center gap-3">
                   <AvatarAuthor name={article.author.name} size="sm" />
                   <div>
-                    <span className="block text-sm font-semibold text-on-surface">{article.author.name}</span>
-                    <span className="text-xs text-on-surface-variant">{article.author.role}</span>
+                    <span className="block text-sm font-semibold text-foreground">{article.author.name}</span>
+                    <span className="text-xs text-muted-foreground">{article.author.role}</span>
                   </div>
                 </div>
-                <span className="text-outline-variant">|</span>
-                <span className="flex items-center gap-1.5 text-sm text-on-surface-variant">
+                <span className="text-black/20">|</span>
+                <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
                   <CalendarBlank className="size-4" />
                   {article.publishedAt ? format(new Date(article.publishedAt), "dd MMMM yyyy, HH:mm", { locale: id }) : "—"} WIB
                 </span>
-                <span className="flex items-center gap-1.5 text-sm text-on-surface-variant">
+                <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
                   <Clock className="size-4" />
                   {article.readingTime || 5} menit baca
                 </span>
-                <span className="flex items-center gap-1.5 text-sm text-on-surface-variant">
+                <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
                   <Eye className="size-4" />
-                  {article.viewCount.toLocaleString("id-ID")} views
+                  {article.viewCount.toLocaleString("id-ID")} dibaca
                 </span>
               </div>
             </header>
@@ -202,7 +215,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
               ) : (
                 <>
                   <p>{article.excerpt}</p>
-                  <p className="text-on-surface-variant italic">Konten artikel sedang diperbarui.</p>
+                  <p className="text-muted-foreground italic">Konten artikel sedang diperbarui.</p>
                 </>
               )}
             </div>
@@ -210,7 +223,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
             {/* Tags */}
             <div className="mt-8 flex flex-wrap gap-2">
               {article.tags.map((tag: any) => (
-                <span key={tag} className="border border-outline-variant px-3 py-1 text-sm text-on-surface-variant cursor-pointer hover:bg-surface-container-low transition-colors">
+                <span key={tag} className="border border-black/10 bg-white px-3 py-1 text-sm text-muted-foreground cursor-pointer hover:border-gold/50 hover:text-foreground transition-colors">
                   #{tag}
                 </span>
               ))}
@@ -218,7 +231,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
 
             {/* Share */}
             <ContentCard variant="low" className="mt-8 flex items-center gap-3">
-              <span className="flex items-center gap-2 text-sm font-semibold text-on-surface">
+              <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
                 <ShareNetwork className="size-5" />
                 Bagikan
               </span>
@@ -276,9 +289,9 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
               <div className="flex items-start gap-4">
                 <AvatarAuthor name={article.author.name} size="lg" />
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">Penulis</span>
-                  <h3 className="mt-0.5 text-base font-bold text-on-surface">{article.author.name}</h3>
-                  <p className="mt-1.5 text-sm leading-relaxed text-on-surface-variant">{article.author.bio}</p>
+                  <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Penulis</span>
+                  <h3 className="mt-0.5 text-base font-bold text-foreground">{article.author.name}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{article.author.bio}</p>
                 </div>
               </div>
             </ContentCard>

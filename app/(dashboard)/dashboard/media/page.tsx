@@ -116,14 +116,16 @@ export default function MediaPage() {
   };
 
   return (
-    <main className="flex-1 px-4 pb-7 lg:px-8">
+    <div className="flex min-h-screen w-full flex-col bg-[#f8f9fa]">
       <DashboardTopbar />
-      <div className="mx-auto grid gap-4">
-        <Card className="rounded-none bg-card ring-0 shadow-sm">
-          <CardHeader className="flex items-center justify-between px-6 py-4">
+      <div className="w-full flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
+        <Card className="rounded-none border border-black/10 bg-white shadow-2xs">
+          <CardHeader className="flex flex-row items-center justify-between border-b border-black/5 px-6 py-4">
             <div className="flex items-center gap-3">
-              <CardTitle className="text-lg font-bold">Media</CardTitle>
-              <Badge variant="outline" className="text-xs">{total} file</Badge>
+              <CardTitle className="text-base font-bold text-foreground">Media Library</CardTitle>
+              <Badge variant="outline" className="rounded-none text-[10px] uppercase font-bold tracking-wider bg-black/5 text-foreground border-black/10">
+                {total} FILE
+              </Badge>
             </div>
             <div className="flex items-center gap-2">
               <input
@@ -135,20 +137,20 @@ export default function MediaPage() {
               />
               <Button
                 size="sm"
-                className="gap-2 rounded-none"
+                className="gap-2 rounded-none bg-primary text-white hover:bg-primary/90 font-bold uppercase tracking-wider text-xs"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
               >
                 {uploading ? (
                   <CircleNotch className="size-4 animate-spin" />
                 ) : (
-                  <UploadSimple className="size-4" />
+                  <UploadSimple className="size-4" weight="bold" />
                 )}
-                {uploading ? "Mengunggah..." : "Upload"}
+                {uploading ? "Mengunggah..." : "Upload Media"}
               </Button>
             </div>
           </CardHeader>
-          <CardContent className="px-6 pb-4">
+          <CardContent className="p-6">
             {loading ? (
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
                 {Array.from({ length: 12 }).map((_, i) => (
@@ -287,6 +289,6 @@ export default function MediaPage() {
           </DialogContent>
         </Dialog>
       </div>
-    </main>
+    </div>
   );
 }

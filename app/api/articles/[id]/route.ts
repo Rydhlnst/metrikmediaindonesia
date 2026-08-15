@@ -18,11 +18,20 @@ export async function GET(
         id: articles.id,
         title: articles.title,
         slug: articles.slug,
+        subtitle: articles.subtitle,
         content: articles.content,
         excerpt: articles.excerpt,
         thumbnail: articles.thumbnail,
+        imageCaption: articles.imageCaption,
         status: articles.status,
         viewCount: articles.viewCount,
+        featured: articles.featured,
+        breaking: articles.breaking,
+        readingTime: articles.readingTime,
+        scheduledAt: articles.scheduledAt,
+        authorId: articles.authorId,
+        locationId: articles.locationId,
+        sponsoredLabel: articles.sponsoredLabel,
         seoTitle: articles.seoTitle,
         seoDescription: articles.seoDescription,
         seoKeywords: articles.seoKeywords,
@@ -33,9 +42,11 @@ export async function GET(
         categoryId: articles.categoryId,
         categoryName: categories.name,
         categorySlug: categories.slug,
+        authorName: authors.name,
       })
       .from(articles)
       .leftJoin(categories, eq(articles.categoryId, categories.id))
+      .leftJoin(authors, eq(articles.authorId, authors.id))
       .where(eq(articles.id, articleId))
       .limit(1);
 
@@ -63,16 +74,25 @@ export async function PUT(
     const {
       title,
       slug,
+      subtitle,
       content,
       excerpt,
       thumbnail,
+      imageCaption,
       status,
       categoryId,
+      authorId,
+      locationId,
+      featured,
+      breaking,
+      readingTime,
+      scheduledAt,
       seoTitle,
       seoDescription,
       seoKeywords,
       focusKeyword,
       seoScore,
+      sponsoredLabel,
     } = body;
 
     const [existing] = await db
@@ -105,16 +125,25 @@ export async function PUT(
       .set({
         title: title ?? existing.title,
         slug: slug ?? existing.slug,
+        subtitle: subtitle !== undefined ? subtitle : existing.subtitle,
         content: content !== undefined ? content : existing.content,
         excerpt: excerpt !== undefined ? excerpt : existing.excerpt,
         thumbnail: thumbnail !== undefined ? thumbnail : existing.thumbnail,
+        imageCaption: imageCaption !== undefined ? imageCaption : existing.imageCaption,
         status: status ?? existing.status,
-        categoryId: categoryId ? parseInt(categoryId) : existing.categoryId,
+        categoryId: categoryId !== undefined ? (categoryId ? parseInt(categoryId) : null) : existing.categoryId,
+        authorId: authorId !== undefined ? (authorId ? parseInt(authorId) : null) : existing.authorId,
+        locationId: locationId !== undefined ? (locationId ? parseInt(locationId) : null) : existing.locationId,
+        featured: featured !== undefined ? Boolean(featured) : existing.featured,
+        breaking: breaking !== undefined ? Boolean(breaking) : existing.breaking,
+        readingTime: readingTime !== undefined ? parseInt(readingTime) : existing.readingTime,
+        scheduledAt: scheduledAt !== undefined ? (scheduledAt ? new Date(scheduledAt) : null) : existing.scheduledAt,
         seoTitle: seoTitle !== undefined ? seoTitle : existing.seoTitle,
         seoDescription: seoDescription !== undefined ? seoDescription : existing.seoDescription,
         seoKeywords: seoKeywords !== undefined ? seoKeywords : existing.seoKeywords,
         focusKeyword: focusKeyword !== undefined ? focusKeyword : existing.focusKeyword,
         seoScore: seoScore !== undefined ? parseInt(seoScore) : existing.seoScore,
+        sponsoredLabel: sponsoredLabel !== undefined ? sponsoredLabel : existing.sponsoredLabel,
         updatedAt: new Date(),
       })
       .where(eq(articles.id, articleId))

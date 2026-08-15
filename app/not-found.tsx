@@ -1,47 +1,38 @@
 import Link from "next/link";
-import { CATEGORIES } from "@/lib/constants";
-import { BrandName } from "@/components/shared/brand-name";
+import { ArrowLeft, MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4">
-      <div className="text-center max-w-md">
-        <p className="font-display-lg text-display-lg text-secondary">404</p>
-        <h1 className="mt-4 font-headline-xl text-headline-xl text-primary">
+    <div className="min-h-[75vh] flex items-center justify-center px-4 py-16">
+      <div className="max-w-md w-full text-center space-y-6">
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-gold/10 border border-gold/30 text-gold-deep text-[11px] font-bold uppercase tracking-widest">
+          Error 404
+        </div>
+
+        <h1 className="font-serif text-4xl sm:text-5xl font-bold text-foreground tracking-tight leading-tight">
           Halaman Tidak Ditemukan
         </h1>
-        <p className="mt-3 font-body-md text-body-md text-on-surface-variant">
-          Maaf, halaman yang Anda cari tidak ada atau telah dipindahkan.
+
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          Halaman yang Anda tuju tidak tersedia atau telah dipindahkan. Silakan kembali ke beranda atau cari topik berita yang relevan.
         </p>
 
-        <div className="mt-8">
+        <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
             href="/"
-            className="inline-block bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider px-8 py-3 hover:bg-secondary hover:text-on-secondary transition-colors"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-black text-white px-6 py-3 text-xs font-bold uppercase tracking-wider rounded-none transition-colors hover:bg-black/90"
           >
+            <ArrowLeft className="size-4" weight="bold" />
             Kembali ke Beranda
           </Link>
-        </div>
 
-        <div className="mt-10 border-t border-outline-variant pt-8">
-          <p className="font-label-md text-label-md uppercase tracking-widest text-on-surface-variant mb-4">
-            Jelajahi Kategori
-          </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            {CATEGORIES.map((cat) => (
-              <Link
-                key={cat.slug}
-                href={`/${cat.slug}`}
-                className="border border-outline-variant px-4 py-2 text-sm text-on-surface hover:border-primary hover:text-primary transition-colors"
-              >
-                {cat.name}
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-8">
-          <BrandName size="sm" className="uppercase" />
+          <Link
+            href="/pencarian"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 border border-black/15 bg-white text-foreground px-6 py-3 text-xs font-bold uppercase tracking-wider rounded-none transition-colors hover:border-gold hover:text-gold-deep"
+          >
+            <MagnifyingGlass className="size-4" weight="bold" />
+            Cari Berita
+          </Link>
         </div>
       </div>
     </div>

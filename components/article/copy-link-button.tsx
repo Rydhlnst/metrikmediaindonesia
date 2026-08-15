@@ -27,7 +27,7 @@ export function CopyLinkButton({ url }: { url: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="flex size-9 items-center justify-center border border-outline-variant bg-background text-on-surface-variant transition-colors hover:text-primary"
+      className="flex size-9 items-center justify-center border border-black/10 bg-white text-muted-foreground transition-colors hover:border-gold hover:text-gold-deep"
       aria-label="Salin tautan"
     >
       {copied ? <Check className="size-4" /> : <LinkIcon className="size-4" />}

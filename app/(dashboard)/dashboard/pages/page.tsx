@@ -83,35 +83,35 @@ export default function PagesPage() {
   };
 
   return (
-    <main className="flex-1 px-4 pb-7 lg:px-8">
+    <div className="flex min-h-screen w-full flex-col bg-[#f8f9fa]">
       <DashboardTopbar />
-      <div className="mx-auto">
-        <Card className="rounded-none bg-card ring-0 shadow-sm">
-          <CardHeader className="flex items-center justify-between px-6 py-4">
-            <CardTitle className="text-lg font-bold">Halaman Statis (CMS Pages)</CardTitle>
+      <div className="w-full flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
+        <Card className="rounded-none border border-black/10 bg-white shadow-2xs">
+          <CardHeader className="flex flex-row items-center justify-between border-b border-black/5 px-6 py-4">
+            <CardTitle className="text-base font-bold text-foreground">Halaman Statis (CMS Pages)</CardTitle>
             <Link href="/dashboard/pages/new">
-              <Button className="gap-2 rounded-none bg-news-red text-white hover:bg-news-red/90">
-                <Plus className="size-4" />
+              <Button className="gap-2 rounded-none bg-primary text-white hover:bg-primary/90 font-bold uppercase tracking-wider text-xs">
+                <Plus className="size-4" weight="bold" />
                 Halaman Baru
               </Button>
             </Link>
           </CardHeader>
-          <CardContent className="px-6 pb-4">
-            <div className="border rounded-none overflow-hidden">
+          <CardContent className="p-6">
+            <div className="border border-black/10 rounded-none overflow-hidden">
               <Table>
                 <TableHeader>
-                  <TableRow className="hover:bg-muted">
-                    <TableHead className="h-10 text-xs font-semibold">Judul Halaman</TableHead>
-                    <TableHead className="h-10 text-xs font-semibold">Slug URL</TableHead>
-                    <TableHead className="h-10 text-xs font-semibold">Status</TableHead>
-                    <TableHead className="h-10 text-xs font-semibold text-right">Aksi</TableHead>
+                  <TableRow className="bg-muted/40 hover:bg-muted/40">
+                    <TableHead className="h-10 text-xs font-bold uppercase tracking-wider text-on-surface">Judul Halaman</TableHead>
+                    <TableHead className="h-10 text-xs font-bold uppercase tracking-wider text-on-surface">Slug URL</TableHead>
+                    <TableHead className="h-10 text-xs font-bold uppercase tracking-wider text-on-surface">Status</TableHead>
+                    <TableHead className="h-10 text-xs font-bold uppercase tracking-wider text-on-surface text-right">Aksi</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {isLoading ? (
                     <TableRow>
                       <TableCell colSpan={4} className="h-32 text-center">
-                        <CircleNotch className="mx-auto size-6 animate-spin text-news-red" />
+                        <CircleNotch className="mx-auto size-6 animate-spin text-primary" />
                       </TableCell>
                     </TableRow>
                   ) : pageList.length === 0 ? (
@@ -122,15 +122,15 @@ export default function PagesPage() {
                     </TableRow>
                   ) : (
                     pageList.map((item) => (
-                      <TableRow key={item.id} className="border-border/50">
-                        <TableCell className="py-3 font-medium text-sm">{item.title}</TableCell>
+                      <TableRow key={item.id} className="border-black/5 hover:bg-black/2">
+                        <TableCell className="py-3 font-semibold text-sm text-foreground">{item.title}</TableCell>
                         <TableCell className="py-3 text-xs text-muted-foreground font-mono">
                           /{item.slug}
                         </TableCell>
                         <TableCell className="py-3">
                           <Badge
                             variant="outline"
-                            className={`text-[10px] font-medium rounded-none ${
+                            className={`text-[10px] font-bold rounded-none uppercase tracking-wider ${
                               item.status === "published"
                                 ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
                                 : "bg-amber-500/10 text-amber-600 border-amber-500/20"
@@ -142,14 +142,14 @@ export default function PagesPage() {
                         <TableCell className="py-3 text-right">
                           <div className="flex items-center justify-end gap-1">
                             <Link href={`/dashboard/pages/${item.id}/edit`}>
-                              <Button variant="ghost" size="icon" className="size-7">
+                              <Button variant="ghost" size="icon" className="size-7 rounded-none">
                                 <PencilSimple className="size-3.5" />
                               </Button>
                             </Link>
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="size-7 text-destructive"
+                              className="size-7 rounded-none text-destructive hover:bg-destructive/10"
                               onClick={() => setDeleteItem(item)}
                             >
                               <Trash className="size-3.5" />
@@ -167,7 +167,7 @@ export default function PagesPage() {
       </div>
 
       <AlertDialog open={!!deleteItem} onOpenChange={() => setDeleteItem(null)}>
-        <AlertDialogContent className="rounded-none">
+        <AlertDialogContent className="rounded-none border border-black/10">
           <AlertDialogHeader>
             <AlertDialogTitle>Hapus Halaman</AlertDialogTitle>
             <AlertDialogDescription>
@@ -185,6 +185,6 @@ export default function PagesPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </main>
+    </div>
   );
 }

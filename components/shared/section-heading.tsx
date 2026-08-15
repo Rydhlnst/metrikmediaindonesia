@@ -15,7 +15,7 @@ const sizeClasses = {
 
 export function SectionHeading({ children, size = "md", className, as: Tag = "h2" }: SectionHeadingProps) {
   return (
-    <Tag className={cn("text-primary", sizeClasses[size], className)}>
+    <Tag className={cn("font-serif font-bold text-foreground", sizeClasses[size], className)}>
       {children}
     </Tag>
   );

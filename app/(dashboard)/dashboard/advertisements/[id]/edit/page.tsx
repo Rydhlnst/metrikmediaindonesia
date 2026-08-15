@@ -119,59 +119,62 @@ export default function EditAdvertisementPage({
   };
 
   return (
-    <main className="flex-1 px-4 pb-7 lg:px-8">
+    <div className="flex min-h-screen w-full flex-col bg-[#f8f9fa]">
       <DashboardTopbar />
-      <div className="mx-auto max-w-2xl space-y-4">
-        <div className="flex items-center justify-between">
+      <div className="w-full flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
+        <div className="flex items-center justify-between border-b border-black/5 pb-4">
           <div className="flex items-center gap-3">
             <Link href="/dashboard/advertisements">
-              <Button variant="ghost" size="icon" className="size-8">
+              <Button variant="ghost" size="icon" className="size-8 rounded-none">
                 <ArrowLeft className="size-4" />
               </Button>
             </Link>
-            <h1 className="text-lg font-bold">Edit Banner Iklan</h1>
+            <div>
+              <h1 className="text-xl font-bold text-foreground">Edit Banner Iklan</h1>
+              <p className="text-xs text-muted-foreground">Perbarui materi kampanye, link tujuan, dan status slot iklan.</p>
+            </div>
           </div>
         </div>
 
         {isLoading ? (
           <div className="flex h-48 items-center justify-center">
-            <CircleNotch className="size-8 animate-spin text-news-red" />
+            <CircleNotch className="size-8 animate-spin text-primary" />
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <Card className="rounded-none bg-card ring-0 shadow-sm">
-              <CardHeader className="px-6 py-4">
-                <CardTitle className="text-base font-bold">Informasi Banner Iklan</CardTitle>
+          <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
+            <Card className="rounded-none border border-black/10 bg-white shadow-2xs">
+              <CardHeader className="border-b border-black/5 px-6 py-4">
+                <CardTitle className="text-base font-bold text-foreground">Informasi Banner Iklan</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 px-6 pb-6">
+              <CardContent className="space-y-4 p-6">
                 <div>
-                  <label className="mb-1.5 block text-xs font-semibold">Judul Iklan / Kampanye</label>
+                  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-on-surface">Judul Iklan / Kampanye</label>
                   <Input
                     placeholder="Judul iklan"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="rounded-none"
+                    className="rounded-none border-black/15 bg-white text-sm focus:border-[#B8860B]"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-xs font-semibold">Target URL Link</label>
+                  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-on-surface">Target URL Link</label>
                   <Input
-                    placeholder="https://..."
+                    placeholder="https://client-website.com/promo"
                     value={link}
                     onChange={(e) => setLink(e.target.value)}
-                    className="rounded-none font-mono text-xs"
+                    className="rounded-none border-black/15 bg-white font-mono text-xs focus:border-[#B8860B]"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="mb-1.5 block text-xs font-semibold">Posisi Slot Banner</label>
+                    <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-on-surface">Posisi Slot Banner</label>
                     <select
                       value={position}
                       onChange={(e) => setPosition(e.target.value)}
-                      className="w-full rounded-none border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-news-red"
+                      className="w-full rounded-none border border-black/15 bg-white px-3 py-2 text-xs font-medium text-foreground outline-none focus:border-[#B8860B]"
                     >
                       <option value="header">Header Top Banner (728x90)</option>
                       <option value="sidebar">Sidebar Banner (300x250)</option>
@@ -181,11 +184,11 @@ export default function EditAdvertisementPage({
                   </div>
 
                   <div>
-                    <label className="mb-1.5 block text-xs font-semibold">Status Tayang</label>
+                    <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-on-surface">Status Tayang</label>
                     <select
                       value={status}
                       onChange={(e) => setStatus(e.target.value)}
-                      className="w-full rounded-none border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-news-red"
+                      className="w-full rounded-none border border-black/15 bg-white px-3 py-2 text-xs font-medium text-foreground outline-none focus:border-[#B8860B]"
                     >
                       <option value="active">Active (Tayang)</option>
                       <option value="inactive">Inactive (Nonaktif)</option>
@@ -194,7 +197,7 @@ export default function EditAdvertisementPage({
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-xs font-semibold">Gambar Banner Iklan</label>
+                  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-on-surface">Materi Banner Gambar</label>
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -203,8 +206,8 @@ export default function EditAdvertisementPage({
                     onChange={handleImageUpload}
                   />
                   {image ? (
-                    <div className="relative aspect-video overflow-hidden border border-border bg-muted">
-                      <img src={image} alt="Banner" className="h-full w-full object-cover" />
+                    <div className="relative border border-black/10 bg-muted overflow-hidden">
+                      <img src={image} alt="Banner Preview" className="max-h-48 w-full object-contain" />
                       <Button
                         type="button"
                         variant="destructive"
@@ -218,17 +221,17 @@ export default function EditAdvertisementPage({
                   ) : (
                     <div
                       onClick={() => fileInputRef.current?.click()}
-                      className="flex aspect-video cursor-pointer flex-col items-center justify-center border-2 border-dashed border-border bg-muted transition-colors hover:border-news-red/50"
+                      className="flex aspect-video cursor-pointer flex-col items-center justify-center border-2 border-dashed border-black/15 bg-white transition-colors hover:border-[#B8860B]"
                     >
                       {isUploading ? (
-                        <CircleNotch className="size-8 animate-spin text-news-red" />
+                        <CircleNotch className="size-8 animate-spin text-primary" />
                       ) : (
                         <div className="text-center">
                           <ImageIcon className="mx-auto size-8 text-muted-foreground/50" />
-                          <p className="mt-2 text-xs font-medium text-foreground">
+                          <p className="mt-2 text-xs font-bold uppercase tracking-wider text-foreground">
                             Klik untuk upload banner gambar
                           </p>
-                          <p className="text-[10px] text-muted-foreground">
+                          <p className="text-[10px] text-muted-foreground mt-0.5">
                             Otomatis dikonversi ke WebP dioptimasi (JPG, PNG, WebP)
                           </p>
                         </div>
@@ -241,19 +244,19 @@ export default function EditAdvertisementPage({
 
             <div className="flex justify-end gap-2">
               <Link href="/dashboard/advertisements">
-                <Button type="button" variant="outline" className="rounded-none">
+                <Button type="button" variant="outline" className="rounded-none text-xs">
                   Batal
                 </Button>
               </Link>
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="gap-2 rounded-none bg-news-red text-white hover:bg-news-red/90"
+                className="gap-2 rounded-none bg-primary text-white hover:bg-primary/90 font-bold uppercase tracking-wider text-xs px-5 py-2.5 shadow-2xs"
               >
                 {isSubmitting ? (
                   <CircleNotch className="size-4 animate-spin" />
                 ) : (
-                  <FloppyDisk className="size-4" />
+                  <FloppyDisk className="size-4" weight="bold" />
                 )}
                 Update Iklan
               </Button>
@@ -261,6 +264,6 @@ export default function EditAdvertisementPage({
           </form>
         )}
       </div>
-    </main>
+    </div>
   );
 }

@@ -76,101 +76,113 @@ export default function SettingsPage() {
   };
 
   return (
-    <main className="flex-1 px-4 pb-7 lg:px-8">
+    <div className="flex min-h-screen w-full flex-col bg-[#f8f9fa]">
       <DashboardTopbar />
-      <div className="mx-auto max-w-4xl space-y-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-lg font-bold">Pengaturan Situs & SEO Global</h1>
+      <div className="w-full flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
+        <div className="flex items-center justify-between border-b border-black/5 pb-4">
+          <div>
+            <h1 className="text-xl font-bold text-foreground">Pengaturan Situs & SEO Global</h1>
+            <p className="text-xs text-muted-foreground">Konfigurasi metadata redaksi, nama media, identitas, dan media sosial resmi.</p>
+          </div>
         </div>
 
         {isLoading ? (
           <div className="flex h-48 items-center justify-center">
-            <CircleNotch className="size-8 animate-spin text-news-red" />
+            <CircleNotch className="size-8 animate-spin text-primary" />
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <Card className="rounded-none bg-card ring-0 shadow-sm">
-              <CardHeader className="px-6 py-4">
-                <CardTitle className="text-base font-bold">Identitas Media</CardTitle>
+          <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
+            <Card className="rounded-none border border-black/10 bg-white shadow-2xs">
+              <CardHeader className="border-b border-black/5 px-6 py-4">
+                <CardTitle className="text-base font-bold text-foreground">Identitas Media</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 px-6 pb-6">
+              <CardContent className="space-y-4 p-6">
                 <div>
-                  <label className="mb-1.5 block text-xs font-semibold">Nama Media</label>
+                  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-on-surface">Nama Media</label>
                   <Input
                     value={siteName}
                     onChange={(e) => setSiteName(e.target.value)}
-                    className="rounded-none"
+                    className="rounded-none border-black/15 bg-white text-sm focus:border-[#B8860B]"
                     required
                   />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-xs font-semibold">Tagline Redaksi</label>
+                  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-on-surface">Tagline Redaksi</label>
                   <Input
                     value={siteTagline}
                     onChange={(e) => setSiteTagline(e.target.value)}
-                    className="rounded-none"
+                    className="rounded-none border-black/15 bg-white text-sm focus:border-[#B8860B]"
                   />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-xs font-semibold">Email Redaksi / Kontak</label>
+                  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-on-surface">Email Redaksi / Kontak</label>
                   <Input
                     type="email"
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
-                    className="rounded-none font-mono text-xs"
+                    className="rounded-none border-black/15 bg-white font-mono text-xs focus:border-[#B8860B]"
                   />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="rounded-none bg-card ring-0 shadow-sm">
-              <CardHeader className="px-6 py-4">
-                <CardTitle className="text-base font-bold">Default SEO Global (Google & Social Metadata)</CardTitle>
+            <Card className="rounded-none border border-black/10 bg-white shadow-2xs">
+              <CardHeader className="border-b border-black/5 px-6 py-4">
+                <CardTitle className="text-base font-bold text-foreground">Default SEO Global (Google & Social Metadata)</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 px-6 pb-6">
+              <CardContent className="space-y-4 p-6">
                 <div>
-                  <label className="mb-1.5 block text-xs font-semibold">Default Meta Title</label>
+                  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-on-surface">Default Meta Title</label>
                   <Input
                     value={defaultMetaTitle}
                     onChange={(e) => setDefaultMetaTitle(e.target.value)}
-                    className="rounded-none"
+                    className="rounded-none border-black/15 bg-white text-sm focus:border-[#B8860B]"
                   />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-xs font-semibold">Default Meta Description</label>
+                  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-on-surface">Default Meta Description</label>
                   <textarea
                     rows={3}
                     value={defaultMetaDesc}
                     onChange={(e) => setDefaultMetaDesc(e.target.value)}
-                    className="w-full resize-none rounded-none border border-border bg-background px-3 py-2 text-sm outline-none focus:border-news-red"
+                    className="w-full resize-none rounded-none border border-black/15 bg-white p-3 text-sm outline-none focus:border-[#B8860B]"
                   />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="rounded-none bg-card ring-0 shadow-sm">
-              <CardHeader className="px-6 py-4">
-                <CardTitle className="text-base font-bold">Media Sosial Resmi</CardTitle>
+            <Card className="rounded-none border border-black/10 bg-white shadow-2xs">
+              <CardHeader className="border-b border-black/5 px-6 py-4">
+                <CardTitle className="text-base font-bold text-foreground">Media Sosial Resmi</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3 px-6 pb-6">
-                <Input
-                  placeholder="Facebook URL"
-                  value={facebookUrl}
-                  onChange={(e) => setFacebookUrl(e.target.value)}
-                  className="rounded-none font-mono text-xs"
-                />
-                <Input
-                  placeholder="Twitter / X URL"
-                  value={twitterUrl}
-                  onChange={(e) => setTwitterUrl(e.target.value)}
-                  className="rounded-none font-mono text-xs"
-                />
-                <Input
-                  placeholder="Instagram URL"
-                  value={instagramUrl}
-                  onChange={(e) => setInstagramUrl(e.target.value)}
-                  className="rounded-none font-mono text-xs"
-                />
+              <CardContent className="space-y-3 p-6">
+                <div>
+                  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-on-surface">Facebook</label>
+                  <Input
+                    placeholder="https://facebook.com/..."
+                    value={facebookUrl}
+                    onChange={(e) => setFacebookUrl(e.target.value)}
+                    className="rounded-none border-black/15 bg-white font-mono text-xs focus:border-[#B8860B]"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-on-surface">Twitter / X</label>
+                  <Input
+                    placeholder="https://x.com/..."
+                    value={twitterUrl}
+                    onChange={(e) => setTwitterUrl(e.target.value)}
+                    className="rounded-none border-black/15 bg-white font-mono text-xs focus:border-[#B8860B]"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-on-surface">Instagram</label>
+                  <Input
+                    placeholder="https://instagram.com/..."
+                    value={instagramUrl}
+                    onChange={(e) => setInstagramUrl(e.target.value)}
+                    className="rounded-none border-black/15 bg-white font-mono text-xs focus:border-[#B8860B]"
+                  />
+                </div>
               </CardContent>
             </Card>
 
@@ -178,12 +190,12 @@ export default function SettingsPage() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="gap-2 rounded-none bg-news-red text-white hover:bg-news-red/90"
+                className="gap-2 rounded-none bg-primary text-white hover:bg-primary/90 font-bold uppercase tracking-wider text-xs px-5 py-2.5 shadow-2xs"
               >
                 {isSubmitting ? (
                   <CircleNotch className="size-4 animate-spin" />
                 ) : (
-                  <FloppyDisk className="size-4" />
+                  <FloppyDisk className="size-4" weight="bold" />
                 )}
                 Simpan Pengaturan
               </Button>
@@ -191,6 +203,6 @@ export default function SettingsPage() {
           </form>
         )}
       </div>
-    </main>
+    </div>
   );
 }

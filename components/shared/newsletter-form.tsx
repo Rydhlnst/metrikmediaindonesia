@@ -42,13 +42,13 @@ export function NewsletterForm() {
   return (
     <>
       {status === "success" && (
-        <div className="mb-4 flex items-center justify-center gap-2 text-sm font-medium text-secondary">
+        <div className="mb-4 flex items-center justify-center gap-2 text-sm font-medium text-gold">
           <CheckCircle className="size-4" weight="fill" />
           {message}
         </div>
       )}
       {status === "error" && (
-        <div className="mb-4 flex items-center justify-center gap-2 text-sm font-medium text-error">
+        <div className="mb-4 flex items-center justify-center gap-2 text-sm font-medium text-red-400">
           <WarningCircle className="size-4" weight="fill" />
           {message}
         </div>
@@ -59,15 +59,16 @@ export function NewsletterForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="bg-transparent border-0 border-b border-outline-variant focus:ring-0 focus:border-primary text-center sm:text-left font-label-md text-label-md uppercase text-primary placeholder-on-surface-variant flex-grow max-w-sm px-0 py-2 outline-none"
+          className="bg-transparent border-0 border-b border-white/30 focus:ring-0 focus:border-gold text-center sm:text-left text-sm text-white placeholder:text-white/50 flex-grow max-w-sm px-0 py-2 outline-none"
           placeholder="ALAMAT EMAIL ANDA"
           disabled={status === "loading"}
         />
         <PrimaryButton
           type="submit"
+          variant="secondary"
           size="lg"
           disabled={status === "loading"}
-          className="font-label-md text-label-md uppercase"
+          className="text-sm"
         >
           {status === "loading" ? "Loading..." : "Subscribe"}
         </PrimaryButton>

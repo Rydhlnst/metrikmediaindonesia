@@ -24,8 +24,8 @@ const subNavCategories = [
 
 export function SubNav({ pathname }: { pathname: string }) {
   return (
-    <nav className="bg-background border-b border-outline-variant">
-      <div className="max-w-[1280px] mx-auto px-4 md:px-16 flex items-center gap-1 overflow-x-auto scrollbar-hide">
+    <nav className="bg-background border-b border-black/10">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-8 flex items-center gap-1 overflow-x-auto scrollbar-hide">
         {subNavSections.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
@@ -36,8 +36,8 @@ export function SubNav({ pathname }: { pathname: string }) {
               className={cn(
                 "flex items-center gap-2 px-4 py-2.5 font-label-md text-label-md uppercase tracking-wider whitespace-nowrap transition-colors border-b-2",
                 isActive
-                  ? "text-secondary border-secondary"
-                  : "text-on-surface-variant border-transparent hover:text-secondary"
+                  ? "text-gold-deep border-gold"
+                  : "text-muted-foreground border-transparent hover:text-gold-deep"
               )}
             >
               <Icon className="size-4" weight={isActive ? "fill" : "regular"} />
@@ -46,7 +46,7 @@ export function SubNav({ pathname }: { pathname: string }) {
           );
         })}
 
-        <div className="mx-2 h-5 w-px bg-outline-variant shrink-0" />
+        <div className="mx-2 h-5 w-px bg-black/10 shrink-0" />
 
         {subNavCategories.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
@@ -57,8 +57,8 @@ export function SubNav({ pathname }: { pathname: string }) {
               className={cn(
                 "px-4 py-2.5 font-label-md text-label-md uppercase tracking-wider whitespace-nowrap transition-colors border-b-2",
                 isActive
-                  ? "text-secondary border-secondary"
-                  : "text-on-surface-variant border-transparent hover:text-secondary"
+                  ? "text-gold-deep border-gold"
+                  : "text-muted-foreground border-transparent hover:text-gold-deep"
               )}
             >
               {item.label}

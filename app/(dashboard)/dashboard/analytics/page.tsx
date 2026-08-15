@@ -42,28 +42,28 @@ export default function AnalyticsPage() {
   }, []);
 
   return (
-    <main className="flex-1 px-4 pb-7 lg:px-8">
+    <div className="flex min-h-screen w-full flex-col bg-[#f8f9fa]">
       <DashboardTopbar />
-      <div className="mx-auto grid gap-4">
+      <div className="w-full flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
         <StatGrid />
 
-        <section className="grid gap-3 xl:grid-cols-4">
-          <Card className="rounded-none bg-card ring-0 shadow-sm xl:col-span-3">
-            <CardHeader className="px-6 py-4">
-              <CardTitle className="text-lg font-bold">Views per Bulan</CardTitle>
+        <section className="grid gap-6 xl:grid-cols-4">
+          <Card className="rounded-none border border-black/10 bg-white shadow-2xs xl:col-span-3">
+            <CardHeader className="border-b border-black/5 px-6 py-4">
+              <CardTitle className="text-base font-bold text-foreground">Views per Bulan</CardTitle>
             </CardHeader>
-            <CardContent className="px-6 pb-4">
+            <CardContent className="p-6">
               <div className="h-80">
                 <ViewsChart />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="rounded-none bg-card ring-0 shadow-sm">
-            <CardHeader className="px-6 py-4">
-              <CardTitle className="text-lg font-bold">Per Kategori</CardTitle>
+          <Card className="rounded-none border border-black/10 bg-white shadow-2xs">
+            <CardHeader className="border-b border-black/5 px-6 py-4">
+              <CardTitle className="text-base font-bold text-foreground">Per Kategori</CardTitle>
             </CardHeader>
-            <CardContent className="px-6 pb-4">
+            <CardContent className="p-6">
               <div className="h-80">
                 <CategoryBarChart />
               </div>
@@ -71,19 +71,19 @@ export default function AnalyticsPage() {
           </Card>
         </section>
 
-        <Card className="rounded-none bg-card ring-0 shadow-sm">
-          <CardHeader className="px-6 py-4">
-            <CardTitle className="text-lg font-bold">Artikel Terpopuler</CardTitle>
+        <Card className="rounded-none border border-black/10 bg-white shadow-2xs">
+          <CardHeader className="border-b border-black/5 px-6 py-4">
+            <CardTitle className="text-base font-bold text-foreground">Artikel Terpopuler</CardTitle>
           </CardHeader>
-          <CardContent className="px-6 pb-4">
-            <div className="border rounded-none overflow-hidden">
+          <CardContent className="p-6">
+            <div className="border border-black/10 rounded-none overflow-hidden">
               <Table>
                 <TableHeader>
-                  <TableRow className="hover:bg-muted">
-                    <TableHead className="h-10 text-xs font-semibold">#</TableHead>
-                    <TableHead className="h-10 text-xs font-semibold">Judul</TableHead>
-                    <TableHead className="h-10 text-xs font-semibold">Kategori</TableHead>
-                    <TableHead className="h-10 text-xs font-semibold text-right">Views</TableHead>
+                  <TableRow className="bg-muted/40 hover:bg-muted/40">
+                    <TableHead className="h-10 text-xs font-bold uppercase tracking-wider text-on-surface">#</TableHead>
+                    <TableHead className="h-10 text-xs font-bold uppercase tracking-wider text-on-surface">Judul</TableHead>
+                    <TableHead className="h-10 text-xs font-bold uppercase tracking-wider text-on-surface">Kategori</TableHead>
+                    <TableHead className="h-10 text-xs font-bold uppercase tracking-wider text-on-surface text-right">Views</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -103,7 +103,7 @@ export default function AnalyticsPage() {
                     </TableRow>
                   ) : (
                     topArticles.map((article, index) => (
-                      <TableRow key={article.id} className="border-border/50">
+                      <TableRow key={article.id} className="border-black/5 hover:bg-black/2">
                         <TableCell className="py-3 text-xs text-muted-foreground font-mono">
                           {index + 1}
                         </TableCell>
@@ -113,13 +113,13 @@ export default function AnalyticsPage() {
                         <TableCell className="py-3">
                           <span
                             className="text-xs font-semibold"
-                            style={{ color: article.categoryColor || "#666" }}
+                            style={{ color: article.categoryColor || "#B8860B" }}
                           >
                             {article.categoryName || "-"}
                           </span>
                         </TableCell>
                         <TableCell className="py-3 text-right">
-                          <span className="flex items-center justify-end gap-1 text-xs text-muted-foreground">
+                          <span className="flex items-center justify-end gap-1 text-xs text-muted-foreground font-mono">
                             <Eye className="size-3" />
                             {(article.viewCount || 0).toLocaleString("id-ID")}
                           </span>
@@ -133,6 +133,6 @@ export default function AnalyticsPage() {
           </CardContent>
         </Card>
       </div>
-    </main>
+    </div>
   );
 }

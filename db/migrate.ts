@@ -3,6 +3,7 @@ import { resolve } from "path";
 import { getDatabaseType } from "./index";
 
 config({ path: resolve(process.cwd(), ".env.local") });
+config({ path: resolve(process.cwd(), ".env") });
 
 async function migrate() {
   const dbType = getDatabaseType();
