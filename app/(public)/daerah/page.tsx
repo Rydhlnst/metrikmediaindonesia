@@ -55,7 +55,10 @@ export default function DaerahIndexPage() {
       </PublicPageHeader>
 
       {/* Section Header */}
-      <SectionHeader title="LIPUTAN TERKINI NUSANTARA" />
+      <SectionHeader
+        title="LIPUTAN TERKINI NUSANTARA"
+        icon={<MapPin className="size-4" weight="bold" />}
+      />
 
       {/* Regional Articles Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

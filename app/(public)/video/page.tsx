@@ -28,7 +28,10 @@ export default function VideoIndexPage() {
         />
 
         {/* Section Header */}
-        <SectionHeader title="TAYANGAN VIDEO PILIHAN REDAKSI" />
+        <SectionHeader
+          title="TAYANGAN VIDEO PILIHAN REDAKSI"
+          icon={<Play className="size-4 fill-current text-gold-deep" />}
+        />
 
         {/* Video Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

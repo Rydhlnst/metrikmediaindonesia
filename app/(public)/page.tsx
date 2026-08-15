@@ -14,7 +14,7 @@ import { NewsletterForm } from "@/components/shared/newsletter-form";
 import { LoadMoreArticles } from "@/components/home/load-more-articles";
 import type { Metadata } from "next";
 import { SITE_CONFIG } from "@/lib/constants";
-import { Lightning, Play, TrendUp, Newspaper } from "@phosphor-icons/react/dist/ssr";
+import { Lightning, Play, TrendUp, Newspaper, ArrowRight } from "@phosphor-icons/react/dist/ssr";
 
 export const metadata: Metadata = {
   title: `${SITE_CONFIG.name} - Media Berita Digital Profesional Indonesia`,
@@ -226,8 +226,9 @@ export default async function HomePage() {
                 <Newspaper className="size-4 text-gold-deep" weight="bold" />
                 <span>Berita Terkini & Populer</span>
               </h2>
-              <Link href="/pencarian" className="text-xs font-bold uppercase text-foreground transition-colors hover:text-gold-deep">
-                Lihat Semua Indeks &rarr;
+              <Link href="/pencarian" className="inline-flex items-center gap-1 text-xs font-bold uppercase text-foreground transition-colors hover:text-gold-deep group">
+                <span>Lihat Semua Indeks</span>
+                <ArrowRight weight="bold" className="size-3.5 transition-transform group-hover:translate-x-0.5" />
               </Link>
             </div>
 
@@ -324,8 +325,9 @@ export default async function HomePage() {
                     Metrik Video HD
                   </h3>
                 </div>
-                <Link href="/video" className="text-[10px] font-bold uppercase text-gold hover:underline">
-                  Lihat Video &rarr;
+                <Link href="/video" className="inline-flex items-center gap-1 text-[10px] font-bold uppercase text-gold hover:underline group">
+                  <span>Lihat Video</span>
+                  <ArrowRight weight="bold" className="size-3 transition-transform group-hover:translate-x-0.5" />
                 </Link>
               </div>
 

@@ -19,6 +19,8 @@ import {
   GraduationCap,
   Buildings,
   CircleNotch,
+  Lightning,
+  Tag,
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 
@@ -97,7 +99,10 @@ function SearchRecommendations() {
     <div className="space-y-8">
       {/* Popular Searches */}
       <section>
-        <SectionHeader title="PENCARIAN POPULER" />
+        <SectionHeader
+          title="PENCARIAN POPULER"
+          icon={<TrendUp className="size-4" weight="bold" />}
+        />
         <div className="flex flex-wrap gap-2">
           {popularSearches.map((term) => (
             <Link
@@ -114,7 +119,10 @@ function SearchRecommendations() {
 
       {/* Browse by Category */}
       <section>
-        <SectionHeader title="TELUSURI BERDASARKAN KATEGORI" />
+        <SectionHeader
+          title="TELUSURI BERDASARKAN KATEGORI"
+          icon={<Tag className="size-4" weight="bold" />}
+        />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {CATEGORIES.map((cat) => (
             <Link
@@ -133,7 +141,12 @@ function SearchRecommendations() {
 
       {/* Trending Articles */}
       <section>
-        <SectionHeader title="BERITA TRENDING" href="/" actionText="Lihat Semua" />
+        <SectionHeader
+          title="BERITA TRENDING"
+          href="/"
+          actionText="Lihat Semua"
+          icon={<TrendUp className="size-4" weight="bold" />}
+        />
         <div className="space-y-3">
           {trendingArticles.slice(0, 5).map((article: any, index: number) => (
             <Link
@@ -163,7 +176,10 @@ function SearchRecommendations() {
 
       {/* Recent Articles */}
       <section>
-        <SectionHeader title="BERITA TERKINI" />
+        <SectionHeader
+          title="BERITA TERKINI"
+          icon={<Lightning className="size-4" weight="bold" />}
+        />
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {recentArticles.map((article: any) => (
             <ArticleCard key={article.id} article={article} />

@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { unstable_cache, revalidateTag } from "next/cache";
 import { desc, eq, and, like, or, not, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/index";
@@ -9,6 +10,7 @@ import {
   articleTags,
 } from "@/db/schema/index";
 import type { Article, Author, Category, GetArticlesOptions } from "@/lib/types";
+import { withRedisCache, invalidateRedisPattern } from "@/lib/redis";
 
 const REVALIDATE_SECONDS = 300;
 const PLACEHOLDER = "/placeholder.png";
@@ -254,182 +256,236 @@ async function getArticleBySlugRaw(slug: string): Promise<Article | null> {
   return null;
 }
 
-export const getArticles = unstable_cache(
-  async (options: GetArticlesOptions = {}): Promise<Article[]> => listArticlesRaw(options),
-  ["articles-list"],
-  { revalidate: REVALIDATE_SECONDS, tags: ["articles"] }
-);
+// ----------------------------------------------------
+// Cached Queries with Multi-Tier Cache (React + Next.js + Redis)
+// ----------------------------------------------------
 
-export const getArticleBySlug = unstable_cache(
-  async (slug: string): Promise<Article | null> => getArticleBySlugRaw(slug),
-  ["article-detail"],
-  { revalidate: REVALIDATE_SECONDS, tags: ["articles", "article-by-slug"] }
-);
+export const getArticles = cache(async (options: GetArticlesOptions = {}): Promise<Article[]> => {
+  const cacheKey = `cache:articles:list:${JSON.stringify(options)}`;
+  return withRedisCache(cacheKey, REVALIDATE_SECONDS, async () => {
+    const cachedFn = unstable_cache(
+      async () => listArticlesRaw(options),
+      ["articles-list", JSON.stringify(options)],
+      { revalidate: REVALIDATE_SECONDS, tags: ["articles"] }
+    );
+    return cachedFn();
+  });
+});
 
-export const getTrendingArticles = unstable_cache(
-  async (limit = 5): Promise<Article[]> => {
-    const db = await getDb();
-    const rows = await db
-      .select(articleSelect)
-      .from(articles)
-      .leftJoin(categories, eq(articles.categoryId, categories.id))
-      .leftJoin(authors, eq(articles.authorId, authors.id))
-      .where(eq(articles.status, "published"))
-      .orderBy(desc(articles.viewCount))
-      .limit(limit);
-    const tagMap = await fetchTagsForArticles(rows.map((r) => r.id));
-    return rows.map((r) => mapRowToArticle(r as ArticleJoinRow, tagMap.get(r.id) ?? []));
-  },
-  ["articles-trending"],
-  { revalidate: REVALIDATE_SECONDS, tags: ["articles", "trending"] }
-);
+export const getArticleBySlug = cache(async (slug: string): Promise<Article | null> => {
+  const cacheKey = `cache:articles:slug:${slug}`;
+  return withRedisCache(cacheKey, REVALIDATE_SECONDS, async () => {
+    const cachedFn = unstable_cache(
+      async () => getArticleBySlugRaw(slug),
+      ["article-detail", slug],
+      { revalidate: REVALIDATE_SECONDS, tags: ["articles", `article-${slug}`] }
+    );
+    return cachedFn();
+  });
+});
 
-export const getCategories = unstable_cache(
-  async (): Promise<Category[]> => {
-    const db = await getDb();
-    const rows = await db
-      .select({
-        id: categories.id,
-        name: categories.name,
-        slug: categories.slug,
-        color: categories.color,
-        description: categories.description,
-        articleCount: sql<number>`count(${articles.id})`.as("article_count"),
-      })
-      .from(categories)
-      .leftJoin(articles, and(eq(articles.categoryId, categories.id), eq(articles.status, "published")))
-      .groupBy(categories.id)
-      .orderBy(categories.id);
-    return rows.map((r) => ({
-      id: r.id,
-      name: r.name,
-      slug: r.slug,
-      color: r.color,
-      description: r.description,
-    }));
-  },
-  ["categories-list"],
-  { revalidate: REVALIDATE_SECONDS, tags: ["categories"] }
-);
+export const getTrendingArticles = cache(async (limit = 5): Promise<Article[]> => {
+  const cacheKey = `cache:articles:trending:${limit}`;
+  return withRedisCache(cacheKey, 120, async () => {
+    const cachedFn = unstable_cache(
+      async () => {
+        const db = await getDb();
+        const rows = await db
+          .select(articleSelect)
+          .from(articles)
+          .leftJoin(categories, eq(articles.categoryId, categories.id))
+          .leftJoin(authors, eq(articles.authorId, authors.id))
+          .where(eq(articles.status, "published"))
+          .orderBy(desc(articles.viewCount))
+          .limit(limit);
+        const tagMap = await fetchTagsForArticles(rows.map((r) => r.id));
+        return rows.map((r) => mapRowToArticle(r as ArticleJoinRow, tagMap.get(r.id) ?? []));
+      },
+      ["articles-trending", String(limit)],
+      { revalidate: 120, tags: ["articles", "trending"] }
+    );
+    return cachedFn();
+  });
+});
 
-export const getCategoryBySlug = unstable_cache(
-  async (slug: string): Promise<Category | null> => {
-    try {
-      const db = await getDb();
-      const [row] = await db
-        .select({
-          id: categories.id,
-          name: categories.name,
-          slug: categories.slug,
-          color: categories.color,
-          description: categories.description,
-        })
-        .from(categories)
-        .where(eq(categories.slug, slug))
-        .limit(1);
-      if (row) return row;
-    } catch (e) {
-      console.warn("getCategoryBySlug db error, using fallback:", e);
-    }
+export const getCategories = cache(async (): Promise<Category[]> => {
+  const cacheKey = "cache:categories:list";
+  return withRedisCache(cacheKey, REVALIDATE_SECONDS, async () => {
+    const cachedFn = unstable_cache(
+      async () => {
+        const db = await getDb();
+        const rows = await db
+          .select({
+            id: categories.id,
+            name: categories.name,
+            slug: categories.slug,
+            color: categories.color,
+            description: categories.description,
+            articleCount: sql<number>`count(${articles.id})`.as("article_count"),
+          })
+          .from(categories)
+          .leftJoin(articles, and(eq(articles.categoryId, categories.id), eq(articles.status, "published")))
+          .groupBy(categories.id)
+          .orderBy(categories.id);
+        return rows.map((r) => ({
+          id: r.id,
+          name: r.name,
+          slug: r.slug,
+          color: r.color,
+          description: r.description,
+        }));
+      },
+      ["categories-list"],
+      { revalidate: REVALIDATE_SECONDS, tags: ["categories"] }
+    );
+    return cachedFn();
+  });
+});
 
-    // Fallback from CATEGORIES constant
-    const { CATEGORIES } = await import("@/lib/constants");
-    const fallback = CATEGORIES.find((c) => c.slug === slug);
-    if (fallback) {
-      return {
-        id: parseInt(fallback.id) || 1,
-        name: fallback.name,
-        slug: fallback.slug,
-        color: fallback.color || null,
-        description: `Berita terbaru seputar ${fallback.name}`,
-      };
-    }
-    return null;
-  },
-  ["category-by-slug"],
-  { revalidate: REVALIDATE_SECONDS, tags: ["categories"] }
-);
+export const getCategoryBySlug = cache(async (slug: string): Promise<Category | null> => {
+  const cacheKey = `cache:categories:slug:${slug}`;
+  return withRedisCache(cacheKey, REVALIDATE_SECONDS, async () => {
+    const cachedFn = unstable_cache(
+      async () => {
+        try {
+          const db = await getDb();
+          const [row] = await db
+            .select({
+              id: categories.id,
+              name: categories.name,
+              slug: categories.slug,
+              color: categories.color,
+              description: categories.description,
+            })
+            .from(categories)
+            .where(eq(categories.slug, slug))
+            .limit(1);
+          if (row) return row;
+        } catch (e) {
+          console.warn("getCategoryBySlug db error, using fallback:", e);
+        }
 
-export const getTags = unstable_cache(
-  async () => {
-    const db = await getDb();
-    return db.select().from(tags).orderBy(tags.name);
-  },
-  ["tags-list"],
-  { revalidate: REVALIDATE_SECONDS, tags: ["tags"] }
-);
+        // Fallback from CATEGORIES constant
+        const { CATEGORIES } = await import("@/lib/constants");
+        const fallback = CATEGORIES.find((c) => c.slug === slug);
+        if (fallback) {
+          return {
+            id: parseInt(fallback.id) || 1,
+            name: fallback.name,
+            slug: fallback.slug,
+            color: fallback.color || null,
+            description: `Berita terbaru seputar ${fallback.name}`,
+          };
+        }
+        return null;
+      },
+      ["category-by-slug", slug],
+      { revalidate: REVALIDATE_SECONDS, tags: ["categories", `category-${slug}`] }
+    );
+    return cachedFn();
+  });
+});
 
-export const getAuthors = unstable_cache(
-  async (): Promise<Author[]> => {
-    const db = await getDb();
-    const rows = await db
-      .select({
-        id: authors.id,
-        name: authors.name,
-        slug: authors.slug,
-        avatar: authors.avatar,
-        bio: authors.bio,
-        role: authors.role,
-        social: authors.socialLinks,
-        articleCount: sql<number>`count(${articles.id})`.as("article_count"),
-      })
-      .from(authors)
-      .leftJoin(articles, and(eq(articles.authorId, authors.id), eq(articles.status, "published")))
-      .groupBy(authors.id)
-      .orderBy(desc(authors.id));
-    return rows.map((r) => ({
-      id: r.id,
-      name: r.name,
-      slug: r.slug,
-      avatar: r.avatar,
-      bio: r.bio,
-      role: r.role,
-      social: r.social,
-    }));
-  },
-  ["authors-list"],
-  { revalidate: REVALIDATE_SECONDS, tags: ["authors"] }
-);
+export const getTags = cache(async () => {
+  const cacheKey = "cache:tags:list";
+  return withRedisCache(cacheKey, REVALIDATE_SECONDS, async () => {
+    const cachedFn = unstable_cache(
+      async () => {
+        const db = await getDb();
+        return db.select().from(tags).orderBy(tags.name);
+      },
+      ["tags-list"],
+      { revalidate: REVALIDATE_SECONDS, tags: ["tags"] }
+    );
+    return cachedFn();
+  });
+});
 
-export const getRelatedArticles = unstable_cache(
+export const getAuthors = cache(async (): Promise<Author[]> => {
+  const cacheKey = "cache:authors:list";
+  return withRedisCache(cacheKey, REVALIDATE_SECONDS, async () => {
+    const cachedFn = unstable_cache(
+      async () => {
+        const db = await getDb();
+        const rows = await db
+          .select({
+            id: authors.id,
+            name: authors.name,
+            slug: authors.slug,
+            avatar: authors.avatar,
+            bio: authors.bio,
+            role: authors.role,
+            social: authors.socialLinks,
+            articleCount: sql<number>`count(${articles.id})`.as("article_count"),
+          })
+          .from(authors)
+          .leftJoin(articles, and(eq(articles.authorId, authors.id), eq(articles.status, "published")))
+          .groupBy(authors.id)
+          .orderBy(desc(authors.id));
+        return rows.map((r) => ({
+          id: r.id,
+          name: r.name,
+          slug: r.slug,
+          avatar: r.avatar,
+          bio: r.bio,
+          role: r.role,
+          social: r.social,
+        }));
+      },
+      ["authors-list"],
+      { revalidate: REVALIDATE_SECONDS, tags: ["authors"] }
+    );
+    return cachedFn();
+  });
+});
+
+export const getRelatedArticles = cache(
   async (article: Pick<Article, "id" | "category" | "tags">, limit = 4): Promise<Article[]> => {
-    const db = await getDb();
-    const relatedTagIds = await db
-      .select({ tagId: articleTags.tagId })
-      .from(articleTags)
-      .where(eq(articleTags.articleId, article.id));
-    const tagIdList = relatedTagIds.map((t) => t.tagId);
+    const cacheKey = `cache:articles:related:${article.id}:${limit}`;
+    return withRedisCache(cacheKey, REVALIDATE_SECONDS, async () => {
+      const cachedFn = unstable_cache(
+        async () => {
+          const db = await getDb();
+          const relatedTagIds = await db
+            .select({ tagId: articleTags.tagId })
+            .from(articleTags)
+            .where(eq(articleTags.articleId, article.id));
+          const tagIdList = relatedTagIds.map((t) => t.tagId);
 
-    const relatedArticleIds = tagIdList.length
-      ? await db
-          .select({ articleId: articleTags.articleId })
-          .from(articleTags)
-          .where(and(inArray(articleTags.tagId, tagIdList), not(eq(articleTags.articleId, article.id))))
-      : [];
+          const relatedArticleIds = tagIdList.length
+            ? await db
+                .select({ articleId: articleTags.articleId })
+                .from(articleTags)
+                .where(and(inArray(articleTags.tagId, tagIdList), not(eq(articleTags.articleId, article.id))))
+            : [];
 
-    const idSet = new Set(relatedArticleIds.map((r) => r.articleId));
-    const conditions = [
-      eq(articles.status, "published"),
-      not(eq(articles.id, article.id)),
-      or(
-        eq(articles.categoryId, article.category.id),
-        idSet.size ? inArray(articles.id, [...idSet]) : sql`false`
-      )!,
-    ];
+          const idSet = new Set(relatedArticleIds.map((r) => r.articleId));
+          const conditions = [
+            eq(articles.status, "published"),
+            not(eq(articles.id, article.id)),
+            or(
+              eq(articles.categoryId, article.category.id),
+              idSet.size ? inArray(articles.id, [...idSet]) : sql`false`
+            )!,
+          ];
 
-    const rows = await db
-      .select(articleSelect)
-      .from(articles)
-      .leftJoin(categories, eq(articles.categoryId, categories.id))
-      .leftJoin(authors, eq(articles.authorId, authors.id))
-      .where(and(...conditions))
-      .orderBy(desc(articles.publishedAt))
-      .limit(limit);
-    const tagMap = await fetchTagsForArticles(rows.map((r) => r.id));
-    return rows.map((r) => mapRowToArticle(r as ArticleJoinRow, tagMap.get(r.id) ?? []));
-  },
-  ["articles-related"],
-  { revalidate: REVALIDATE_SECONDS, tags: ["articles"] }
+          const rows = await db
+            .select(articleSelect)
+            .from(articles)
+            .leftJoin(categories, eq(articles.categoryId, categories.id))
+            .leftJoin(authors, eq(articles.authorId, authors.id))
+            .where(and(...conditions))
+            .orderBy(desc(articles.publishedAt))
+            .limit(limit);
+          const tagMap = await fetchTagsForArticles(rows.map((r) => r.id));
+          return rows.map((r) => mapRowToArticle(r as ArticleJoinRow, tagMap.get(r.id) ?? []));
+        },
+        ["articles-related", String(article.id), String(limit)],
+        { revalidate: REVALIDATE_SECONDS, tags: ["articles"] }
+      );
+      return cachedFn();
+    });
+  }
 );
 
 export async function searchArticles(query: string, limit = 10): Promise<Article[]> {
@@ -444,6 +500,7 @@ export async function incrementArticleViews(slug: string) {
       .set({ viewCount: sql`${articles.viewCount} + 1` })
       .where(eq(articles.slug, slug));
     (revalidateTag as any)("trending");
+    void invalidateRedisPattern("cache:articles:trending:*");
   } catch (error) {
     console.error("Failed to increment view count:", error);
   }
@@ -455,14 +512,20 @@ export function revalidateAllArticles() {
   (revalidateTag as any)("articles");
   (revalidateTag as any)("trending");
   (revalidateTag as any)("article-by-slug");
+  void invalidateRedisPattern("cache:articles:*");
 }
 
 export function revalidateCategories() {
   (revalidateTag as any)("categories");
   (revalidateTag as any)("articles");
+  void invalidateRedisPattern("cache:categories:*");
+  void invalidateRedisPattern("cache:articles:*");
 }
 
 export function revalidateAuthors() {
   (revalidateTag as any)("authors");
   (revalidateTag as any)("articles");
+  void invalidateRedisPattern("cache:authors:*");
+  void invalidateRedisPattern("cache:articles:*");
 }
+

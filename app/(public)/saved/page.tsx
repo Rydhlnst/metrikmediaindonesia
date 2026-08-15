@@ -78,7 +78,10 @@ export default function SavedPage() {
         />
 
         {/* Section Header */}
-        <SectionHeader title="DAFTAR ARTIKEL PILIHAN ANDA" />
+        <SectionHeader
+          title="DAFTAR ARTIKEL PILIHAN ANDA"
+          icon={<BookmarkSimple className="size-4" weight="bold" />}
+        />
 
         {bookmarks.length === 0 ? (
           <div className="rounded-none border border-black/10 bg-white p-8">

@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
+import type { ReactNode } from "react";
 
 interface SectionHeaderProps {
   title: string;
   href?: string;
   actionText?: string;
   className?: string;
+  icon?: ReactNode;
 }
 
 export function SectionHeader({
@@ -13,20 +16,26 @@ export function SectionHeader({
   href,
   actionText,
   className,
+  icon,
 }: SectionHeaderProps) {
   return (
     <div className={cn("flex items-center justify-between border-b border-black/10 pb-1.5 mb-6", className)}>
-      <h2 className="text-xs font-bold uppercase tracking-widest text-foreground border-b-2 border-black -mb-[8px] pb-1.5 inline-block">
-        {title}
-      </h2>
+      <div className="flex items-center gap-2 border-b-2 border-black -mb-[8px] pb-1.5 inline-flex">
+        {icon && <span className="text-gold-deep flex items-center justify-center">{icon}</span>}
+        <h2 className="text-xs font-bold uppercase tracking-widest text-foreground">
+          {title}
+        </h2>
+      </div>
       {actionText && href && (
         <Link
           href={href}
-          className="text-xs font-bold text-foreground uppercase tracking-wider transition-colors hover:text-gold-deep"
+          className="inline-flex items-center gap-1 text-xs font-bold text-foreground uppercase tracking-wider transition-colors hover:text-gold-deep group"
         >
-          {actionText} &rarr;
+          <span>{actionText}</span>
+          <ArrowRight weight="bold" className="size-3 transition-transform group-hover:translate-x-0.5" />
         </Link>
       )}
     </div>
   );
 }
+

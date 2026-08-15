@@ -48,7 +48,10 @@ export default function BusinessPublicationPage() {
         </div>
 
         {/* Section Header */}
-        <SectionHeader title="FORMULIR PENGAJUAN PUBLIKASI" />
+        <SectionHeader
+          title="FORMULIR PENGAJUAN PUBLIKASI"
+          icon={<FileText className="size-4" weight="bold" />}
+        />
 
         {/* Submission Form */}
         <div className="bg-white rounded-none border border-black/10 p-6 sm:p-10 space-y-6">

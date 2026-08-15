@@ -285,6 +285,12 @@ export const articles = pgTable(
     index("articles_category_id_idx").on(table.categoryId),
     index("articles_author_id_idx").on(table.authorId),
     index("articles_published_at_idx").on(table.publishedAt),
+    index("articles_status_published_at_idx").on(table.status, table.publishedAt),
+    index("articles_status_view_count_idx").on(table.status, table.viewCount),
+    index("articles_status_category_published_idx").on(table.status, table.categoryId, table.publishedAt),
+    index("articles_status_author_published_idx").on(table.status, table.authorId, table.publishedAt),
+    index("articles_status_featured_idx").on(table.status, table.featured, table.publishedAt),
+    index("articles_status_breaking_idx").on(table.status, table.breaking, table.publishedAt),
   ]
 );
 
@@ -303,6 +309,7 @@ export const articleTags = pgTable(
   },
   (table) => [
     uniqueIndex("article_tags_unique").on(table.articleId, table.tagId),
+    index("article_tags_tag_id_idx").on(table.tagId, table.articleId),
   ]
 );
 

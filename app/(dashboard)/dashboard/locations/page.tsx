@@ -3,7 +3,7 @@ import { DashboardTopbar } from "@/components/dashboard/topbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, MapPin, PencilSimple, Trash } from "@phosphor-icons/react/dist/ssr";
+import { Plus, MapPin, PencilSimple, Trash, ArrowRight } from "@phosphor-icons/react/dist/ssr";
 
 export const metadata: Metadata = {
   title: "Manajemen Wilayah & Lokasi - Metrik Media CMS",
@@ -27,7 +27,15 @@ export default function LocationsManagementPage() {
           <CardHeader className="flex flex-row items-center justify-between border-b border-black/5 px-6 py-4">
             <div>
               <CardTitle className="text-base font-bold text-foreground">Hirarki Wilayah & Berita Daerah</CardTitle>
-              <p className="text-xs text-muted-foreground mt-0.5">Struktur hirarki wilayah liputan: Indonesia &rarr; Provinsi &rarr; Kota/Kabupaten &rarr; Kecamatan.</p>
+              <p className="text-xs text-muted-foreground mt-0.5 flex items-center flex-wrap gap-1">
+                <span>Struktur hirarki wilayah liputan: Indonesia</span>
+                <ArrowRight className="size-3 text-muted-foreground" />
+                <span>Provinsi</span>
+                <ArrowRight className="size-3 text-muted-foreground" />
+                <span>Kota/Kabupaten</span>
+                <ArrowRight className="size-3 text-muted-foreground" />
+                <span>Kecamatan.</span>
+              </p>
             </div>
             <Button className="gap-2 rounded-none bg-primary text-white hover:bg-primary/90 font-bold uppercase tracking-wider text-xs">
               <Plus className="size-4" weight="bold" />

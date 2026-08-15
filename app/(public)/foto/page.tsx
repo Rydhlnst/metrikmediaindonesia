@@ -27,7 +27,10 @@ export default function PhotoIndexPage() {
       />
 
       {/* Section Header */}
-      <SectionHeader title="GALERI PHOTO STORY PILIHAN" />
+      <SectionHeader
+        title="GALERI PHOTO STORY PILIHAN"
+        icon={<Camera className="size-4" weight="bold" />}
+      />
 
       {/* Photo Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

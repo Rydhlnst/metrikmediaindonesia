@@ -10,6 +10,7 @@ import type { Metadata } from "next";
 
 import { PublicPageHeader } from "@/components/shared/public-page-header";
 import { SectionHeader } from "@/components/shared/section-header";
+import { Clock, Lightning } from "@phosphor-icons/react/dist/ssr";
 
 interface CategoryPageProps {
   params: Promise<{ category: string }>;
@@ -111,10 +112,10 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                 <CategoryBadge variant="bordered">
                   {cat.name}
                 </CategoryBadge>
-                <span className="text-muted-foreground text-sm">&bull;</span>
-                <span className="font-label-md text-label-md text-muted-foreground">
-                  {featured.readingTime} MENIT BACA
-                </span>
+                <div className="flex items-center gap-1 text-muted-foreground font-label-md text-label-md">
+                  <Clock className="size-3.5" weight="bold" />
+                  <span>{featured.readingTime} MENIT BACA</span>
+                </div>
               </div>
               <h2 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-4 group-hover:text-gold-deep transition-colors duration-300">
                 <Link href={`/${category}/${featured.slug}`}>
@@ -203,7 +204,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
           {/* Text-Only Stories List */}
           <div className="md:col-span-4 flex flex-col gap-8">
-            <div className="border-b-2 border-primary pb-2 mb-4">
+            <div className="flex items-center gap-2 border-b-2 border-black pb-2 mb-4">
+              <Lightning className="size-4 text-gold-deep" weight="bold" />
               <h4 className="font-label-md text-label-md text-foreground uppercase tracking-widest">
                 Terbaru dari Kanal Ini
               </h4>

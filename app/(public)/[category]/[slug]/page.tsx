@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { SITE_CONFIG } from "@/lib/constants";
-import { getArticleBySlug, getArticles, getRelatedArticles, incrementViewCount } from "@/lib/queries";
+import { getArticleBySlug, getArticles, getRelatedArticles, getTrendingArticles, getCategories, incrementViewCount } from "@/lib/queries";
 import { ArticleCard } from "@/components/article/article-card";
 import { SectionHeader } from "@/components/shared/section-header";
 import { AvatarAuthor } from "@/components/shared/avatar-author";
@@ -19,16 +19,16 @@ import {
   FacebookLogo,
   TwitterLogo,
   LinkedinLogo,
-  Link as LinkIcon,
   Lightning,
   ArrowLeft,
+  TrendUp,
+  Newspaper,
+  Tag,
 } from "@phosphor-icons/react/dist/ssr";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import type { Metadata } from "next";
 import type { Article } from "@/lib/types";
-
-
 
 interface ArticleDetailPageProps {
   params: Promise<{ category: string; slug: string }>;
@@ -96,21 +96,30 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
 
   void incrementViewCount(slug);
 
-  let relatedArticles: Article[] = [];
-  try {
-    relatedArticles = await getRelatedArticles(article, 4);
-  } catch {
-    relatedArticles = [];
-  }
+  const [relatedRes, latestRes, trendingRes, categoriesRes] = await Promise.allSettled([
+    getRelatedArticles(article, 5),
+    getArticles({ limit: 8 }),
+    getTrendingArticles(5),
+    getCategories(),
+  ]);
 
-  if (!relatedArticles || relatedArticles.length === 0) {
-    try {
-      const { getArticles } = await import("@/lib/queries");
-      relatedArticles = await getArticles({ limit: 4 });
-    } catch {
-      relatedArticles = [];
-    }
-  }
+  const rawRelated = relatedRes.status === "fulfilled" ? relatedRes.value : [];
+  const rawLatest = latestRes.status === "fulfilled" ? latestRes.value : [];
+  const rawTrending = trendingRes.status === "fulfilled" ? trendingRes.value : [];
+  const allCategories = categoriesRes.status === "fulfilled" ? categoriesRes.value : [];
+
+  // Exclude current article from suggestions
+  const relatedArticles = rawRelated
+    .filter((a) => a.id !== article.id && a.slug !== article.slug)
+    .slice(0, 4);
+
+  const recentArticles = rawLatest
+    .filter((a) => a.id !== article.id && a.slug !== article.slug)
+    .slice(0, 5);
+
+  const trendingArticles = rawTrending
+    .filter((a) => a.id !== article.id && a.slug !== article.slug)
+    .slice(0, 5);
 
   return (
     <>
@@ -298,13 +307,76 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
           </div>
 
           {/* Sidebar */}
-          <aside className="flex flex-col gap-6">
+          <aside className="flex flex-col gap-8 lg:sticky lg:top-24 self-start">
+            {/* Berita Terkait */}
             {relatedArticles.length > 0 && (
               <div>
-                <SectionHeader title="Berita Terkait" />
-                <div className="mt-4 space-y-1">
+                <SectionHeader
+                  title="Berita Terkait"
+                  icon={<Newspaper className="size-4" weight="bold" />}
+                />
+                <div className="mt-4 divide-y divide-black/10">
                   {relatedArticles.map((related) => (
                     <ArticleCard key={related.id} article={related} variant="horizontal" />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Berita Terkini / Recent Posts */}
+            {recentArticles.length > 0 && (
+              <div>
+                <SectionHeader
+                  title="Berita Terkini"
+                  icon={<Lightning className="size-4" weight="bold" />}
+                />
+                <div className="mt-4 divide-y divide-black/10">
+                  {recentArticles.map((recent) => (
+                    <ArticleCard key={recent.id} article={recent} variant="horizontal" />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Terpopuler */}
+            {trendingArticles.length > 0 && (
+              <div>
+                <SectionHeader
+                  title="Terpopuler"
+                  icon={<TrendUp className="size-4" weight="bold" />}
+                />
+                <div className="mt-4 divide-y divide-black/10">
+                  {trendingArticles.map((trending, idx) => (
+                    <ArticleCard
+                      key={trending.id}
+                      article={trending}
+                      variant="horizontal"
+                      rank={idx}
+                      showViews
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Jelajahi Kategori */}
+            {allCategories.length > 0 && (
+              <div className="border border-black/10 bg-white p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <Tag className="size-4 text-gold-deep" weight="bold" />
+                  <h3 className="font-serif text-base font-bold text-foreground">
+                    Jelajahi Kategori
+                  </h3>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {allCategories.map((cat) => (
+                    <Link
+                      key={cat.id}
+                      href={`/${cat.slug}`}
+                      className="border border-black/10 bg-surface-container px-3 py-1.5 text-xs font-semibold text-foreground transition-all hover:bg-gold-deep hover:text-white hover:border-gold-deep"
+                    >
+                      {cat.name}
+                    </Link>
                   ))}
                 </div>
               </div>

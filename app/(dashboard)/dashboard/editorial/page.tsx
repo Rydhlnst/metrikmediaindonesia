@@ -60,8 +60,14 @@ export default function EditorialWorkflowPage() {
               <Kanban className="size-5 text-[#B8860B]" weight="bold" />
               Editorial Workflow Board
             </h1>
-            <p className="text-xs text-muted-foreground">
-              Kelola alur persetujuan liputan dari Jurnalis &rarr; Editor Review &rarr; Chief Editor &rarr; Dipublikasikan.
+            <p className="text-xs text-muted-foreground flex items-center flex-wrap gap-1">
+              <span>Kelola alur persetujuan liputan dari Jurnalis</span>
+              <ArrowRight className="size-3 text-muted-foreground" />
+              <span>Editor Review</span>
+              <ArrowRight className="size-3 text-muted-foreground" />
+              <span>Chief Editor</span>
+              <ArrowRight className="size-3 text-muted-foreground" />
+              <span>Dipublikasikan.</span>
             </p>
           </div>
 
