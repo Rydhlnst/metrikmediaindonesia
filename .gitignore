@@ -37,10 +37,12 @@ yarn-error.log*
 !.env.example
 !.env.docker
 
-
 # vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# tests
+/test-results
