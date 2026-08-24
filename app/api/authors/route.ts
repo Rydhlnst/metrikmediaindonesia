@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin, requireAuth } from "@/lib/server-session";
 import { getDb } from "@/db/index";
 import { authors, articles } from "@/db/schema/index";
 import { desc, eq, count } from "drizzle-orm";
+import { authorSchema } from "@/lib/validators/cms";
+import { zodError } from "@/lib/api-response";
 
 export async function GET(request: NextRequest) {
+  const authGuard = await requireAuth(request); if (authGuard.error) return authGuard.error;
   try {
     const db = await getDb();
     const { searchParams } = new URL(request.url);
@@ -40,22 +44,19 @@ export async function GET(request: NextRequest) {
     );
 
     return NextResponse.json(itemsWithCounts);
-  } catch (error: any) {
+  } catch (error) {
     console.error("GET /api/authors error:", error);
     return NextResponse.json({ message: "Gagal mengambil data penulis" }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
+  const authGuard = await requireAdmin(request); if (authGuard.error) return authGuard.error;
   try {
     const db = await getDb();
-    const body = await request.json();
-
-    const { name, slug, bio, avatar, role = "Redaktur", socialLinks } = body;
-
-    if (!name || !slug) {
-      return NextResponse.json({ message: "Nama dan slug penulis wajib diisi" }, { status: 400 });
-    }
+    const parsed = authorSchema.safeParse(await request.json().catch(() => null));
+    if (!parsed.success) return zodError(parsed.error);
+    const { name, slug, bio, avatar, role = "Redaktur", socialLinks } = parsed.data;
 
     const [existing] = await db
       .select()
@@ -83,7 +84,7 @@ export async function POST(request: NextRequest) {
       { message: "Penulis berhasil ditambahkan", data: newAuthor },
       { status: 201 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("POST /api/authors error:", error);
     return NextResponse.json({ message: "Gagal menambahkan penulis" }, { status: 500 });
   }

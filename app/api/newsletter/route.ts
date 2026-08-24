@@ -2,64 +2,46 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/db/index";
 import { newsletterSubscribers } from "@/db/schema/index";
 import { eq } from "drizzle-orm";
+import { requireAdmin } from "@/lib/server-session";
+import { newsletterSchema } from "@/lib/validators/public";
+import { enforceRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
+  const limited = await enforceRateLimit(request, "newsletter", 5, 60);
+  if (limited) return limited;
   try {
-    const body = await request.json();
-    const { email, source = "footer" } = body;
+    const parsed = newsletterSchema.safeParse(await request.json().catch(() => null));
+    if (!parsed.success) return NextResponse.json({ message: "Invalid email address" }, { status: 422 });
+    const { email, source } = parsed.data;
+    const db = await getDb();
+    const [existing] = await db
+      .select()
+      .from(newsletterSubscribers)
+      .where(eq(newsletterSubscribers.email, email.toLowerCase()))
+      .limit(1);
 
-    if (!email || typeof email !== "string") {
-      return NextResponse.json(
-        { message: "Email diperlukan" },
-        { status: 400 }
-      );
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { message: "Format email tidak valid" },
-        { status: 400 }
-      );
-    }
-
-    try {
-      const db = await getDb();
-      const [existing] = await db
-        .select()
-        .from(newsletterSubscribers)
-        .where(eq(newsletterSubscribers.email, email.toLowerCase()))
-        .limit(1);
-
-      if (existing) {
-        if (!existing.isActive) {
-          await db
-            .update(newsletterSubscribers)
-            .set({ isActive: true })
-            .where(eq(newsletterSubscribers.id, existing.id));
-        }
-        return NextResponse.json({
-          message: "Anda sudah terdaftar dalam newsletter kami",
-          success: true,
-        });
+    if (existing) {
+      if (!existing.isActive) {
+        await db
+          .update(newsletterSubscribers)
+          .set({ isActive: true })
+          .where(eq(newsletterSubscribers.id, existing.id));
       }
-
-      await db.insert(newsletterSubscribers).values({
-        email: email.toLowerCase(),
-        source,
-      });
-
       return NextResponse.json({
-        message: "Berhasil berlangganan newsletter",
-        success: true,
-      });
-    } catch (dbError) {
-      console.error("[Newsletter] DB error:", dbError);
-      return NextResponse.json({
-        message: "Berhasil berlangganan newsletter",
+        message: "Anda sudah terdaftar dalam newsletter kami",
         success: true,
       });
     }
+
+    await db.insert(newsletterSubscribers).values({
+      email: email.toLowerCase(),
+      source,
+    });
+
+    return NextResponse.json({
+      message: "Berhasil berlangganan newsletter",
+      success: true,
+    });
   } catch (error) {
     console.error("[Newsletter] Error:", error);
     return NextResponse.json(
@@ -69,7 +51,9 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const authGuard = await requireAdmin(request);
+  if (authGuard.error) return authGuard.error;
   try {
     const db = await getDb();
     const subscribers = await db

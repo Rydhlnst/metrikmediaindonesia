@@ -7,7 +7,34 @@ import { PrimaryButton } from "@/components/shared/primary-button";
 import { CircleNotch } from "@phosphor-icons/react/dist/ssr";
 import type { Article } from "@/lib/types";
 
-function mapApiArticle(row: any): Article {
+interface ApiArticleRow {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content: string | null;
+  thumbnail: string | null;
+  publishedAt: string | null;
+  readingTime?: number;
+  viewCount?: number;
+  featured?: boolean;
+  breaking?: boolean;
+  categoryId?: number | null;
+  categoryName?: string | null;
+  categorySlug?: string | null;
+  categoryColor?: string | null;
+  category?: { name?: string; slug?: string; color?: string | null };
+  author?: { name?: string; slug?: string; bio?: string | null; avatar?: string | null; role?: string | null; social?: Article["author"]["social"] };
+  authorId?: number | null;
+  authorName?: string | null;
+  authorSlug?: string | null;
+  authorBio?: string | null;
+  authorAvatar?: string | null;
+  authorRole?: string | null;
+  authorSocial?: Article["author"]["social"];
+}
+
+function mapApiArticle(row: ApiArticleRow): Article {
   return {
     id: row.id,
     title: row.title,
@@ -31,11 +58,11 @@ function mapApiArticle(row: any): Article {
     author: {
       id: row.authorId ?? 0,
       name: row.authorName ?? row.author?.name ?? "",
-      slug: row.authorSlug ?? "",
-      bio: row.authorBio ?? null,
-      avatar: row.authorAvatar ?? null,
-      role: row.authorRole ?? null,
-      social: row.authorSocial ?? null,
+      slug: row.authorSlug ?? row.author?.slug ?? "",
+      bio: row.authorBio ?? row.author?.bio ?? null,
+      avatar: row.authorAvatar ?? row.author?.avatar ?? null,
+      role: row.authorRole ?? row.author?.role ?? null,
+      social: row.authorSocial ?? row.author?.social ?? null,
     },
   };
 }
@@ -51,7 +78,7 @@ export function LoadMoreArticles({ initialArticles }: { initialArticles: Article
     try {
       const res = await fetch(`/api/articles?page=${page}&limit=6&status=published`);
       const data = await res.json();
-      const rows: any[] = data.data ?? [];
+      const rows = (Array.isArray(data.data) ? data.data : []) as ApiArticleRow[];
       if (rows.length > 0) {
         setArticles((prev) => [...prev, ...rows.map(mapApiArticle)]);
         setPage((p) => p + 1);

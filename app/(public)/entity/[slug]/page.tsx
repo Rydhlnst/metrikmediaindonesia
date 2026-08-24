@@ -1,8 +1,11 @@
 import { Metadata } from "next";
-import { articles } from "@/lib/mock-data";
+import { notFound } from "next/navigation";
+import { getEntityProfile } from "@/lib/public-taxonomy";
 import { generateMetadata as createSeoMetadata } from "@/lib/seo";
 import { SITE_CONFIG } from "@/lib/constants";
 import { EntityProfile } from "@/components/shared/entity-profile";
+
+export const dynamic = "force-dynamic";
 
 interface EntityPageProps {
   params: Promise<{ slug: string }>;
@@ -14,7 +17,8 @@ function toTitle(slug: string) {
 
 export async function generateMetadata({ params }: EntityPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const entityName = toTitle(slug);
+  const profile = await getEntityProfile(slug);
+  const entityName = profile?.name || toTitle(slug);
   return createSeoMetadata({
     title: `Profil & Berita Entitas: ${entityName}`,
     description: `Arsip berita, rekam jejak, dan informasi terkini mengenai entitas ${entityName} di Metrik Media Indonesia.`,
@@ -24,17 +28,17 @@ export async function generateMetadata({ params }: EntityPageProps): Promise<Met
 
 export default async function EntityPage({ params }: EntityPageProps) {
   const { slug } = await params;
-  const entityName = toTitle(slug);
-  const entityArticles = articles.slice(0, 6);
+  const profile = await getEntityProfile(slug);
+  if (!profile) notFound();
 
   return (
     <EntityProfile
       kicker="Entitas Terdaftar"
-      name={entityName}
-      description={`Halaman resmi pemantauan pemberitaan dan keterhubungan entitas ${entityName} dalam database jaringan media Metrik Media Indonesia.`}
-      initial={entityName.charAt(0)}
-      articles={entityArticles}
-      listTitle={`Berita Terkait ${entityName}`}
+      name={profile.name}
+      description={profile.description || `Pemberitaan terkait ${profile.name}.`}
+      initial={profile.name.charAt(0)}
+      articles={profile.articles}
+      listTitle={`Berita Terkait ${profile.name}`}
     />
   );
 }

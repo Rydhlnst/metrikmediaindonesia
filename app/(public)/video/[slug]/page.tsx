@@ -1,10 +1,13 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getArticleBySlug, getRelatedArticles } from "@/lib/mock-data";
+import { getArticleBySlug } from "@/lib/queries";
+import { getArticleMedia } from "@/lib/article-media";
 import { generateMetadata as createSeoMetadata } from "@/lib/seo";
 import { SITE_CONFIG } from "@/lib/constants";
-import { CalendarBlank, Eye, Play, ArrowLeft, VideoCamera } from "@phosphor-icons/react/dist/ssr";
+import { CalendarBlank, Eye, ArrowLeft } from "@phosphor-icons/react/dist/ssr";
+
+export const dynamic = "force-dynamic";
 
 interface VideoPageProps {
   params: Promise<{ slug: string }>;
@@ -12,27 +15,28 @@ interface VideoPageProps {
 
 export async function generateMetadata({ params }: VideoPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getArticleBySlug(slug);
   if (!article) return { title: "Video Tidak Ditemukan | Metrik Media" };
 
   return createSeoMetadata({
     title: `[VIDEO] ${article.title} | Metrik Media Indonesia`,
-    description: article.excerpt,
+    description: article.excerpt || undefined,
     canonical: `${SITE_CONFIG.url}/video/${article.slug}`,
-    ogImage: article.thumbnail,
+    ogImage: article.thumbnail || undefined,
     ogType: "article",
   });
 }
 
 export default async function VideoDetailPage({ params }: VideoPageProps) {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getArticleBySlug(slug);
 
   if (!article) {
     notFound();
   }
 
-  const related = getRelatedArticles(article, 3);
+  const [video] = await getArticleMedia(article.id, "video");
+  if (!video) notFound();
 
   return (
     <article className="container-editorial py-8 pb-20 md:pb-8">
@@ -64,14 +68,14 @@ export default async function VideoDetailPage({ params }: VideoPageProps) {
 
           {/* HTML5 Video Player Container */}
           <div className="relative aspect-video w-full bg-black rounded-none overflow-hidden border border-black/10">
-            <video
+            {video ? <video
               className="w-full h-full object-cover"
               controls
-              poster={article.thumbnail}
+              poster={article.thumbnail || undefined}
             >
-              <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
+              <source src={video.url} />
               Browser Anda tidak mendukung pemutar video HTML5.
-            </video>
+            </video> : <p className="flex h-full items-center justify-center p-6 text-sm text-white">No video media has been published for this article.</p>}
           </div>
 
           {/* Metadata Bar */}
@@ -89,11 +93,11 @@ export default async function VideoDetailPage({ params }: VideoPageProps) {
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1">
                 <CalendarBlank className="size-3.5 text-muted-foreground" />
-                {new Date(article.publishedAt).toLocaleDateString("id-ID", {
+                {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString("id-ID", {
                   day: "numeric",
                   month: "long",
                   year: "numeric",
-                })}
+                }) : "Unpublished"}
               </span>
               <span className="flex items-center gap-1">
                 <Eye className="size-3.5 text-muted-foreground" />

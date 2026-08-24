@@ -1,11 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
-import { uploadToMinio, ensureBucketExists } from "@/lib/minio";
-import { convertToWebp, getImageMetadata, generateUploadPath } from "@/lib/image-utils";
+import { canManageEditorial, requireAuth, requirePermission } from "@/lib/server-session";
+import { PERMISSIONS } from "@/lib/permissions";
+import { uploadToMinio } from "@/lib/minio";
+import { convertToWebp, getImageMetadata, generateUploadPath, validateUploadedImage } from "@/lib/image-utils";
 import { getDb } from "@/db/index";
 import { media } from "@/db/schema/index";
-import { desc, sql } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
+import { imageUploadOptionsSchema, paginationQuerySchema } from "@/lib/validators/public";
+import { apiError, zodError } from "@/lib/api-response";
+import { enforceRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
+  const rateLimitError = await enforceRateLimit(request, "uploads", 20, 60 * 60);
+  if (rateLimitError) return rateLimitError;
+  const authGuard = await requirePermission(request, PERMISSIONS.MEDIA_UPLOAD, "Media upload permission required");
+  if (authGuard.error) return authGuard.error;
   try {
     const db = await getDb();
     const formData = await request.formData();
@@ -18,33 +27,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate file type
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-    if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json(
-        { message: "Tipe file tidak didukung. Gunakan JPG, PNG, GIF, atau WebP" },
-        { status: 400 }
-      );
-    }
-
-    // Validate file size (5MB max)
     const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
-      return NextResponse.json(
-        { message: "Ukuran file terlalu besar. Maksimal 5MB" },
-        { status: 400 }
-      );
+      return apiError(413, "VALIDATION_ERROR", "Image size must not exceed 5MB");
     }
 
     // Convert to buffer
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
+    try {
+      await validateUploadedImage(buffer, file.name, file.type);
+    } catch {
+      return apiError(422, "VALIDATION_ERROR", "The uploaded file is not a supported image");
+    }
 
     // Read optional optimization parameters
-    const maxWidth = formData.get("maxWidth") ? parseInt(formData.get("maxWidth") as string) : 1920;
-    const maxHeight = formData.get("maxHeight") ? parseInt(formData.get("maxHeight") as string) : 1080;
-    const quality = formData.get("quality") ? parseInt(formData.get("quality") as string) : 80;
-
+    const options = imageUploadOptionsSchema.safeParse({
+      maxWidth: formData.get("maxWidth") ?? undefined,
+      maxHeight: formData.get("maxHeight") ?? undefined,
+    });
+    if (!options.success) return zodError(options.error);
+    const { maxWidth, maxHeight } = options.data;
     // Convert to webp with dimension & quality optimization (Targeting fastest LCP & tiny payload)
     const webpBuffer = await convertToWebp(buffer, { quality: 82, maxWidth, maxHeight, effort: 5 });
     const metadata = await getImageMetadata(webpBuffer);
@@ -52,28 +55,13 @@ export async function POST(request: NextRequest) {
     // Generate upload path
     const uploadPath = generateUploadPath(file.name);
 
-    let url = "";
-
-    try {
-      // Try MinIO if available
-      const bucket = process.env.MINIO_BUCKET || "metrikmedia";
-      url = await uploadToMinio(bucket, uploadPath, webpBuffer, "image/webp");
-    } catch (minioErr) {
-      console.warn("MinIO upload failed, using local public fallback:", minioErr);
-      
-      // Fallback to local public/uploads directory
-      const fs = await import("fs/promises");
-      const path = await import("path");
-      const localFilePath = path.join(process.cwd(), "public", uploadPath);
-      const localDir = path.dirname(localFilePath);
-      
-      await fs.mkdir(localDir, { recursive: true });
-      await fs.writeFile(localFilePath, webpBuffer);
-      url = `/${uploadPath}`;
-    }
+    const bucket = process.env.MINIO_BUCKET || "metrikmedia";
+    let url: string;
+    try { url = await uploadToMinio(bucket, uploadPath, webpBuffer, "image/webp"); }
+    catch (error) { console.error("MinIO upload failed", error); return apiError(503, "STORAGE_UNAVAILABLE", "Media storage is unavailable"); }
 
     // Save to database
-    let mediaRecordId = 1;
+    let mediaRecordId: number;
     try {
       const [mediaRecord] = await db
         .insert(media)
@@ -85,12 +73,12 @@ export async function POST(request: NextRequest) {
           width: metadata.width,
           height: metadata.height,
           alt: file.name.replace(/\.[^/.]+$/, ""),
+          authUserId: authGuard.user.id,
         })
         .returning();
-      if (mediaRecord) mediaRecordId = mediaRecord.id;
-    } catch (dbErr) {
-      console.warn("Could not write media record to DB:", dbErr);
-    }
+      if (!mediaRecord) throw new Error("Media record was not created");
+      mediaRecordId = mediaRecord.id;
+    } catch (error) { console.error("Could not write media record", error); return apiError(500, "INTERNAL_ERROR", "Could not save media record"); }
 
     return NextResponse.json(
       {
@@ -106,31 +94,37 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("POST /api/upload error:", error);
-    return NextResponse.json(
-      { message: error.message || "Gagal mengunggah file" },
-      { status: 500 }
-    );
+    return apiError(500, "INTERNAL_ERROR", "Could not upload the file");
   }
 }
 
 export async function GET(request: NextRequest) {
+  const authGuard = await requireAuth(request); if (authGuard.error) return authGuard.error;
   try {
     const db = await getDb();
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "20");
+    const pagination = paginationQuerySchema.safeParse({
+      page: searchParams.get("page") ?? undefined,
+      limit: searchParams.get("limit") ?? undefined,
+    });
+    if (!pagination.success) return zodError(pagination.error);
+    const { page, limit } = pagination.data;
     const offset = (page - 1) * limit;
 
     const mediaList = await db
       .select()
       .from(media)
+      .where(canManageEditorial(authGuard.user) ? undefined : eq(media.authUserId, authGuard.user.id))
       .orderBy(desc(media.createdAt))
       .limit(limit)
       .offset(offset);
 
-    const [total] = await db.select({ count: sql<number>`count(*)::int` }).from(media);
+    const [total] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(media)
+      .where(canManageEditorial(authGuard.user) ? undefined : eq(media.authUserId, authGuard.user.id));
 
     return NextResponse.json({
       data: mediaList,
@@ -141,11 +135,8 @@ export async function GET(request: NextRequest) {
         totalPages: Math.ceil((total?.count || 0) / limit),
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("GET /api/upload error:", error);
-    return NextResponse.json(
-      { message: "Gagal mengambil data media" },
-      { status: 500 }
-    );
+    return apiError(500, "INTERNAL_ERROR", "Could not load media");
   }
 }

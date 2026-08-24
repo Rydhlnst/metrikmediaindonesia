@@ -5,8 +5,21 @@ import { getCategorySlug, getCategoryName, getAuthorName, getTimeAgo, formatView
 import { Clock, Eye, BookmarkSimple } from "@phosphor-icons/react/dist/ssr";
 import { CategoryBadge } from "@/components/shared/category-badge";
 
+interface ArticleCardData {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt?: string | null;
+  thumbnail?: string | null;
+  featuredImage?: string | null;
+  publishedAt?: string | null;
+  viewCount?: number | null;
+  category?: { id?: number; name?: string | null; slug?: string | null; color?: string | null } | null;
+  author?: { name?: string | null } | null;
+}
+
 interface ArticleCardProps {
-  article: any;
+  article: ArticleCardData;
   className?: string;
   variant?: "vertical" | "horizontal" | "featured";
   size?: "sm" | "md" | "lg";

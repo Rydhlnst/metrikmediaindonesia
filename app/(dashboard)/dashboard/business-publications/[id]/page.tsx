@@ -1,0 +1,21 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { requestJson, toastApiError } from "@/lib/api-client";
+
+type Publication = { id: number; companyName: string; contactName: string | null; contactEmail: string; contactPhone: string; articleTitle: string; articleContent: string; status: string; reviewNote: string | null; attachments: string[] | null };
+
+export default function BusinessPublicationDetailPage({ params }: { params: { id: string } }) {
+  const [item, setItem] = useState<Publication | null>(null);
+  const [status, setStatus] = useState("under_review");
+  const [reviewNote, setReviewNote] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  useEffect(() => { const timer = window.setTimeout(() => { void requestJson<{ data: Publication }>(`/api/business-publications/${params.id}`).then((payload) => { setItem(payload.data); setStatus(payload.data.status); setReviewNote(payload.data.reviewNote ?? ""); }).catch(toastApiError).finally(() => setLoading(false)); }, 0); return () => window.clearTimeout(timer); }, [params.id]);
+  const save = async () => { setSaving(true); try { const payload = await requestJson<{ data: Publication }>(`/api/business-publications/${params.id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status, reviewNote: reviewNote || null }) }); setItem(payload.data); toast.success("Business publication review updated"); } catch (error) { toastApiError(error); } finally { setSaving(false); } };
+  if (loading) return <p>Loading…</p>;
+  if (!item) return <p>Publication not found.</p>;
+  return <div className="space-y-6"><Link href="/dashboard/business-publications" className="text-xs font-bold uppercase text-gold-deep">← Back to requests</Link><div className="border border-black/10 bg-white p-6"><p className="text-xs uppercase text-muted-foreground">{item.companyName} · {item.contactEmail}</p><h1 className="mt-2 font-serif text-3xl font-bold">{item.articleTitle}</h1><p className="mt-5 whitespace-pre-wrap text-sm leading-7">{item.articleContent}</p></div><section className="space-y-4 border border-black/10 bg-white p-6"><h2 className="font-serif text-xl font-bold">Editorial review</h2><select value={status} onChange={(event) => setStatus(event.target.value)} className="h-10 w-full border border-black/15 px-3"><option value="under_review">Under review</option><option value="revision_required">Revision required</option><option value="approved">Approved</option><option value="published">Published</option><option value="rejected">Rejected</option></select><textarea value={reviewNote} onChange={(event) => setReviewNote(event.target.value)} rows={5} placeholder="Required for revision or rejection" className="w-full border border-black/15 p-3" /><button disabled={saving} onClick={save} className="bg-black px-4 py-2 text-xs font-bold uppercase text-white disabled:opacity-50">{saving ? "Saving…" : "Save review"}</button></section></div>;
+}

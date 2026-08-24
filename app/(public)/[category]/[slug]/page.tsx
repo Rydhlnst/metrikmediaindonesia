@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { headers, cookies } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import { SITE_CONFIG } from "@/lib/constants";
@@ -8,9 +9,13 @@ import { SectionHeader } from "@/components/shared/section-header";
 import { AvatarAuthor } from "@/components/shared/avatar-author";
 import { CategoryBadge } from "@/components/shared/category-badge";
 import { ContentCard } from "@/components/shared/content-card";
+import { sanitizeRichHtml } from "@/lib/content-sanitizer";
 import { CopyLinkButton } from "@/components/article/copy-link-button";
+import { ReadingHistoryTracker } from "@/components/article/reading-history-tracker";
+import { BookmarkButton } from "@/components/article/bookmark-button";
 import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { ReadingProgress } from "@/components/shared/animate-on-scroll";
+import { AdvertisementSlot } from "@/components/advertising/advertisement-slot";
 import {
   Clock,
   Eye,
@@ -28,6 +33,8 @@ import {
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import type { Metadata } from "next";
+
+export const dynamic = "force-dynamic";
 import type { Article } from "@/lib/types";
 
 interface ArticleDetailPageProps {
@@ -84,7 +91,7 @@ export async function generateStaticParams() {
 export const revalidate = 300;
 
 export default async function ArticleDetailPage({ params }: ArticleDetailPageProps) {
-  const { category, slug } = await params;
+  const { slug } = await params;
   let article: Article | null = null;
   try {
     article = await getArticleBySlug(slug);
@@ -94,7 +101,13 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
 
   if (!article) notFound();
 
-  void incrementViewCount(slug);
+  const requestHeaders = await headers();
+  const requestCookies = await cookies();
+  void incrementViewCount(slug, {
+    ip: requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() || requestHeaders.get("x-real-ip") || undefined,
+    userAgent: requestHeaders.get("user-agent") || undefined,
+    sessionToken: requestCookies.get("better-auth.session_token")?.value,
+  });
 
   const [relatedRes, latestRes, trendingRes, categoriesRes] = await Promise.allSettled([
     getRelatedArticles(article, 5),
@@ -123,6 +136,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
 
   return (
     <>
+      <ReadingHistoryTracker articleId={article.id} />
       <ReadingProgress />
       <ArticleJsonLd
         title={article.title}
@@ -142,6 +156,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
       />
 
       <div className="container-editorial py-8 pb-20 md:pb-8">
+        <AdvertisementSlot position="article_top" className="mb-6" />
         {/* Back button */}
         <Link
           href={`/${article.category.slug}`}
@@ -220,7 +235,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
             {/* Article Content */}
             <div className="prose mt-8 max-w-none">
               {article.content ? (
-                <div dangerouslySetInnerHTML={{ __html: article.content }} />
+                <div dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(article.content) || "" }} />
               ) : (
                 <>
                   <p>{article.excerpt}</p>
@@ -231,7 +246,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
 
             {/* Tags */}
             <div className="mt-8 flex flex-wrap gap-2">
-              {article.tags.map((tag: any) => (
+              {article.tags.map((tag) => (
                 <span key={tag} className="border border-black/10 bg-white px-3 py-1 text-sm text-muted-foreground cursor-pointer hover:border-gold/50 hover:text-foreground transition-colors">
                   #{tag}
                 </span>
@@ -287,6 +302,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
                         <LinkedinLogo className="size-4" weight="fill" />
                       </a>
                       <CopyLinkButton url={`${SITE_CONFIG.url}/${article.category.slug}/${article.slug}`} />
+                      <BookmarkButton articleId={article.id} />
                     </>
                   );
                 })()}

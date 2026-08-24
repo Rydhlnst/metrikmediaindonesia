@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { CircleNotch, EnvelopeSimple, ArrowLeft, CheckCircle } from "@phosphor-icons/react/dist/ssr";
 import { BrandName } from "@/components/shared/brand-name";
+import { requestJson, toastApiError } from "@/lib/api-client";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -17,21 +18,16 @@ export default function ForgotPasswordPage() {
     setError("");
 
     try {
-      const res = await fetch("/api/auth/forgot-password", {
+      await requestJson("/api/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Gagal mengirim email reset password");
-      }
-
       setIsSuccess(true);
-    } catch (err: any) {
-      setError(err.message || "Terjadi kesalahan");
+    } catch (error: unknown) {
+      toastApiError(error);
+      setError(error instanceof Error ? error.message : "Gagal mengirim email reset password");
     } finally {
       setIsLoading(false);
     }

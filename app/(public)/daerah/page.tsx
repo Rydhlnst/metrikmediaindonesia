@@ -1,12 +1,14 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { articles } from "@/lib/mock-data";
+import { getArticles } from "@/lib/queries";
 import { generateMetadata } from "@/lib/seo";
 import { SITE_CONFIG } from "@/lib/constants";
 import { MapPin, Clock, ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { PublicPageHeader } from "@/components/shared/public-page-header";
 import { SectionHeader } from "@/components/shared/section-header";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = generateMetadata({
   title: "Kabar Daerah - Liputan Berita Nusantara & Regional Terkini",
@@ -26,8 +28,8 @@ const REGIONS = [
   { id: "papua", name: "Papua" },
 ];
 
-export default function DaerahIndexPage() {
-  const regionalNews = articles;
+export default async function DaerahIndexPage() {
+  const regionalNews = await getArticles({ categorySlug: "daerah", limit: 24 });
 
   return (
     <div className="container-editorial py-8 pb-20 md:pb-8 space-y-8">
@@ -70,7 +72,7 @@ export default function DaerahIndexPage() {
           >
             <div className="relative aspect-[16/10] w-full bg-muted overflow-hidden">
               <Image
-                src={item.thumbnail}
+                src={item.thumbnail || "/placeholder.png"}
                 alt={item.title}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -96,11 +98,11 @@ export default function DaerahIndexPage() {
               <div className="flex items-center justify-between pt-2 border-t border-black/5 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1 text-[11px]">
                   <Clock className="size-3.5 text-muted-foreground" />
-                  {new Date(item.publishedAt).toLocaleDateString("id-ID", {
+                  {item.publishedAt ? new Date(item.publishedAt).toLocaleDateString("id-ID", {
                     day: "numeric",
                     month: "short",
                     year: "numeric",
-                  })}
+                  }) : "Unpublished"}
                 </span>
                 <span className="font-bold text-gold-deep flex items-center gap-1 text-xs uppercase tracking-wider">
                   Baca <ArrowRight className="size-3" weight="bold" />
@@ -110,6 +112,7 @@ export default function DaerahIndexPage() {
           </Link>
         ))}
       </div>
+      {regionalNews.length === 0 ? <p className="border border-black/10 bg-white p-6 text-sm text-muted-foreground">No published regional news is available.</p> : null}
 
     </div>
   );

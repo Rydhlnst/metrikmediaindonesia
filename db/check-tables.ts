@@ -11,10 +11,10 @@ async function check() {
     if (tables.length === 0) {
       console.log("NO TABLES FOUND");
     } else {
-      tables.forEach((t: any) => console.log(t.tablename));
+      tables.forEach((t) => console.log(t.tablename));
     }
-  } catch (e: any) {
-    console.error("Error:", e.message);
+  } catch (e) {
+    console.error("Error:", e instanceof Error ? e.message : "Unknown database error");
   }
   await sql.end();
   process.exit(0);

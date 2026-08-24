@@ -26,6 +26,7 @@ import {
 import { Plus, PencilSimple, Trash, CircleNotch } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/error-message";
 
 interface StaticPageItem {
   id: number;
@@ -58,7 +59,7 @@ export default function PagesPage() {
   };
 
   useEffect(() => {
-    fetchPages();
+    queueMicrotask(() => fetchPages());
   }, []);
 
   const handleDelete = async () => {
@@ -77,8 +78,8 @@ export default function PagesPage() {
       toast.success("Halaman berhasil dihapus");
       setDeleteItem(null);
       fetchPages();
-    } catch (err: any) {
-      toast.error(err.message || "Gagal menghapus halaman");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Gagal menghapus halaman"));
     }
   };
 
@@ -117,7 +118,7 @@ export default function PagesPage() {
                   ) : pageList.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={4} className="h-32 text-center text-muted-foreground">
-                        Belum ada halaman statis. Klik "Halaman Baru" untuk membuat (seperti Redaksi, Tentang Kami, Pedoman Siber).
+                        Belum ada halaman statis. Klik &quot;Halaman Baru&quot; untuk membuat (seperti Redaksi, Tentang Kami, Pedoman Siber).
                       </TableCell>
                     </TableRow>
                   ) : (

@@ -25,6 +25,7 @@ import {
 import { Plus, PencilSimple, Trash, CircleNotch } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/error-message";
 
 interface Tag {
   id: number;
@@ -56,7 +57,7 @@ export default function TagsPage() {
   };
 
   useEffect(() => {
-    fetchTags();
+    queueMicrotask(() => fetchTags());
   }, []);
 
   const handleDelete = async () => {
@@ -75,8 +76,8 @@ export default function TagsPage() {
       toast.success("Tag berhasil dihapus");
       setDeleteItem(null);
       fetchTags();
-    } catch (err: any) {
-      toast.error(err.message || "Gagal menghapus tag");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Gagal menghapus tag"));
     }
   };
 
@@ -115,7 +116,7 @@ export default function TagsPage() {
                   ) : tags.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={4} className="h-32 text-center text-muted-foreground">
-                        Belum ada tag. Klik "Tag Baru" untuk menambahkan.
+                      Belum ada tag. Klik &quot;Tag Baru&quot; untuk menambahkan.
                       </TableCell>
                     </TableRow>
                   ) : (

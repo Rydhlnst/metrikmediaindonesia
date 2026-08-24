@@ -17,7 +17,6 @@ import {
   SignOut,
   ArrowRight,
   TrendUp,
-  Fire,
 } from "@phosphor-icons/react/dist/ssr";
 import { BrandName } from "@/components/shared/brand-name";
 import { Divider } from "@/components/shared/divider";

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import NextImage from "next/image";
 import dynamic from "next/dynamic";
 import { DashboardTopbar } from "@/components/dashboard/topbar";
 const TiptapEditor = dynamic(
@@ -18,7 +19,7 @@ import {
   ArrowLeft,
   Plus,
   X,
-  Image,
+  Image as ImageIcon,
   CircleNotch,
   Trash,
   Sparkle,
@@ -27,13 +28,19 @@ import {
   Lightning,
   MapPin,
 } from "@phosphor-icons/react/dist/ssr";
-import { CATEGORIES } from "@/lib/constants";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useSession } from "@/lib/use-session";
+import { requestJson, toastApiError } from "@/lib/api-client";
+
+type AuthorOption = { id: number; name: string; role: string | null };
+type CategoryOption = { id: number; name: string; slug: string; isActive?: boolean };
 
 export default function NewArticlePage() {
   const router = useRouter();
+  const { user } = useSession();
+  const isContributor = user?.role === "Kontributor";
 
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
@@ -45,6 +52,7 @@ export default function NewArticlePage() {
   const [selectedLocation, setSelectedLocation] = useState("1");
   const [isFeatured, setIsFeatured] = useState(false);
   const [isBreaking, setIsBreaking] = useState(false);
+  const [isEditorsChoice, setIsEditorsChoice] = useState(false);
   const [imageCaption, setImageCaption] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
@@ -57,37 +65,28 @@ export default function NewArticlePage() {
   const [thumbnailUrl, setThumbnailUrl] = useState("");
   const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [authorsList, setAuthorsList] = useState<any[]>([]);
+  const [authorsList, setAuthorsList] = useState<AuthorOption[]>([]);
+  const [categoriesList, setCategoriesList] = useState<CategoryOption[]>([]);
 
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    // Fetch Authors
-    fetch("/api/authors")
-      .then((res) => (res.ok ? res.json() : []))
-      .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setAuthorsList(data);
-          setSelectedAuthor(String(data[0].id));
-        } else {
-          // Fallback mock authors
-          setAuthorsList([
-            { id: 1, name: "Ahmad Rizky Pratama", role: "Chief Editor" },
-            { id: 2, name: "Siti Nurhaliza", role: "Senior Reporter" },
-            { id: 3, name: "Budi Santoso", role: "Jurnalis Investigasi" },
-          ]);
-          setSelectedAuthor("1");
-        }
+    // Kontributor otomatis pakai author profil sendiri dari sesi
+    if (isContributor && user?.authorId) {
+      return;
+    }
+
+    void Promise.all([
+      requestJson<AuthorOption[]>("/api/authors"),
+      requestJson<CategoryOption[]>("/api/categories"),
+    ])
+      .then(([authors, categories]) => {
+        setAuthorsList(authors);
+        if (!isContributor && authors[0]) setSelectedAuthor(String(authors[0].id));
+        setCategoriesList(categories.filter((category) => category.isActive !== false));
       })
-      .catch(() => {
-        setAuthorsList([
-          { id: 1, name: "Ahmad Rizky Pratama", role: "Chief Editor" },
-          { id: 2, name: "Siti Nurhaliza", role: "Senior Reporter" },
-          { id: 3, name: "Budi Santoso", role: "Jurnalis Investigasi" },
-        ]);
-        setSelectedAuthor("1");
-      });
-  }, []);
+      .catch(toastApiError);
+  }, [isContributor, user?.authorId]);
 
   const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -112,8 +111,8 @@ export default function NewArticlePage() {
 
       setThumbnailUrl(result.data.url);
       toast.success("Gambar utama berhasil diunggah (WebP)", { id: toastId });
-    } catch (err: any) {
-      toast.error(err.message || "Gagal mengunggah gambar", { id: toastId });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Gagal mengunggah gambar", { id: toastId });
     } finally {
       setIsUploadingThumbnail(false);
       if (thumbnailInputRef.current) thumbnailInputRef.current.value = "";
@@ -150,14 +149,28 @@ export default function NewArticlePage() {
   const wordCount = plainText ? plainText.split(/\s+/).filter(Boolean).length : 0;
   const calculatedReadingTime = Math.max(1, Math.ceil(wordCount / 200));
 
-  const handleSaveArticle = async (status: "draft" | "published") => {
+  const handleSaveArticle = async (status: "draft" | "submitted" | "published") => {
     if (!title || !slug) {
-      toast.error("Judul dan slug artikel wajib diisi");
+      toast.error("Judul berita wajib diisi");
+      return;
+    }
+    if (isContributor && status === "submitted" && !selectedCategory) {
+      toast.error("Pilih rubrik kategori sebelum mengirim ke redaksi");
+      return;
+    }
+    if (isContributor && status === "submitted" && wordCount < 20) {
+      toast.error("Isi berita terlalu singkat — minimal 20 kata agar bisa direview redaksi");
       return;
     }
 
     setIsSaving(true);
-    const toastId = toast.loading(status === "published" ? "Mempublikasikan artikel..." : "Menyimpan draft...");
+    const toastId = toast.loading(
+      status === "published"
+        ? "Mempublikasikan artikel..."
+        : status === "submitted"
+        ? "Mengirimkan artikel ke meja redaksi..."
+        : "Menyimpan draft..."
+    );
 
     try {
       const res = await fetch("/api/articles", {
@@ -177,22 +190,31 @@ export default function NewArticlePage() {
           locationId: selectedLocation ? parseInt(selectedLocation) : null,
           featured: isFeatured,
           breaking: isBreaking,
+          editorsChoice: isEditorsChoice,
           readingTime: calculatedReadingTime,
           seoTitle: seoTitle.trim() || title,
           seoDescription: seoDescription.trim() || excerpt.trim() || null,
           seoKeywords: seoKeywords.trim() || null,
           focusKeyword: focusKeyword.trim() || null,
           seoScore,
+          tags,
         }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Gagal menyimpan artikel");
 
-      toast.success(status === "published" ? "Artikel berhasil dipublikasikan!" : "Draft berhasil disimpan!", { id: toastId });
-      router.push("/dashboard/articles");
-    } catch (err: any) {
-      toast.error(err.message || "Gagal menyimpan artikel", { id: toastId });
+      toast.success(
+        status === "published"
+          ? "Artikel berhasil dipublikasikan!"
+          : status === "submitted"
+          ? "Artikel berhasil dikirimkan! Menunggu peninjauan oleh tim editor."
+          : "Draft berhasil disimpan!",
+        { id: toastId }
+      );
+      router.push(isContributor ? "/dashboard/my-articles" : "/dashboard/articles");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Gagal menyimpan artikel", { id: toastId });
     } finally {
       setIsSaving(false);
     }
@@ -211,8 +233,14 @@ export default function NewArticlePage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-xl font-bold text-foreground">Artikel Baru</h1>
-              <p className="text-xs text-muted-foreground">Tulis, verifikasi SEO, dan terbitkan liputan berita terkini.</p>
+              <h1 className="text-xl font-bold text-foreground">
+                {isContributor ? "Kirim Berita Kontributor" : "Artikel Baru"}
+              </h1>
+              <p className="text-xs text-muted-foreground">
+                {isContributor
+                  ? "Tulis draf liputan berita Anda dan kirimkan ke kurasi meja redaksi."
+                  : "Tulis, verifikasi SEO, dan terbitkan liputan berita terkini secara instan."}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -225,14 +253,25 @@ export default function NewArticlePage() {
               {isSaving ? <CircleNotch className="size-4 animate-spin" /> : <FloppyDisk className="size-4" weight="bold" />}
               Simpan Draft
             </Button>
-            <Button
-              disabled={isSaving}
-              onClick={() => handleSaveArticle("published")}
-              className="gap-2 rounded-none bg-primary text-white hover:bg-primary/90 font-bold uppercase tracking-wider text-xs px-5 py-2.5 shadow-2xs"
-            >
-              {isSaving ? <CircleNotch className="size-4 animate-spin" /> : <PaperPlaneRight className="size-4" weight="bold" />}
-              Publish Berita
-            </Button>
+            {isContributor ? (
+              <Button
+                disabled={isSaving}
+                onClick={() => handleSaveArticle("submitted")}
+                className="gap-2 rounded-none bg-[#b8860b] text-white hover:bg-[#92700a] font-bold uppercase tracking-wider text-xs px-5 py-2.5 border border-[#92700a] shadow-xs"
+              >
+                {isSaving ? <CircleNotch className="size-4 animate-spin" /> : <PaperPlaneRight className="size-4" weight="bold" />}
+                Kirim untuk Ditinjau
+              </Button>
+            ) : (
+              <Button
+                disabled={isSaving}
+                onClick={() => handleSaveArticle("published")}
+                className="gap-2 rounded-none bg-primary text-white hover:bg-primary/90 font-bold uppercase tracking-wider text-xs px-5 py-2.5 shadow-xs"
+              >
+                {isSaving ? <CircleNotch className="size-4 animate-spin" /> : <PaperPlaneRight className="size-4" weight="bold" />}
+                Publish Berita
+              </Button>
+            )}
           </div>
         </div>
 
@@ -282,33 +321,35 @@ export default function NewArticlePage() {
               >
                 Konten & Naskah Berita
               </button>
-              <button
-                onClick={() => setActiveTab("seo")}
-                className={`border-b-2 px-4 py-2 text-xs font-bold uppercase tracking-wider transition-colors flex items-center gap-1.5 ${
-                  activeTab === "seo"
-                    ? "border-primary text-primary"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <Sparkle className="size-3.5" weight="bold" />
-                Pengaturan SEO & Analisis
-                {seoScore > 0 && (
-                  <Badge className={`ml-1 text-[10px] rounded-none px-1.5 py-0 ${seoScore >= 70 ? 'bg-emerald-600' : 'bg-[#B8860B]'}`}>
-                    {seoScore}/100
-                  </Badge>
-                )}
-              </button>
+              {!isContributor && (
+                <button
+                  onClick={() => setActiveTab("seo")}
+                  className={`border-b-2 px-4 py-2 text-xs font-bold uppercase tracking-wider transition-colors flex items-center gap-1.5 ${
+                    activeTab === "seo"
+                      ? "border-primary text-primary"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <Sparkle className="size-3.5" weight="bold" />
+                  Pengaturan SEO & Analisis
+                  {seoScore > 0 && (
+                    <Badge className={`ml-1 text-[10px] rounded-none px-1.5 py-0 ${seoScore >= 70 ? 'bg-emerald-600' : 'bg-[#B8860B]'}`}>
+                      {seoScore}/100
+                    </Badge>
+                  )}
+                </button>
+              )}
             </div>
 
             {/* Content Tab */}
             {activeTab === "content" && (
               <div className="space-y-4">
-                <TiptapEditor content={content} onChange={setContent} />
+                <TiptapEditor content={content} onChange={setContent} storageKey="metrik-article-draft:new" />
               </div>
             )}
 
-            {/* SEO Tab */}
-            {activeTab === "seo" && (
+            {/* SEO Tab content hanya untuk admin */}
+            {activeTab === "seo" && !isContributor && (
               <div className="space-y-6">
                 <SeoTracker
                   title={title}
@@ -371,7 +412,8 @@ export default function NewArticlePage() {
 
           {/* Sidebar Settings Column */}
           <div className="space-y-6">
-            {/* Editorial Toggles Card */}
+            {/* Editorial Toggles Card — hanya admin/redaksi */}
+            {!isContributor && (
             <Card className="rounded-none border border-black/10 bg-white shadow-2xs">
               <CardHeader className="border-b border-black/5 px-6 py-4">
                 <CardTitle className="text-base font-bold text-foreground">Status & Posisi Berita</CardTitle>
@@ -396,6 +438,14 @@ export default function NewArticlePage() {
                 </label>
 
                 <label className="flex items-start gap-3 cursor-pointer p-2.5 border border-black/10 hover:bg-black/[0.02] transition-colors">
+                  <input type="checkbox" checked={isEditorsChoice} onChange={(e) => setIsEditorsChoice(e.target.checked)} className="mt-0.5 size-4 accent-[#B8860B]" />
+                  <div>
+                    <span className="flex items-center gap-1.5 text-xs font-bold text-foreground">Pilihan Editor</span>
+                    <p className="mt-1 text-[11px] text-muted-foreground">Tampilkan artikel di kurasi pilihan editor.</p>
+                  </div>
+                </label>
+
+                <label className="flex items-start gap-3 cursor-pointer p-2.5 border border-black/10 hover:bg-black/[0.02] transition-colors">
                   <input
                     type="checkbox"
                     checked={isBreaking}
@@ -414,6 +464,7 @@ export default function NewArticlePage() {
                 </label>
               </CardContent>
             </Card>
+            )}
 
             {/* Author & Taxonomy Card */}
             <Card className="rounded-none border border-black/10 bg-white shadow-2xs">
@@ -421,7 +472,8 @@ export default function NewArticlePage() {
                 <CardTitle className="text-base font-bold text-foreground">Atribusi & Klasifikasi</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 p-6">
-                {/* Author Dropdown */}
+                {/* Author Dropdown — hanya admin/redaksi; kontributor otomatis teratribusi */}
+                {!isContributor && (
                 <div>
                   <label className="mb-1.5 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-on-surface">
                     <User className="size-3.5 text-primary" />
@@ -440,6 +492,7 @@ export default function NewArticlePage() {
                     ))}
                   </select>
                 </div>
+                )}
 
                 {/* Category Dropdown */}
                 <div>
@@ -452,8 +505,8 @@ export default function NewArticlePage() {
                     className="w-full rounded-none border border-black/15 bg-white px-3 py-2 text-xs font-medium text-foreground outline-none focus:border-[#B8860B]"
                   >
                     <option value="">Pilih rubrik kategori</option>
-                    {CATEGORIES.map((cat) => (
-                      <option key={cat.id} value={cat.slug}>
+                    {categoriesList.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
                         {cat.name}
                       </option>
                     ))}
@@ -481,7 +534,8 @@ export default function NewArticlePage() {
                   </select>
                 </div>
 
-                {/* Slug URL */}
+                {/* Slug URL — hanya admin; kontributor auto dari judul */}
+                {!isContributor && (
                 <div>
                   <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-on-surface">
                     Slug URL
@@ -493,6 +547,7 @@ export default function NewArticlePage() {
                     className="rounded-none border-black/15 bg-white font-mono text-xs focus:border-[#B8860B]"
                   />
                 </div>
+                )}
 
                 {/* Tags */}
                 <div>
@@ -560,9 +615,11 @@ export default function NewArticlePage() {
                 />
                 {thumbnailUrl ? (
                   <div className="relative aspect-video overflow-hidden border border-black/10 bg-muted">
-                    <img
+                    <NextImage
                       src={thumbnailUrl}
                       alt="Gambar Utama"
+                      width={800}
+                      height={450}
                       className="h-full w-full object-cover"
                     />
                     <Button
@@ -584,7 +641,7 @@ export default function NewArticlePage() {
                       <CircleNotch className="size-8 animate-spin text-primary" />
                     ) : (
                       <div className="text-center p-3">
-                        <Image className="mx-auto size-8 text-muted-foreground/50" />
+                        <ImageIcon className="mx-auto size-8 text-muted-foreground/50" />
                         <p className="mt-2 text-xs font-bold uppercase tracking-wider text-foreground">
                           Klik untuk upload foto
                         </p>

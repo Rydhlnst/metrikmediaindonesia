@@ -14,12 +14,13 @@ import { ArrowLeft, FloppyDisk, CircleNotch } from "@phosphor-icons/react/dist/s
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/error-message";
 
 export default function NewStaticPage() {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
-  const [excerpt, setExcerpt] = useState("");
+  const [excerpt] = useState("");
   const [content, setContent] = useState("");
   const [status, setStatus] = useState("published");
   const [seoTitle, setSeoTitle] = useState("");
@@ -68,8 +69,8 @@ export default function NewStaticPage() {
 
       toast.success("Halaman berhasil dibuat");
       router.push("/dashboard/pages");
-    } catch (err: any) {
-      toast.error(err.message || "Gagal membuat halaman");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Gagal membuat halaman"));
     } finally {
       setIsSubmitting(false);
     }

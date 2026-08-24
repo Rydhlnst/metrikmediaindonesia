@@ -26,6 +26,8 @@ import {
 import { Plus, PencilSimple, Trash, CircleNotch, Image as ImageIcon } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/error-message";
+import NextImage from "next/image";
 
 interface Advertisement {
   id: number;
@@ -61,7 +63,7 @@ export default function AdvertisementsPage() {
   };
 
   useEffect(() => {
-    fetchAds();
+    queueMicrotask(() => fetchAds());
   }, []);
 
   const handleDelete = async () => {
@@ -80,8 +82,8 @@ export default function AdvertisementsPage() {
       toast.success("Iklan berhasil dihapus");
       setDeleteItem(null);
       fetchAds();
-    } catch (err: any) {
-      toast.error(err.message || "Gagal menghapus iklan");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Gagal menghapus iklan"));
     }
   };
 
@@ -121,7 +123,7 @@ export default function AdvertisementsPage() {
                   ) : ads.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={5} className="h-32 text-center text-muted-foreground">
-                        Belum ada iklan dipasang. Klik "Iklan Baru" untuk memasang banner.
+                        Belum ada iklan dipasang. Klik &quot;Iklan Baru&quot; untuk memasang banner.
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -130,7 +132,7 @@ export default function AdvertisementsPage() {
                         <TableCell className="py-3">
                           <div className="size-10 overflow-hidden border border-black/10 bg-muted flex items-center justify-center">
                             {ad.image ? (
-                              <img src={ad.image} alt={ad.title} className="h-full w-full object-cover" />
+                              <NextImage src={ad.image} alt={ad.title} width={80} height={80} className="h-full w-full object-cover" />
                             ) : (
                               <ImageIcon className="size-5 text-muted-foreground/50" />
                             )}

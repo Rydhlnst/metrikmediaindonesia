@@ -1,8 +1,11 @@
 import { Metadata } from "next";
-import { articles } from "@/lib/mock-data";
+import { notFound } from "next/navigation";
+import { getTopicProfile } from "@/lib/public-taxonomy";
 import { generateMetadata as createSeoMetadata } from "@/lib/seo";
 import { SITE_CONFIG } from "@/lib/constants";
 import { EntityProfile } from "@/components/shared/entity-profile";
+
+export const dynamic = "force-dynamic";
 
 interface TopicPageProps {
   params: Promise<{ slug: string }>;
@@ -10,7 +13,8 @@ interface TopicPageProps {
 
 export async function generateMetadata({ params }: TopicPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const topicTitle = slug.replace(/-/g, " ").toUpperCase();
+  const profile = await getTopicProfile(slug);
+  const topicTitle = profile?.name || slug.replace(/-/g, " ").toUpperCase();
   return createSeoMetadata({
     title: `Topik Terkait: ${topicTitle}`,
     description: `Kumpulan berita lengkap, analisis terpercaya, dan perkembangan terkini seputar isu ${topicTitle} di Metrik Media Indonesia.`,
@@ -20,16 +24,16 @@ export async function generateMetadata({ params }: TopicPageProps): Promise<Meta
 
 export default async function TopicPage({ params }: TopicPageProps) {
   const { slug } = await params;
-  const topicTitle = slug.replace(/-/g, " ").toUpperCase();
-  const topicArticles = articles.slice(0, 6);
+  const profile = await getTopicProfile(slug);
+  if (!profile) notFound();
 
   return (
     <EntityProfile
       kicker="Topik Khusus"
-      name={topicTitle}
-      description={`Liputan mendalam, fakta aktual, dan arsip lengkap berita terverifikasi terkait isu ${topicTitle}.`}
-      initial={topicTitle.charAt(0)}
-      articles={topicArticles}
+      name={profile.name}
+      description={profile.description || `Liputan mendalam terkait ${profile.name}.`}
+      initial={profile.name.charAt(0)}
+      articles={profile.articles}
       listTitle="Berita Terkini dalam Topik Ini"
     />
   );

@@ -9,14 +9,20 @@ echo "🚀 Starting Metrik Media Indonesia Deployment..."
 
 # 1. Check if .env exists
 if [ ! -f ".env" ]; then
-    if [ -f ".env.docker" ]; then
-        echo "📄 .env not found. Copying .env.docker to .env..."
-        cp .env.docker .env
-    else
-        echo "❌ Error: .env file missing! Please copy .env.example or .env.docker to .env"
+    echo "❌ Error: .env file missing. Create it from .env.example and set production secrets."
+    exit 1
+fi
+
+set -a
+. ./.env
+set +a
+
+for required in BETTER_AUTH_SECRET CRON_SECRET POSTGRES_PASSWORD MINIO_ROOT_PASSWORD; do
+    if [ -z "${!required:-}" ] || [[ "${!required}" == *"change_in_production"* ]] || [[ "${!required}" == *"generate_"* ]]; then
+        echo "❌ Error: ${required} must be set to a unique production value."
         exit 1
     fi
-fi
+done
 
 # 2. Pull latest git changes (if in git repo)
 if [ -d ".git" ]; then

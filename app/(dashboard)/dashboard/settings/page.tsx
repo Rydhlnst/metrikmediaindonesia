@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FloppyDisk, CircleNotch } from "@phosphor-icons/react/dist/ssr";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/error-message";
 
 export default function SettingsPage() {
   const [siteName, setSiteName] = useState("Metrik Media Indonesia");
@@ -68,8 +69,8 @@ export default function SettingsPage() {
       if (!res.ok) throw new Error("Gagal menyimpan pengaturan");
 
       toast.success("Pengaturan situs berhasil disimpan");
-    } catch (err: any) {
-      toast.error(err.message || "Gagal menyimpan pengaturan");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Gagal menyimpan pengaturan"));
     } finally {
       setIsSubmitting(false);
     }

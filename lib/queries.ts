@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { unstable_cache, revalidateTag } from "next/cache";
-import { desc, eq, and, like, or, not, inArray, sql } from "drizzle-orm";
+import { desc, eq, and, like, or, not, inArray, sql, gt, gte, isNull, lte } from "drizzle-orm";
 import { getDb } from "@/db/index";
 import {
   articles,
@@ -8,12 +8,13 @@ import {
   authors,
   tags,
   articleTags,
+  articleViewRollups,
 } from "@/db/schema/index";
+import { recordArticleView, type ArticleViewContext } from "@/lib/article-views";
 import type { Article, Author, Category, GetArticlesOptions } from "@/lib/types";
 import { withRedisCache, invalidateRedisPattern } from "@/lib/redis";
 
 const REVALIDATE_SECONDS = 300;
-const PLACEHOLDER = "/placeholder.png";
 
 async function fetchTagsForArticles(articleIds: number[]): Promise<Map<number, string[]>> {
   if (articleIds.length === 0) return new Map();
@@ -35,6 +36,7 @@ async function fetchTagsForArticles(articleIds: number[]): Promise<Map<number, s
 type ArticleJoinRow = {
   id: number;
   title: string;
+  subtitle: string | null;
   slug: string;
   excerpt: string | null;
   content: string | null;
@@ -45,6 +47,7 @@ type ArticleJoinRow = {
   viewCount: number | null;
   featured: boolean | null;
   breaking: boolean | null;
+  editorsChoice: boolean | null;
   seoTitle: string | null;
   seoDescription: string | null;
   seoKeywords: string | null;
@@ -67,6 +70,7 @@ function mapRowToArticle(row: ArticleJoinRow, tagList: string[]): Article {
   return {
     id: row.id,
     title: row.title,
+    subtitle: row.subtitle,
     slug: row.slug,
     excerpt: row.excerpt,
     content: row.content,
@@ -77,6 +81,7 @@ function mapRowToArticle(row: ArticleJoinRow, tagList: string[]): Article {
     viewCount: row.viewCount ?? 0,
     isFeatured: row.featured ?? false,
     isBreaking: row.breaking ?? false,
+    editorsChoice: row.editorsChoice ?? false,
     seoTitle: row.seoTitle,
     seoDescription: row.seoDescription,
     seoKeywords: row.seoKeywords,
@@ -104,6 +109,7 @@ function mapRowToArticle(row: ArticleJoinRow, tagList: string[]): Article {
 const articleSelect = {
   id: articles.id,
   title: articles.title,
+  subtitle: articles.subtitle,
   slug: articles.slug,
   excerpt: articles.excerpt,
   content: articles.content,
@@ -114,6 +120,7 @@ const articleSelect = {
   viewCount: articles.viewCount,
   featured: articles.featured,
   breaking: articles.breaking,
+  editorsChoice: articles.editorsChoice,
   seoTitle: articles.seoTitle,
   seoDescription: articles.seoDescription,
   seoKeywords: articles.seoKeywords,
@@ -134,13 +141,13 @@ const articleSelect = {
 
 async function listArticlesRaw(options: GetArticlesOptions): Promise<Article[]> {
   const db = await getDb();
-  const conditions = [eq(articles.status, "published")];
+  const conditions = [eq(articles.status, "published"), eq(categories.isActive, true)];
 
   if (options.categorySlug) {
     const [cat] = await db
       .select({ id: categories.id })
       .from(categories)
-      .where(eq(categories.slug, options.categorySlug))
+      .where(and(eq(categories.slug, options.categorySlug), eq(categories.isActive, true)))
       .limit(1);
     if (cat) conditions.push(eq(articles.categoryId, cat.id));
   }
@@ -154,8 +161,34 @@ async function listArticlesRaw(options: GetArticlesOptions): Promise<Article[]> 
     if (auth) conditions.push(eq(articles.authorId, auth.id));
   }
 
+  if (options.tagSlug) {
+    const [tag] = await db
+      .select({ id: tags.id })
+      .from(tags)
+      .where(eq(tags.slug, options.tagSlug))
+      .limit(1);
+    if (!tag) return [];
+    const taggedArticleIds = db
+      .select({ articleId: articleTags.articleId })
+      .from(articleTags)
+      .where(eq(articleTags.tagId, tag.id));
+    conditions.push(inArray(articles.id, taggedArticleIds));
+  }
+
   if (options.featured) conditions.push(eq(articles.featured, true));
-  if (options.breaking) conditions.push(eq(articles.breaking, true));
+  if (options.breaking) {
+    const now = new Date();
+    conditions.push(
+      eq(articles.breaking, true),
+      or(isNull(articles.breakingStartsAt), lte(articles.breakingStartsAt, now))!,
+      or(isNull(articles.breakingEndsAt), gt(articles.breakingEndsAt, now))!,
+    );
+  }
+  if (options.editorsChoice) conditions.push(eq(articles.editorsChoice, true));
+  if (options.ids) {
+    if (!options.ids.length) return [];
+    conditions.push(inArray(articles.id, options.ids));
+  }
 
   if (options.search) {
     const term = `%${options.search}%`;
@@ -198,60 +231,10 @@ async function getArticleBySlugRaw(slug: string): Promise<Article | null> {
     if (rows.length > 0) {
       const tagMap = await fetchTagsForArticles([rows[0].id]);
       const mapped = mapRowToArticle(rows[0] as ArticleJoinRow, tagMap.get(rows[0].id) ?? []);
-      if (!mapped.content || mapped.content.trim() === "") {
-        const { generateArticleHtml } = await import("@/lib/mock-data");
-        mapped.content = generateArticleHtml(
-          mapped.title,
-          mapped.excerpt || "",
-          mapped.category.name,
-          mapped.author.name
-        );
-      }
       return mapped;
     }
   } catch (e) {
-    console.warn("getArticleBySlug db error, using fallback:", e);
-  }
-
-  // Fallback to rich mock data
-  const { getArticleBySlug: getMockArticleBySlug, generateArticleHtml } = await import("@/lib/mock-data");
-  const mock = getMockArticleBySlug(slug);
-  if (mock) {
-    return {
-      id: parseInt(mock.id) || 1,
-      title: mock.title,
-      slug: mock.slug,
-      excerpt: mock.excerpt,
-      content: mock.content || generateArticleHtml(mock.title, mock.excerpt, mock.category.name, mock.author.name),
-      thumbnail: mock.thumbnail,
-      featuredImage: (mock as any).featuredImage || mock.thumbnail,
-      publishedAt: mock.publishedAt,
-      readingTime: mock.readingTime,
-      viewCount: mock.viewCount,
-      isFeatured: mock.isFeatured || false,
-      isBreaking: mock.isBreaking || false,
-      seoTitle: mock.title,
-      seoDescription: mock.excerpt,
-      seoKeywords: mock.tags.join(", "),
-      focusKeyword: mock.tags[0] || "",
-      updatedAt: mock.publishedAt,
-      category: {
-        id: 1,
-        name: mock.category.name,
-        slug: mock.category.slug,
-        color: mock.category.color,
-      },
-      author: {
-        id: 1,
-        name: mock.author.name,
-        slug: mock.author.slug,
-        bio: mock.author.bio,
-        avatar: mock.author.avatar,
-        role: mock.author.role,
-        social: mock.author.social,
-      },
-      tags: mock.tags,
-    };
+    console.warn("getArticleBySlug db error:", e);
   }
   return null;
 }
@@ -284,24 +267,32 @@ export const getArticleBySlug = cache(async (slug: string): Promise<Article | nu
   });
 });
 
-export const getTrendingArticles = cache(async (limit = 5): Promise<Article[]> => {
-  const cacheKey = `cache:articles:trending:${limit}`;
+export const getTrendingArticles = cache(async (limit = 5, windowHours = 24): Promise<Article[]> => {
+  const cacheKey = `cache:articles:trending:${limit}:${windowHours}`;
   return withRedisCache(cacheKey, 120, async () => {
     const cachedFn = unstable_cache(
       async () => {
         const db = await getDb();
+        const cutoff = new Date(Date.now() - windowHours * 60 * 60 * 1000);
+        const rollupCounts = db
+          .select({ articleId: articleViewRollups.articleId, views: sql<number>`sum(${articleViewRollups.viewCount})`.as("views") })
+          .from(articleViewRollups)
+          .where(and(gte(articleViewRollups.bucketStart, cutoff), eq(articleViewRollups.bucketType, "hour")))
+          .groupBy(articleViewRollups.articleId)
+          .as("trending_counts");
         const rows = await db
-          .select(articleSelect)
+          .select({ ...articleSelect, trendingViews: sql<number>`coalesce(${rollupCounts.views}, 0)` })
           .from(articles)
           .leftJoin(categories, eq(articles.categoryId, categories.id))
           .leftJoin(authors, eq(articles.authorId, authors.id))
+          .leftJoin(rollupCounts, eq(articles.id, rollupCounts.articleId))
           .where(eq(articles.status, "published"))
-          .orderBy(desc(articles.viewCount))
+          .orderBy(desc(sql`coalesce(${rollupCounts.views}, 0)`), desc(articles.viewCount))
           .limit(limit);
         const tagMap = await fetchTagsForArticles(rows.map((r) => r.id));
         return rows.map((r) => mapRowToArticle(r as ArticleJoinRow, tagMap.get(r.id) ?? []));
       },
-      ["articles-trending", String(limit)],
+      ["articles-trending", String(limit), String(windowHours)],
       { revalidate: 120, tags: ["articles", "trending"] }
     );
     return cachedFn();
@@ -325,6 +316,7 @@ export const getCategories = cache(async (): Promise<Category[]> => {
           })
           .from(categories)
           .leftJoin(articles, and(eq(articles.categoryId, categories.id), eq(articles.status, "published")))
+          .where(eq(categories.isActive, true))
           .groupBy(categories.id)
           .orderBy(categories.id);
         return rows.map((r) => ({
@@ -358,25 +350,10 @@ export const getCategoryBySlug = cache(async (slug: string): Promise<Category | 
               description: categories.description,
             })
             .from(categories)
-            .where(eq(categories.slug, slug))
+          .where(and(eq(categories.slug, slug), eq(categories.isActive, true)))
             .limit(1);
           if (row) return row;
-        } catch (e) {
-          console.warn("getCategoryBySlug db error, using fallback:", e);
-        }
-
-        // Fallback from CATEGORIES constant
-        const { CATEGORIES } = await import("@/lib/constants");
-        const fallback = CATEGORIES.find((c) => c.slug === slug);
-        if (fallback) {
-          return {
-            id: parseInt(fallback.id) || 1,
-            name: fallback.name,
-            slug: fallback.slug,
-            color: fallback.color || null,
-            description: `Berita terbaru seputar ${fallback.name}`,
-          };
-        }
+        } catch (e) { console.warn("getCategoryBySlug db error:", e); }
         return null;
       },
       ["category-by-slug", slug],
@@ -439,6 +416,48 @@ export const getAuthors = cache(async (): Promise<Author[]> => {
   });
 });
 
+export const getAuthorBySlug = cache(async (slug: string): Promise<Author | null> => {
+  const cacheKey = `cache:author:slug:${slug}`;
+  return withRedisCache(cacheKey, REVALIDATE_SECONDS, async () => {
+    const cachedFn = unstable_cache(
+      async () => {
+        try {
+          const db = await getDb();
+          const [row] = await db
+            .select({
+              id: authors.id,
+              name: authors.name,
+              slug: authors.slug,
+              avatar: authors.avatar,
+              bio: authors.bio,
+              role: authors.role,
+              social: authors.socialLinks,
+            })
+            .from(authors)
+            .where(eq(authors.slug, slug))
+            .limit(1);
+
+          if (row) {
+            return {
+              id: row.id,
+              name: row.name,
+              slug: row.slug,
+              avatar: row.avatar,
+              bio: row.bio,
+              role: row.role,
+              social: row.social,
+            };
+          }
+        } catch (e) { console.warn("getAuthorBySlug DB query error:", e); }
+        return null;
+      },
+      ["author-by-slug", slug],
+      { revalidate: REVALIDATE_SECONDS, tags: ["authors", `author-${slug}`] }
+    );
+    return cachedFn();
+  });
+});
+
 export const getRelatedArticles = cache(
   async (article: Pick<Article, "id" | "category" | "tags">, limit = 4): Promise<Article[]> => {
     const cacheKey = `cache:articles:related:${article.id}:${limit}`;
@@ -492,14 +511,16 @@ export async function searchArticles(query: string, limit = 10): Promise<Article
   return listArticlesRaw({ search: query, limit });
 }
 
-export async function incrementArticleViews(slug: string) {
+export async function incrementArticleViews(slug: string, context?: ArticleViewContext) {
   try {
     const db = await getDb();
-    await db
-      .update(articles)
-      .set({ viewCount: sql`${articles.viewCount} + 1` })
-      .where(eq(articles.slug, slug));
-    (revalidateTag as any)("trending");
+    const [article] = await db
+      .select({ id: articles.id })
+      .from(articles)
+      .where(eq(articles.slug, slug))
+      .limit(1);
+    if (article) await recordArticleView(article.id, context);
+    revalidateTag("trending", "max");
     void invalidateRedisPattern("cache:articles:trending:*");
   } catch (error) {
     console.error("Failed to increment view count:", error);
@@ -509,23 +530,22 @@ export async function incrementArticleViews(slug: string) {
 export const incrementViewCount = incrementArticleViews;
 
 export function revalidateAllArticles() {
-  (revalidateTag as any)("articles");
-  (revalidateTag as any)("trending");
-  (revalidateTag as any)("article-by-slug");
+  revalidateTag("articles", "max");
+  revalidateTag("trending", "max");
+  revalidateTag("article-by-slug", "max");
   void invalidateRedisPattern("cache:articles:*");
 }
 
 export function revalidateCategories() {
-  (revalidateTag as any)("categories");
-  (revalidateTag as any)("articles");
+  revalidateTag("categories", "max");
+  revalidateTag("articles", "max");
   void invalidateRedisPattern("cache:categories:*");
   void invalidateRedisPattern("cache:articles:*");
 }
 
 export function revalidateAuthors() {
-  (revalidateTag as any)("authors");
-  (revalidateTag as any)("articles");
+  revalidateTag("authors", "max");
+  revalidateTag("articles", "max");
   void invalidateRedisPattern("cache:authors:*");
   void invalidateRedisPattern("cache:articles:*");
 }
-

@@ -2,10 +2,13 @@ import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { getArticleBySlug } from "@/lib/mock-data";
+import { getArticleBySlug } from "@/lib/queries";
+import { getArticleMedia } from "@/lib/article-media";
 import { generateMetadata as createSeoMetadata } from "@/lib/seo";
 import { SITE_CONFIG } from "@/lib/constants";
-import { Camera, CalendarBlank, User, ArrowLeft } from "@phosphor-icons/react/dist/ssr";
+import { CalendarBlank, User, ArrowLeft } from "@phosphor-icons/react/dist/ssr";
+
+export const dynamic = "force-dynamic";
 
 interface PhotoPageProps {
   params: Promise<{ slug: string }>;
@@ -13,32 +16,28 @@ interface PhotoPageProps {
 
 export async function generateMetadata({ params }: PhotoPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getArticleBySlug(slug);
   if (!article) return { title: "Foto Tidak Ditemukan | Metrik Media" };
 
   return createSeoMetadata({
     title: `[FOTO] ${article.title} | Metrik Media Indonesia`,
-    description: article.excerpt,
+    description: article.excerpt || undefined,
     canonical: `${SITE_CONFIG.url}/foto/${article.slug}`,
-    ogImage: article.thumbnail,
+    ogImage: article.thumbnail || undefined,
     ogType: "article",
   });
 }
 
 export default async function PhotoDetailPage({ params }: PhotoPageProps) {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getArticleBySlug(slug);
 
   if (!article) {
     notFound();
   }
 
-  const galleryImages = [
-    { url: article.thumbnail, caption: "Suasana utama peninjauan lokasi kegiatan oleh pemangku kepentingan terkait di Jakarta." },
-    { url: "https://picsum.photos/seed/foto-gallery-1/1200/800", caption: "Para delegasi dan jurnalis menyimak paparan materi laporan dengan saksama." },
-    { url: "https://picsum.photos/seed/foto-gallery-2/1200/800", caption: "Antusiasme masyarakat saat menyaksikan langsung jalannya rangkaian kegiatan di lokasi." },
-    { url: "https://picsum.photos/seed/foto-gallery-3/1200/800", caption: "Potret kebersamaan tim dan staf teknis yang bertugas mengawal kelancaran acara." },
-  ];
+  const galleryImages = await getArticleMedia(article.id, "image");
+  if (!galleryImages.length) notFound();
 
   return (
     <article className="container-editorial py-8 pb-20 md:pb-8">
@@ -73,11 +72,11 @@ export default async function PhotoDetailPage({ params }: PhotoPageProps) {
               <span>•</span>
               <span className="flex items-center gap-1">
                 <CalendarBlank className="size-3.5 text-muted-foreground" />
-                {new Date(article.publishedAt).toLocaleDateString("id-ID", {
+                {article.publishedAt ? new Date(article.publishedAt).toLocaleDateString("id-ID", {
                   day: "numeric",
                   month: "long",
                   year: "numeric",
-                })}
+                }) : "Unpublished"}
               </span>
             </div>
           </div>
@@ -89,8 +88,8 @@ export default async function PhotoDetailPage({ params }: PhotoPageProps) {
             <figure key={idx} className="rounded-none border border-black/10 bg-white p-4 sm:p-6 space-y-3">
               <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
                 <Image
-                  src={img.url}
-                  alt={`Galeri foto ${idx + 1}`}
+                  src={img.url || "/placeholder.png"}
+                  alt={img.altText || `Galeri foto ${idx + 1}`}
                   fill
                   sizes="(max-width: 768px) 100vw, 896px"
                   className="object-cover"
@@ -101,11 +100,12 @@ export default async function PhotoDetailPage({ params }: PhotoPageProps) {
               </div>
               <figcaption className="text-xs sm:text-sm text-foreground/90 leading-relaxed pt-1">
                 <strong className="text-gold-deep mr-2 uppercase tracking-wider text-xs">MetrikFoto:</strong>
-                {img.caption}
+                {img.caption || article.excerpt || article.title}
               </figcaption>
             </figure>
           ))}
         </div>
+        {!galleryImages.length ? <p className="border border-black/10 bg-white p-6 text-sm text-muted-foreground">No gallery media has been published for this article.</p> : null}
 
       </div>
     </article>

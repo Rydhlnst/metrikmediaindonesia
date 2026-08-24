@@ -25,6 +25,7 @@ import {
 import { Plus, PencilSimple, Trash, CircleNotch } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/error-message";
 
 interface Category {
   id: number;
@@ -58,7 +59,7 @@ export default function CategoriesPage() {
   };
 
   useEffect(() => {
-    fetchCategories();
+    queueMicrotask(() => fetchCategories());
   }, []);
 
   const handleDelete = async () => {
@@ -77,8 +78,8 @@ export default function CategoriesPage() {
       toast.success("Kategori berhasil dihapus");
       setDeleteItem(null);
       fetchCategories();
-    } catch (err: any) {
-      toast.error(err.message || "Gagal menghapus kategori");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Gagal menghapus kategori"));
     }
   };
 
@@ -117,7 +118,7 @@ export default function CategoriesPage() {
                   ) : categories.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={4} className="h-32 text-center text-muted-foreground">
-                        Belum ada kategori. Klik "Kategori Baru" untuk menambahkan.
+                        Belum ada kategori. Klik &quot;Kategori Baru&quot; untuk menambahkan.
                       </TableCell>
                     </TableRow>
                   ) : (

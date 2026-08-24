@@ -1,8 +1,10 @@
-import { betterAuth } from "better-auth";
+import { APIError, betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "@/db/schema/index";
+import { sendEmail } from "@/lib/email";
+import { eq } from "drizzle-orm";
 
 const connectionString = process.env.POSTGRES_URL || "postgresql://postgres:postgres@localhost:5432/metrikmedia";
 const client = postgres(connectionString);
@@ -20,17 +22,48 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: false,
-    sendResetPassword: async ({ user, url, token }: { user: any; url: string; token: string }) => {
-      console.log(`Password reset for ${user.email}: ${url}`);
+    requireEmailVerification: process.env.NODE_ENV === "production",
+    sendResetPassword: async ({ user, url }: { user: { email: string }; url: string }) => {
+      await sendEmail({
+        to: user.email,
+        subject: "Reset your Metrik Media password",
+        html: `<p>Use the link below to reset your password.</p><p><a href="${url}">Reset password</a></p>`,
+      });
     },
-    sendVerificationEmail: async ({ user, url, token }: { user: any; url: string; token: string }) => {
-      console.log(`Email verification for ${user.email}: ${url}`);
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    sendOnSignIn: true,
+    async sendVerificationEmail({ user, url }) {
+      await sendEmail({
+        to: user.email,
+        subject: "Verify your Metrik Media email",
+        html: `<p>Verify your email address to activate your account.</p><p><a href="${url}">Verify email</a></p>`,
+      });
     },
   },
   session: {
     expiresIn: 60 * 60 * 24 * 7,
     updateAge: 60 * 60 * 24,
+  },
+  databaseHooks: {
+    session: {
+      create: {
+        async before(session) {
+          const [account] = await db
+            .select({ isActive: schema.user.isActive })
+            .from(schema.user)
+            .where(eq(schema.user.id, session.userId))
+            .limit(1);
+          if (!account?.isActive) {
+            throw new APIError("FORBIDDEN", {
+              message: "This account is inactive.",
+              code: "ACCOUNT_INACTIVE",
+            });
+          }
+        },
+      },
+    },
   },
   user: {
     additionalFields: {
@@ -43,11 +76,6 @@ export const auth = betterAuth({
         type: "boolean",
         required: false,
         defaultValue: true,
-      },
-      avatar: {
-        type: "string",
-        required: false,
-        defaultValue: null,
       },
     },
   },

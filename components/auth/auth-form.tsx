@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Eye, EyeSlash, CircleNotch, EnvelopeSimple, LockSimple, ArrowRight, GoogleLogo, GithubLogo } from "@phosphor-icons/react/dist/ssr";
 import Blocks from "@/components/ui/blocks";
 import { BrandName } from "@/components/shared/brand-name";
+import { requestJson, toastApiError } from "@/lib/api-client";
 
 interface AuthFormProps {
   mode: "login" | "register";
@@ -67,33 +68,19 @@ export function AuthForm({ mode }: AuthFormProps) {
       const url = isLogin ? "/api/auth/sign-in/email" : "/api/auth/sign-up/email";
       const body = isLogin ? { email, password, rememberMe } : { name, email, password };
 
-      const res = await fetch(url, {
+      await requestJson(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
 
-      let data: any = {};
-      try {
-        data = await res.json();
-      } catch {
-        data = { message: "Gagal terhubung ke server autentikasi" };
-      }
-
-      if (!res.ok) {
-        throw new Error(data.message || (isLogin ? "Email atau password salah" : "Gagal membuat akun"));
-      }
-
-      if (isLogin) {
-        document.cookie = "better-auth.session_token=" + (data.token || "mock-admin-token-metrik") + "; path=/; max-age=604800; SameSite=Lax";
-      }
-
       const searchParams = new URLSearchParams(window.location.search);
       const redirectTo = searchParams.get("redirect") || "/dashboard";
       router.push(redirectTo);
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || "Terjadi kesalahan");
+    } catch (error: unknown) {
+      toastApiError(error);
+      setError(error instanceof Error ? error.message : (isLogin ? "Email atau password salah" : "Gagal membuat akun"));
     } finally {
       setIsLoading(false);
     }
@@ -118,8 +105,8 @@ export function AuthForm({ mode }: AuthFormProps) {
             </h1>
             <p className="text-sm text-muted-foreground">
               {isLogin
-                ? "Sign in to continue to your workspace."
-                : "Sign up to get started with Metrik Media."}
+                ? "Masuk untuk mengakses ruang redaksi dan manajemen artikel."
+                : "Daftar untuk mulai menulis dan mengirimkan liputan berita."}
             </p>
           </div>
 
@@ -127,14 +114,14 @@ export function AuthForm({ mode }: AuthFormProps) {
           <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
-              className="flex h-10 items-center justify-center gap-2 border border-outline-variant bg-muted text-sm font-medium transition-colors hover:bg-muted/80"
+              className="flex h-10 items-center justify-center gap-2 border border-outline-variant bg-muted text-sm font-medium transition-colors hover:bg-muted/80 rounded-none"
             >
               <GoogleLogo className="h-4 w-4" />
               Google
             </button>
             <button
               type="button"
-              className="flex h-10 items-center justify-center gap-2 border border-outline-variant bg-muted text-sm font-medium transition-colors hover:bg-muted/80"
+              className="flex h-10 items-center justify-center gap-2 border border-outline-variant bg-muted text-sm font-medium transition-colors hover:bg-muted/80 rounded-none"
             >
               <GithubLogo className="h-4 w-4" />
               GitHub
@@ -144,15 +131,15 @@ export function AuthForm({ mode }: AuthFormProps) {
           {/* Divider */}
           <div className="flex items-center gap-3">
             <div className="h-px flex-1 bg-outline-variant" />
-            <span className="shrink-0 text-xs text-muted-foreground">
-              or continue with email
+            <span className="shrink-0 text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+              atau gunakan email
             </span>
             <div className="h-px flex-1 bg-outline-variant" />
           </div>
 
           {/* Error */}
           {error && (
-            <div className="bg-error/10 p-3 text-xs text-error">
+            <div className="bg-error/10 border-l-2 border-error p-3 text-xs text-error rounded-none">
               {error}
             </div>
           )}
@@ -162,35 +149,40 @@ export function AuthForm({ mode }: AuthFormProps) {
             {/* Name (register only) */}
             {!isLogin && (
               <div className="space-y-1.5">
-                <label htmlFor="name" className="text-sm font-medium">
-                  Name
+                <label htmlFor="name" className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                  Nama Lengkap Penulis
                 </label>
-                <input
-                  id="name"
-                  type="text"
-                  placeholder="Your name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="h-11 w-full border border-outline-variant bg-muted px-3.5 pl-10 text-sm outline-none transition-colors focus:border-foreground focus:ring-1 focus:ring-foreground"
-                  required
-                />
+                <div className="relative">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground text-xs font-bold">
+                    @
+                  </span>
+                  <input
+                    id="name"
+                    type="text"
+                    placeholder="Nama lengkap Anda..."
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="h-11 w-full border border-outline-variant bg-muted px-3.5 pl-9 text-sm outline-none transition-colors focus:border-[#b8860b] focus:ring-1 focus:ring-[#b8860b] rounded-none"
+                    required
+                  />
+                </div>
               </div>
             )}
 
             {/* Email */}
             <div className="space-y-1.5">
-              <label htmlFor="email" className="text-sm font-medium">
-                Email address
+              <label htmlFor="email" className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                Alamat Email
               </label>
               <div className="relative">
                 <EnvelopeSimple className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <input
                   id="email"
                   type="email"
-                  placeholder="you@company.com"
+                  placeholder="nama@domain.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-11 w-full border border-outline-variant bg-muted pl-10 pr-3.5 text-sm outline-none transition-colors focus:border-foreground focus:ring-1 focus:ring-foreground"
+                  className="h-11 w-full border border-outline-variant bg-muted pl-10 pr-3.5 text-sm outline-none transition-colors focus:border-[#b8860b] focus:ring-1 focus:ring-[#b8860b] rounded-none"
                   required
                 />
               </div>
@@ -199,12 +191,12 @@ export function AuthForm({ mode }: AuthFormProps) {
             {/* Password */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label htmlFor="password" className="text-sm font-medium">
-                  Password
+                <label htmlFor="password" className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                  Kata Sandi
                 </label>
                 {isLogin && (
-                  <Link href="/forgot-password" className="text-xs font-medium text-foreground hover:underline">
-                    Forgot password?
+                  <Link href="/forgot-password" className="text-xs font-semibold text-[#b8860b] hover:underline">
+                    Lupa kata sandi?
                   </Link>
                 )}
               </div>
@@ -216,7 +208,7 @@ export function AuthForm({ mode }: AuthFormProps) {
                   placeholder="••••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="h-11 w-full border border-outline-variant bg-muted pl-10 pr-10 text-sm outline-none transition-colors focus:border-foreground focus:ring-1 focus:ring-foreground"
+                  className="h-11 w-full border border-outline-variant bg-muted pl-10 pr-10 text-sm outline-none transition-colors focus:border-[#b8860b] focus:ring-1 focus:ring-[#b8860b] rounded-none"
                   required
                 />
                 <button
@@ -237,10 +229,10 @@ export function AuthForm({ mode }: AuthFormProps) {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="h-4 w-4 border-outline-variant accent-foreground"
+                  className="h-4 w-4 border-outline-variant accent-[#b8860b] rounded-none"
                 />
-                <label htmlFor="remember" className="cursor-pointer text-sm text-muted-foreground">
-                  Keep me signed in
+                <label htmlFor="remember" className="cursor-pointer text-xs font-medium text-muted-foreground">
+                  Ingat sesi login saya
                 </label>
               </div>
             )}
@@ -249,13 +241,13 @@ export function AuthForm({ mode }: AuthFormProps) {
             <button
               type="submit"
               disabled={isLoading}
-              className="flex h-11 w-full items-center justify-center gap-2 bg-foreground text-sm font-semibold text-background transition-colors hover:bg-foreground/90 disabled:opacity-50"
+              className="flex h-11 w-full items-center justify-center gap-2 bg-[#111827] text-white hover:bg-[#b8860b] text-xs font-bold uppercase tracking-wider transition-colors disabled:opacity-50 rounded-none border border-black/20"
             >
               {isLoading ? (
                 <CircleNotch className="h-4 w-4 animate-spin" />
               ) : (
                 <>
-                  {isLogin ? "Sign in" : "Create account"}
+                  {isLogin ? "Masuk ke Dashboard" : "Daftar sebagai Penulis"}
                   <ArrowRight className="h-4 w-4" />
                 </>
               )}
@@ -263,13 +255,13 @@ export function AuthForm({ mode }: AuthFormProps) {
           </form>
 
           {/* Footer */}
-          <p className="text-center text-sm text-muted-foreground">
-            {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+          <p className="text-center text-xs text-muted-foreground">
+            {isLogin ? "Belum memiliki akun kontributor?" : "Sudah memiliki akun?"}{" "}
             <Link
               href={isLogin ? "/signup" : "/login"}
-              className="font-medium text-foreground hover:underline"
+              className="font-bold text-[#b8860b] hover:underline"
             >
-              {isLogin ? "Create one for free" : "Sign in"}
+              {isLogin ? "Daftar sekarang gratis" : "Masuk di sini"}
             </Link>
           </p>
         </div>

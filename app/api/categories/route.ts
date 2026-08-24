@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireEditor, requireAuth } from "@/lib/server-session";
 import { getDb } from "@/db/index";
 import { categories, articles } from "@/db/schema/index";
 import { desc, eq, count } from "drizzle-orm";
+import { categorySchema } from "@/lib/validators/cms";
+import { zodError } from "@/lib/api-response";
 
 export async function GET(request: NextRequest) {
+  const authGuard = await requireAuth(request); if (authGuard.error) return authGuard.error;
   try {
     const db = await getDb();
     const { searchParams } = new URL(request.url);
@@ -41,25 +45,19 @@ export async function GET(request: NextRequest) {
     );
 
     return NextResponse.json(itemsWithCounts);
-  } catch (error: any) {
+  } catch (error) {
     console.error("GET /api/categories error:", error);
     return NextResponse.json({ message: "Gagal mengambil data kategori" }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
+  const authGuard = await requireEditor(request); if (authGuard.error) return authGuard.error;
   try {
     const db = await getDb();
-    const body = await request.json();
-
-    const { name, slug, description, color, seoTitle, seoDescription } = body;
-
-    if (!name || !slug) {
-      return NextResponse.json(
-        { message: "Nama dan slug kategori wajib diisi" },
-        { status: 400 }
-      );
-    }
+    const parsed = categorySchema.safeParse(await request.json().catch(() => null));
+    if (!parsed.success) return zodError(parsed.error);
+    const { name, slug, description, color, seoTitle, seoDescription, isActive } = parsed.data;
 
     // Check duplicate slug
     const [existing] = await db
@@ -84,6 +82,7 @@ export async function POST(request: NextRequest) {
         color: color || "#DC2626",
         seoTitle: seoTitle || name,
         seoDescription: seoDescription || description || null,
+        isActive: isActive ?? true,
       })
       .returning();
 
@@ -91,7 +90,7 @@ export async function POST(request: NextRequest) {
       { message: "Kategori berhasil dibuat", data: newCategory },
       { status: 201 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("POST /api/categories error:", error);
     return NextResponse.json({ message: "Gagal membuat kategori" }, { status: 500 });
   }

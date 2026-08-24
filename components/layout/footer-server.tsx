@@ -7,7 +7,6 @@ import {
   YoutubeLogo,
   LinkedinLogo,
   EnvelopeSimple,
-  PhoneCall,
   MapPin,
   ShieldCheck,
 } from "@phosphor-icons/react/dist/ssr";

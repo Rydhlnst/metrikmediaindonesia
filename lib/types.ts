@@ -24,6 +24,7 @@ export interface Category {
 export interface Article {
   id: number;
   title: string;
+  subtitle?: string | null;
   slug: string;
   excerpt: string | null;
   content: string | null;
@@ -36,6 +37,7 @@ export interface Article {
   viewCount: number;
   isFeatured: boolean;
   isBreaking: boolean;
+  editorsChoice?: boolean;
   tags: string[];
   seoTitle?: string | null;
   seoDescription?: string | null;
@@ -50,6 +52,9 @@ export interface GetArticlesOptions {
   authorSlug?: string;
   featured?: boolean;
   breaking?: boolean;
+  editorsChoice?: boolean;
+  ids?: number[];
   page?: number;
   search?: string;
+  tagSlug?: string;
 }

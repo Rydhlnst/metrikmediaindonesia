@@ -1,12 +1,14 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { articles } from "@/lib/mock-data";
+import { getArticlesWithMedia } from "@/lib/article-media";
 import { generateMetadata } from "@/lib/seo";
 import { SITE_CONFIG } from "@/lib/constants";
 import { Camera, Clock, ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { PublicPageHeader } from "@/components/shared/public-page-header";
 import { SectionHeader } from "@/components/shared/section-header";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = generateMetadata({
   title: "Metrik Foto - Galeri Foto Berita & Photo Story Jurnalistik",
@@ -14,8 +16,8 @@ export const metadata: Metadata = generateMetadata({
   canonical: `${SITE_CONFIG.url}/foto`,
 });
 
-export default function PhotoIndexPage() {
-  const photoNews = articles.slice(0, 6);
+export default async function PhotoIndexPage() {
+  const photoNews = await getArticlesWithMedia("image", 6);
 
   return (
     <div className="container-editorial py-8 pb-20 md:pb-8 space-y-8">
@@ -42,7 +44,7 @@ export default function PhotoIndexPage() {
           >
             <div className="relative aspect-[4/3] w-full bg-muted overflow-hidden">
               <Image
-                src={item.thumbnail}
+                src={item.thumbnail || "/placeholder.png"}
                 alt={item.title}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -65,11 +67,11 @@ export default function PhotoIndexPage() {
               <div className="flex items-center justify-between pt-2 border-t border-black/5 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1 text-[11px]">
                   <Clock className="size-3.5 text-muted-foreground" />
-                  {new Date(item.publishedAt).toLocaleDateString("id-ID", {
+                  {item.publishedAt ? new Date(item.publishedAt).toLocaleDateString("id-ID", {
                     day: "numeric",
                     month: "short",
                     year: "numeric",
-                  })}
+                  }) : "Unpublished"}
                 </span>
                 <span className="font-bold text-gold-deep flex items-center gap-1 text-xs uppercase tracking-wider">
                   Lihat Galeri <ArrowRight className="size-3" weight="bold" />
@@ -79,6 +81,7 @@ export default function PhotoIndexPage() {
           </Link>
         ))}
       </div>
+      {photoNews.length === 0 ? <p className="border border-black/10 bg-white p-6 text-sm text-muted-foreground">No published photo stories are available.</p> : null}
 
     </div>
   );

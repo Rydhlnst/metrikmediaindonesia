@@ -1,63 +1,47 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { useSession } from "@/lib/use-session";
 import { BookmarkSimple, Trash } from "@phosphor-icons/react/dist/ssr";
 import { ArticleCard } from "@/components/article/article-card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { PublicPageHeader } from "@/components/shared/public-page-header";
 import { SectionHeader } from "@/components/shared/section-header";
+import { requestJson, toastApiError } from "@/lib/api-client";
 
-interface BookmarkedArticle {
+interface Bookmark {
   id: number;
-  title: string;
-  slug: string;
-  excerpt: string;
-  thumbnail: string;
-  publishedAt: string;
-  readingTime: number;
-  viewCount: number;
-  category: {
-    name: string;
+  article: {
+    id: number;
+    title: string;
     slug: string;
-    color: string;
+    excerpt: string | null;
+    thumbnail: string | null;
+    publishedAt: string | null;
+    category: { name: string; slug: string | null } | null;
   };
-  author: {
-    name: string;
-    avatar: string;
-  };
-}
-
-function getBookmarks(): BookmarkedArticle[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const stored = localStorage.getItem("bookmarks");
-    return stored ? JSON.parse(stored) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveBookmarks(bookmarks: BookmarkedArticle[]) {
-  localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
 }
 
 export default function SavedPage() {
   const { user, isLoading } = useSession();
-  const [bookmarks, setBookmarks] = useState<BookmarkedArticle[]>([]);
+  const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const stored = getBookmarks();
-    setBookmarks(stored);
-    setLoading(false);
-  }, []);
+    if (!user) return;
+    requestJson<{ data: Bookmark[] }>("/api/bookmarks")
+      .then((response) => setBookmarks(response.data))
+      .catch(toastApiError)
+      .finally(() => setLoading(false));
+  }, [user]);
 
-  const handleRemove = (id: number) => {
-    const updated = bookmarks.filter((b) => b.id !== id);
-    setBookmarks(updated);
-    saveBookmarks(updated);
+  const handleRemove = async (articleId: number) => {
+    try {
+      await requestJson(`/api/bookmarks/${articleId}`, { method: "DELETE" });
+      setBookmarks((current) => current.filter((bookmark) => bookmark.article.id !== articleId));
+    } catch (error) {
+      toastApiError(error);
+    }
   };
 
   if (isLoading || loading) {
@@ -74,7 +58,7 @@ export default function SavedPage() {
         {/* Standardized Reusable Header */}
         <PublicPageHeader
           title="Disimpan"
-          description={`Arsip bacaan pribadi Anda (${bookmarks.length} artikel tersimpan di peramban).`}
+          description={`Your private reading list (${bookmarks.length} saved articles).`}
         />
 
         {/* Section Header */}
@@ -95,11 +79,17 @@ export default function SavedPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {bookmarks.map((article) => (
-              <div key={article.id} className="group relative">
-                <ArticleCard article={article} />
+            {bookmarks.map((bookmark) => (
+              <div key={bookmark.id} className="group relative">
+                <ArticleCard
+                  article={{
+                    ...bookmark.article,
+                    featuredImage: bookmark.article.thumbnail,
+                    category: bookmark.article.category ?? undefined,
+                  }}
+                />
                 <button
-                  onClick={() => handleRemove(article.id)}
+                  onClick={() => handleRemove(bookmark.article.id)}
                   className="absolute right-3 top-3 flex size-7 items-center justify-center rounded-none bg-destructive text-white opacity-0 transition-opacity group-hover:opacity-100 cursor-pointer"
                   title="Hapus dari daftar simpan"
                 >

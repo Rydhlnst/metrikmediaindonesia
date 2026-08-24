@@ -8,6 +8,62 @@
       "when": 1786602978229,
       "tag": "0000_magenta_surge",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1786890998373,
+      "tag": "0001_quiet_senator_kelly",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786924456869,
+      "tag": "0002_fine_peter_parker",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1787066350642,
+      "tag": "0003_complex_iron_lad",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1787072006776,
+      "tag": "0004_tough_vivisector",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1787577108053,
+      "tag": "0005_early_legion",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1787577834352,
+      "tag": "0006_daily_kylun",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1787578659336,
+      "tag": "0007_silent_hedge_knight",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1787579594941,
+      "tag": "0008_same_colonel_america",
+      "breakpoints": true
     }
   ]
 }

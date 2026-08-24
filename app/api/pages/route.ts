@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/server-session";
 import { getDb } from "@/db/index";
 import { pages } from "@/db/schema/index";
 import { desc, eq } from "drizzle-orm";
+import { pageSchema } from "@/lib/validators/cms";
+import { zodError } from "@/lib/api-response";
 
 export async function GET(request: NextRequest) {
+  const authGuard = await requireAdmin(request); if (authGuard.error) return authGuard.error;
   try {
     const db = await getDb();
     const { searchParams } = new URL(request.url);
@@ -25,22 +29,19 @@ export async function GET(request: NextRequest) {
 
     const items = await db.select().from(pages).orderBy(desc(pages.createdAt));
     return NextResponse.json(items);
-  } catch (error: any) {
+  } catch (error) {
     console.error("GET /api/pages error:", error);
     return NextResponse.json({ message: "Gagal mengambil data halaman" }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
+  const authGuard = await requireAdmin(request); if (authGuard.error) return authGuard.error;
   try {
     const db = await getDb();
-    const body = await request.json();
-
-    const { title, slug, content, excerpt, status = "published", seoTitle, seoDescription } = body;
-
-    if (!title || !slug) {
-      return NextResponse.json({ message: "Judul dan slug halaman wajib diisi" }, { status: 400 });
-    }
+    const parsed = pageSchema.safeParse(await request.json().catch(() => null));
+    if (!parsed.success) return zodError(parsed.error);
+    const { title, slug, content, excerpt, status = "published", seoTitle, seoDescription } = parsed.data;
 
     const [existing] = await db
       .select()
@@ -69,7 +70,7 @@ export async function POST(request: NextRequest) {
       { message: "Halaman berhasil dibuat", data: newPage },
       { status: 201 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("POST /api/pages error:", error);
     return NextResponse.json({ message: "Gagal membuat halaman" }, { status: 500 });
   }

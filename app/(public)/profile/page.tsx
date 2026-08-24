@@ -3,8 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSession } from "@/lib/use-session";
-import { UserCircle, SignIn, SignOut, BookmarkSimple, PencilSimple, CircleNotch, Check } from "@phosphor-icons/react/dist/ssr";
+import { UserCircle, SignIn, SignOut, BookmarkSimple, PencilSimple, CircleNotch, Check, PenNib } from "@phosphor-icons/react/dist/ssr";
 import { toast } from "sonner";
+import { requestJson, toastApiError } from "@/lib/api-client";
 
 export default function ProfilePage() {
   const { user, isLoading, signOut, refresh } = useSession();
@@ -29,19 +30,17 @@ export default function ProfilePage() {
 
     setIsSaving(true);
     try {
-      const res = await fetch("/api/auth/update-user", {
+      await requestJson("/api/auth/update-user", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: name.trim() }),
       });
-
-      if (!res.ok) throw new Error("Gagal memperbarui profil");
       
       toast.success("Profil berhasil diperbarui");
       setIsEditing(false);
       refresh();
-    } catch (err: any) {
-      toast.error(err.message || "Gagal memperbarui profil");
+    } catch (error: unknown) {
+      toastApiError(error);
     } finally {
       setIsSaving(false);
     }
@@ -156,6 +155,13 @@ export default function ProfilePage() {
           <BookmarkSimple className="mx-auto mb-4 size-10 text-muted-foreground/50" />
           <p className="font-medium text-foreground">Lihat Artikel Tersimpan</p>
           <p className="mt-1 text-sm text-muted-foreground">Akses bookmark Anda di sini</p>
+        </Link>
+      </div>
+
+      <div className="mt-4">
+        <Link href="/submissions" className="flex items-center gap-4 border border-black/10 bg-white p-5 transition-colors hover:border-gold/50">
+          <PenNib className="size-7 text-muted-foreground" />
+          <div><p className="font-medium text-foreground">My Submissions</p><p className="mt-1 text-sm text-muted-foreground">Submit content and track editorial review.</p></div>
         </Link>
       </div>
     </div>

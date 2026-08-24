@@ -3,6 +3,8 @@ import { cn } from '@/lib/utils';
 import type React from 'react';
 import { type JSX, useEffect, useState } from 'react';
 
+type ActiveDivs = ReadonlyArray<ReadonlySet<number>> | Readonly<Record<number, ReadonlySet<number>>>;
+
 function Blocks({
   activeDivs,
   divClass,
@@ -11,7 +13,7 @@ function Blocks({
   containerRef,
 }: {
   activeDivsClass?: string;
-  activeDivs?: any;
+  activeDivs?: ActiveDivs;
   divClass?: string;
   classname?: string;
   containerRef: React.RefObject<HTMLDivElement | null>;
@@ -36,7 +38,7 @@ function Blocks({
                 key={rowIndex}
                 className={cn(
                   `h-[6vh] w-full border border-[#5dcece09] ${
-                    activeDivs[columnIndex]?.has(rowIndex) ? `${activeDivsClass}` : ''
+                    activeDivs?.[columnIndex]?.has(rowIndex) ? `${activeDivsClass}` : ''
                   }`,
                   divClass
                 )}

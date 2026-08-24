@@ -1,16 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/server-session";
 import { getDb } from "@/db/index";
 import { pages } from "@/db/schema/index";
 import { eq, and, ne } from "drizzle-orm";
+import { pageSchema, positiveIdSchema } from "@/lib/validators/cms";
+import { zodError } from "@/lib/api-response";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authGuard = await requireAdmin(request); if (authGuard.error) return authGuard.error;
   try {
     const db = await getDb();
     const { id } = await params;
-    const pageId = parseInt(id);
+    const parsedId = positiveIdSchema.safeParse(id);
+    if (!parsedId.success) return zodError(parsedId.error);
+    const pageId = parsedId.data;
 
     const [pageItem] = await db
       .select()
@@ -23,7 +29,7 @@ export async function GET(
     }
 
     return NextResponse.json(pageItem);
-  } catch (error: any) {
+  } catch (error) {
     console.error("GET /api/pages/[id] error:", error);
     return NextResponse.json({ message: "Gagal mengambil data halaman" }, { status: 500 });
   }
@@ -33,13 +39,16 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authGuard = await requireAdmin(request); if (authGuard.error) return authGuard.error;
   try {
     const db = await getDb();
     const { id } = await params;
-    const pageId = parseInt(id);
-    const body = await request.json();
-
-    const { title, slug, content, excerpt, status, seoTitle, seoDescription } = body;
+    const parsedId = positiveIdSchema.safeParse(id);
+    if (!parsedId.success) return zodError(parsedId.error);
+    const pageId = parsedId.data;
+    const parsed = pageSchema.partial().safeParse(await request.json().catch(() => null));
+    if (!parsed.success) return zodError(parsed.error);
+    const { title, slug, content, excerpt, status, seoTitle, seoDescription } = parsed.data;
 
     const [existing] = await db
       .select()
@@ -79,7 +88,7 @@ export async function PUT(
       .returning();
 
     return NextResponse.json({ message: "Halaman berhasil diperbarui", data: updated });
-  } catch (error: any) {
+  } catch (error) {
     console.error("PUT /api/pages/[id] error:", error);
     return NextResponse.json({ message: "Gagal memperbarui halaman" }, { status: 500 });
   }
@@ -89,15 +98,18 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authGuard = await requireAdmin(request); if (authGuard.error) return authGuard.error;
   try {
     const db = await getDb();
     const { id } = await params;
-    const pageId = parseInt(id);
+    const parsedId = positiveIdSchema.safeParse(id);
+    if (!parsedId.success) return zodError(parsedId.error);
+    const pageId = parsedId.data;
 
     await db.delete(pages).where(eq(pages.id, pageId));
 
     return NextResponse.json({ message: "Halaman berhasil dihapus" });
-  } catch (error: any) {
+  } catch (error) {
     console.error("DELETE /api/pages/[id] error:", error);
     return NextResponse.json({ message: "Gagal menghapus halaman" }, { status: 500 });
   }

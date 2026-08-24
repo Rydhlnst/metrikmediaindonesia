@@ -9,6 +9,7 @@ import { ArrowLeft, FloppyDisk, CircleNotch } from "@phosphor-icons/react/dist/s
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/error-message";
 
 export default function EditCategoryPage({
   params,
@@ -80,8 +81,8 @@ export default function EditCategoryPage({
 
       toast.success("Kategori berhasil diperbarui");
       router.push("/dashboard/categories");
-    } catch (err: any) {
-      toast.error(err.message || "Gagal memperbarui kategori");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Gagal memperbarui kategori"));
     } finally {
       setIsSubmitting(false);
     }

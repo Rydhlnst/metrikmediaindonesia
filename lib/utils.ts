@@ -12,21 +12,23 @@ export function getInitials(name: string): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-const PLACEHOLDER = "https://picsum.photos/seed/metrik/800/450";
+const PLACEHOLDER = "/placeholder.png";
 
 export type ImageSize = "thumbnail" | "card" | "hero" | "og" | "original";
 
-export function getImageUrl(image: any, size: ImageSize = "original"): string {
+export function getImageUrl(image: unknown, _size: ImageSize = "original"): string {
+  void _size;
   if (!image) return PLACEHOLDER;
 
   if (typeof image === "string") {
     return image.trim() || PLACEHOLDER;
   }
 
-  if (typeof image === "object") {
-    if (image.thumbnail && typeof image.thumbnail === "string") return image.thumbnail;
-    if (image.featuredImage && typeof image.featuredImage === "string") return image.featuredImage;
-    if (image.url && typeof image.url === "string") return image.url;
+  if (typeof image === "object" && image !== null) {
+    const candidate = image as { thumbnail?: unknown; featuredImage?: unknown; url?: unknown };
+    if (typeof candidate.thumbnail === "string") return candidate.thumbnail;
+    if (typeof candidate.featuredImage === "string") return candidate.featuredImage;
+    if (typeof candidate.url === "string") return candidate.url;
   }
 
   return PLACEHOLDER;

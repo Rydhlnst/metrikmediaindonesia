@@ -1,38 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/db/index";
 import { contactMessages } from "@/db/schema/index";
+import { requireAdmin } from "@/lib/server-session";
+import { contactMessageSchema } from "@/lib/validators/public";
+import { enforceRateLimit } from "@/lib/rate-limit";
+import { zodError } from "@/lib/api-response";
 
 export async function POST(request: NextRequest) {
+  const limited = await enforceRateLimit(request, "contact", 5, 60);
+  if (limited) return limited;
   try {
-    const body = await request.json();
-    const { name, email, subject, message } = body;
-
-    if (!name || !email || !subject || !message) {
-      return NextResponse.json(
-        { message: "Semua field wajib diisi" },
-        { status: 400 }
-      );
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { message: "Format email tidak valid" },
-        { status: 400 }
-      );
-    }
-
-    try {
-      const db = await getDb();
-      await db.insert(contactMessages).values({
-        name,
-        email,
-        subject,
-        message,
-      });
-    } catch (dbError) {
-      console.error("[Contact] DB error:", dbError);
-    }
+    const parsed = contactMessageSchema.safeParse(await request.json().catch(() => null));
+    if (!parsed.success) return zodError(parsed.error);
+    const db = await getDb();
+    await db.insert(contactMessages).values(parsed.data);
 
     return NextResponse.json({
       message: "Pesan berhasil dikirim. Kami akan menghubungi Anda segera.",
@@ -47,7 +28,9 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const authGuard = await requireAdmin(request);
+  if (authGuard.error) return authGuard.error;
   try {
     const db = await getDb();
     const messages = await db

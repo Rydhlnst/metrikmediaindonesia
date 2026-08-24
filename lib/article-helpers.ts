@@ -1,13 +1,18 @@
-export function getCategorySlug(article: any, fallback = "berita"): string {
-  return typeof article.category === "object" ? article.category?.slug : fallback;
+interface ArticleRelations {
+  category?: { slug?: string | null; name?: string | null } | null;
+  author?: { name?: string | null } | null;
 }
 
-export function getCategoryName(article: any, fallback = ""): string {
-  return typeof article.category === "object" ? article.category?.name : fallback;
+export function getCategorySlug(article: ArticleRelations, fallback = "berita"): string {
+  return article.category?.slug || fallback;
 }
 
-export function getAuthorName(article: any, fallback = ""): string {
-  return typeof article.author === "object" ? article.author?.name : fallback;
+export function getCategoryName(article: ArticleRelations, fallback = ""): string {
+  return article.category?.name || fallback;
+}
+
+export function getAuthorName(article: ArticleRelations, fallback = ""): string {
+  return article.author?.name || fallback;
 }
 
 export function getTimeAgo(dateInput: string | Date): string {

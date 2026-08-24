@@ -9,6 +9,7 @@ import { ArrowLeft, FloppyDisk, CircleNotch, Image as ImageIcon, Trash } from "@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/error-message";
 
 export default function EditAuthorPage({
   params,
@@ -85,8 +86,8 @@ export default function EditAuthorPage({
 
       setAvatar(result.data.url);
       toast.success("Foto profil berhasil diunggah (WebP)", { id: toastId });
-    } catch (err: any) {
-      toast.error(err.message || "Gagal mengunggah foto", { id: toastId });
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Gagal mengunggah foto"), { id: toastId });
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -120,8 +121,8 @@ export default function EditAuthorPage({
 
       toast.success("Penulis berhasil diperbarui");
       router.push("/dashboard/authors");
-    } catch (err: any) {
-      toast.error(err.message || "Gagal memperbarui penulis");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Gagal memperbarui penulis"));
     } finally {
       setIsSubmitting(false);
     }
@@ -208,12 +209,24 @@ export default function EditAuthorPage({
 
                 <div>
                   <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-on-surface">URL Foto Avatar</label>
-                  <Input
-                    placeholder="https://..."
-                    value={avatar}
-                    onChange={(e) => setAvatar(e.target.value)}
-                    className="rounded-none border-black/15 bg-white font-mono text-xs focus:border-[#B8860B]"
-                  />
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="https://..."
+                      value={avatar}
+                      onChange={(e) => setAvatar(e.target.value)}
+                      className="rounded-none border-black/15 bg-white font-mono text-xs focus:border-[#B8860B]"
+                    />
+                    <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+                    <Button type="button" variant="outline" className="shrink-0 gap-2 rounded-none text-xs" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
+                      <ImageIcon className="size-4" />
+                      {isUploading ? "Mengunggah..." : "Unggah"}
+                    </Button>
+                    {avatar ? (
+                      <Button type="button" variant="ghost" size="icon" className="shrink-0 rounded-none" aria-label="Hapus avatar" onClick={() => setAvatar("")}>
+                        <Trash className="size-4" />
+                      </Button>
+                    ) : null}
+                  </div>
                 </div>
               </CardContent>
             </Card>

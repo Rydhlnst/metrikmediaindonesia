@@ -5,10 +5,11 @@ import { DashboardTopbar } from "@/components/dashboard/topbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, FloppyDisk, CircleNotch, Image as ImageIcon, Trash, UploadSimple } from "@phosphor-icons/react/dist/ssr";
+import { ArrowLeft, FloppyDisk, CircleNotch, UploadSimple } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/error-message";
 
 export default function NewAuthorPage() {
   const router = useRouter();
@@ -62,8 +63,8 @@ export default function NewAuthorPage() {
 
       setAvatar(result.data.url);
       toast.success("Foto profil berhasil diunggah (WebP)", { id: toastId });
-    } catch (err: any) {
-      toast.error(err.message || "Gagal mengunggah foto", { id: toastId });
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Gagal mengunggah foto"), { id: toastId });
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -97,8 +98,8 @@ export default function NewAuthorPage() {
 
       toast.success("Penulis berhasil ditambahkan");
       router.push("/dashboard/authors");
-    } catch (err: any) {
-      toast.error(err.message || "Gagal menambahkan penulis");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Gagal menambahkan penulis"));
     } finally {
       setIsSubmitting(false);
     }

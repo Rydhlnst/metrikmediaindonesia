@@ -9,6 +9,7 @@ import { ArrowLeft, FloppyDisk, CircleNotch } from "@phosphor-icons/react/dist/s
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/error-message";
 
 export default function EditTagPage({
   params,
@@ -65,8 +66,8 @@ export default function EditTagPage({
 
       toast.success("Tag berhasil diperbarui");
       router.push("/dashboard/tags");
-    } catch (err: any) {
-      toast.error(err.message || "Gagal memperbarui tag");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Gagal memperbarui tag"));
     } finally {
       setIsSubmitting(false);
     }

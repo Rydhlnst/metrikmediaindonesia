@@ -1,16 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin, requireAuth } from "@/lib/server-session";
 import { getDb } from "@/db/index";
 import { authors } from "@/db/schema/index";
 import { eq, and, ne } from "drizzle-orm";
+import { authorSchema, positiveIdSchema } from "@/lib/validators/cms";
+import { zodError } from "@/lib/api-response";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authGuard = await requireAuth(request); if (authGuard.error) return authGuard.error;
   try {
     const db = await getDb();
     const { id } = await params;
-    const authorId = parseInt(id);
+    const parsedId = positiveIdSchema.safeParse(id);
+    if (!parsedId.success) return zodError(parsedId.error);
+    const authorId = parsedId.data;
 
     const [author] = await db
       .select()
@@ -23,7 +29,7 @@ export async function GET(
     }
 
     return NextResponse.json(author);
-  } catch (error: any) {
+  } catch (error) {
     console.error("GET /api/authors/[id] error:", error);
     return NextResponse.json({ message: "Gagal mengambil data penulis" }, { status: 500 });
   }
@@ -33,13 +39,16 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authGuard = await requireAdmin(request); if (authGuard.error) return authGuard.error;
   try {
     const db = await getDb();
     const { id } = await params;
-    const authorId = parseInt(id);
-    const body = await request.json();
-
-    const { name, slug, bio, avatar, role, socialLinks } = body;
+    const parsedId = positiveIdSchema.safeParse(id);
+    if (!parsedId.success) return zodError(parsedId.error);
+    const authorId = parsedId.data;
+    const parsed = authorSchema.partial().safeParse(await request.json().catch(() => null));
+    if (!parsed.success) return zodError(parsed.error);
+    const { name, slug, bio, avatar, role, socialLinks } = parsed.data;
 
     const [existing] = await db
       .select()
@@ -71,14 +80,14 @@ export async function PUT(
         bio: bio !== undefined ? bio : existing.bio,
         avatar: avatar !== undefined ? avatar : existing.avatar,
         role: role ?? existing.role,
-        socialLinks: socialLinks ?? existing.socialLinks,
+        socialLinks: socialLinks !== undefined ? socialLinks : existing.socialLinks,
         updatedAt: new Date(),
       })
       .where(eq(authors.id, authorId))
       .returning();
 
     return NextResponse.json({ message: "Penulis berhasil diperbarui", data: updated });
-  } catch (error: any) {
+  } catch (error) {
     console.error("PUT /api/authors/[id] error:", error);
     return NextResponse.json({ message: "Gagal memperbarui penulis" }, { status: 500 });
   }
@@ -88,15 +97,18 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authGuard = await requireAdmin(request); if (authGuard.error) return authGuard.error;
   try {
     const db = await getDb();
     const { id } = await params;
-    const authorId = parseInt(id);
+    const parsedId = positiveIdSchema.safeParse(id);
+    if (!parsedId.success) return zodError(parsedId.error);
+    const authorId = parsedId.data;
 
     await db.delete(authors).where(eq(authors.id, authorId));
 
     return NextResponse.json({ message: "Penulis berhasil dihapus" });
-  } catch (error: any) {
+  } catch (error) {
     console.error("DELETE /api/authors/[id] error:", error);
     return NextResponse.json({ message: "Gagal menghapus penulis" }, { status: 500 });
   }

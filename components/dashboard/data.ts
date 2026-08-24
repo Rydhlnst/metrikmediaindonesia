@@ -13,13 +13,26 @@ import {
   Gear,
   ChartBar,
   Lightning,
+  PenNib,
 } from "@phosphor-icons/react/dist/ssr";
+import type { Icon } from "@phosphor-icons/react/dist/lib/types";
 
-export const navSections = [
+export interface NavItem {
+  label: string;
+  icon: Icon;
+  href: string;
+}
+
+export interface NavSection {
+  title: string;
+  items: NavItem[];
+}
+
+export const adminNavSections: NavSection[] = [
   {
     title: "Main",
     items: [
-      { label: "Dashboard", icon: SquaresFour, href: "/dashboard", active: true },
+      { label: "Dashboard", icon: SquaresFour, href: "/dashboard" },
       { label: "Analytics", icon: ChartBar, href: "/dashboard/analytics" },
     ],
   },
@@ -28,6 +41,7 @@ export const navSections = [
     items: [
       { label: "Editorial Workflow Board", icon: Lightning, href: "/dashboard/editorial" },
       { label: "Artikel", icon: NewspaperClipping, href: "/dashboard/articles" },
+      { label: "User Submissions", icon: FileText, href: "/dashboard/submissions" },
       { label: "Topik Berita", icon: TagSimple, href: "/dashboard/topics" },
       { label: "Wilayah & Lokasi", icon: FolderOpen, href: "/dashboard/locations" },
       { label: "Entitas (Relationship)", icon: Users, href: "/dashboard/entities" },
@@ -57,109 +71,16 @@ export const navSections = [
   },
 ];
 
-export const chartData = [
-  { month: "Jan", articles: 45, views: 120000 },
-  { month: "Feb", articles: 52, views: 145000 },
-  { month: "Mar", articles: 61, views: 180000 },
-  { month: "Apr", articles: 48, views: 160000 },
-  { month: "May", articles: 72, views: 210000 },
-  { month: "Jun", articles: 65, views: 195000 },
-  { month: "Jul", articles: 80, views: 240000 },
-];
-
-export const categoryData = [
-  { name: "Politik", count: 320, color: "#DC2626" },
-  { name: "Ekonomi", count: 280, color: "#2563EB" },
-  { name: "Teknologi", count: 245, color: "#7C3AED" },
-  { name: "Olahraga", count: 198, color: "#059669" },
-  { name: "Hiburan", count: 120, color: "#D97706" },
-  { name: "Lifestyle", count: 85, color: "#EC4899" },
-];
-
-export const recentArticles = [
+export const contributorNavSections: NavSection[] = [
   {
-    id: "1",
-    title: "Indonesia Luncurkan Program Transformasi Digital Nasional",
-    category: "Teknologi",
-    categoryColor: "#7C3AED",
-    author: "Budi Santoso",
-    status: "published" as const,
-    views: 15420,
-    publishedAt: "2026-07-25",
-  },
-  {
-    id: "2",
-    title: "Pasar Saham Indonesia Catat Rekor Tertinggi Sepanjang Sejarah",
-    category: "Ekonomi",
-    categoryColor: "#2563EB",
-    author: "Siti Nurhaliza",
-    status: "published" as const,
-    views: 12300,
-    publishedAt: "2026-07-25",
-  },
-  {
-    id: "3",
-    title: "Timnas Indonesia Tampil Gemilang di Piala Dunia U-20",
-    category: "Olahraga",
-    categoryColor: "#059669",
-    author: "Reza Firmansyah",
-    status: "published" as const,
-    views: 28500,
-    publishedAt: "2026-07-25",
-  },
-  {
-    id: "4",
-    title: "Film Indonesia Raih Penghargaan di Festival Film Cannes 2026",
-    category: "Hiburan",
-    categoryColor: "#D97706",
-    author: "Maya Putri",
-    status: "draft" as const,
-    views: 0,
-    publishedAt: "2026-07-24",
-  },
-  {
-    id: "5",
-    title: "Tips Productivity: Cara Efektif Mengelola Waktu",
-    category: "Lifestyle",
-    categoryColor: "#EC4899",
-    author: "Maya Putri",
-    status: "scheduled" as const,
-    views: 0,
-    publishedAt: "2026-07-26",
+    title: "Main",
+    items: [
+      { label: "Beranda Saya", icon: SquaresFour, href: "/dashboard" },
+      { label: "Tulis Berita Baru", icon: PenNib, href: "/dashboard/articles/new" },
+      { label: "Artikel Saya", icon: NewspaperClipping, href: "/dashboard/my-articles" },
+    ],
   },
 ];
 
-export const recentComments = [
-  {
-    id: "1",
-    article: "Indonesia Luncurkan Program Transformasi Digital",
-    user: "Ahmad Fauzi",
-    content: "Artikel yang sangat informatif! Semoga program ini berjalan lancar.",
-    status: "approved" as const,
-    createdAt: "2026-07-25T10:30:00Z",
-  },
-  {
-    id: "2",
-    article: "Pasar Saham Indonesia Catat Rekor Tertinggi",
-    user: "Dewi Sartika",
-    content: "IHSG makin monster! Tapi tetap waspada ya.",
-    status: "pending" as const,
-    createdAt: "2026-07-25T09:15:00Z",
-  },
-  {
-    id: "3",
-    article: "Timnas Indonesia Tampil Gemilang",
-    user: "Rizky Pratama",
-    content: "GARUDA! Semoga bisa terus berprestasi di level internasional.",
-    status: "approved" as const,
-    createdAt: "2026-07-25T08:00:00Z",
-  },
-  {
-    id: "4",
-    article: "Startup AI Indonesia Raih Pendanaan",
-    user: "Putri Wulandari",
-    content: "Bangga dengan startup lokal! Semoga semakin banyak bermunculan.",
-    status: "spam" as const,
-    createdAt: "2026-07-24T16:45:00Z",
-  },
-];
+// Legacy export untuk kompatibilitas (admin view)
+export const navSections = adminNavSections;

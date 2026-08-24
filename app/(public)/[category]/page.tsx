@@ -1,15 +1,15 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { CATEGORIES, SITE_CONFIG } from "@/lib/constants";
+import { SITE_CONFIG } from "@/lib/constants";
 import { getArticles, getCategoryBySlug } from "@/lib/queries";
 import { WebsiteJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { CategoryBadge } from "@/components/shared/category-badge";
-import { Divider } from "@/components/shared/divider";
 import type { Metadata } from "next";
 
 import { PublicPageHeader } from "@/components/shared/public-page-header";
-import { SectionHeader } from "@/components/shared/section-header";
+
+export const dynamic = "force-dynamic";
 import { Clock, Lightning } from "@phosphor-icons/react/dist/ssr";
 
 interface CategoryPageProps {
@@ -44,10 +44,6 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
       canonical: `${SITE_CONFIG.url}/${category}`,
     },
   };
-}
-
-export function generateStaticParams() {
-  return CATEGORIES.map((c) => ({ category: c.slug }));
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
@@ -127,7 +123,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
               </p>
               <div className="mt-auto pt-6 border-t border-black/10">
                 <p className="font-label-md text-label-md text-gold-deep">
-                  OLEH {featured.author.name.toUpperCase()}
+                  OLEH {(featured.author?.name ?? "Redaksi").toUpperCase()}
                 </p>
               </div>
             </div>
@@ -163,7 +159,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
               </p>
               <div className="mt-auto pt-4 border-t border-black/10">
                 <p className="font-label-md text-label-md text-gold-deep">
-                  OLEH {secondary[0].author.name.toUpperCase()}
+                  OLEH {(secondary[0].author?.name ?? "Redaksi").toUpperCase()}
                 </p>
               </div>
             </article>
@@ -196,7 +192,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
               </p>
               <div className="mt-auto pt-4 border-t border-black/10">
                 <p className="font-label-md text-label-md text-gold-deep">
-                  OLEH {secondary[1].author.name.toUpperCase()}
+                  OLEH {(secondary[1].author?.name ?? "Redaksi").toUpperCase()}
                 </p>
               </div>
             </article>
@@ -210,7 +206,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                 Terbaru dari Kanal Ini
               </h4>
             </div>
-            {latest.map((article: any) => (
+            {latest.map((article) => (
               <article key={article.id} className="group cursor-pointer border-b border-black/10 pb-6 last:border-b-0 last:pb-0">
                 <CategoryBadge variant="bordered" className="mb-2 border-muted-foreground text-muted-foreground">
                   {cat.name}

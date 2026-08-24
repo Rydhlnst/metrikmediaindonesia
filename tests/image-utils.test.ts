@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { convertToWebp, getImageMetadata, getWebpMimeType, generateUploadPath } from "@/lib/image-utils";
+import { getWebpMimeType, generateUploadPath } from "@/lib/image-utils";
 
 describe("getWebpMimeType", () => {
   it("returns image/webp", () => {

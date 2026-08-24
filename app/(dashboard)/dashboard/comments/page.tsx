@@ -1,18 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { DashboardTopbar } from "@/components/dashboard/topbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Check, X, Trash, CircleNotch, Warning, ArrowBendUpLeft, CheckCircle, ShieldWarning, ArrowUUpLeft } from "@phosphor-icons/react/dist/ssr";
-import dynamic from "next/dynamic";
-
-const TiptapEditor = dynamic(
-  () => import("@/components/dashboard/tiptap-editor").then((m) => m.TiptapEditor),
-  { ssr: false }
-);
+import { getErrorMessage } from "@/lib/error-message";
+import { Trash, CircleNotch, CheckCircle, ShieldWarning, ArrowUUpLeft } from "@phosphor-icons/react/dist/ssr";
 
 interface CommentItem {
   id: number;
@@ -60,7 +55,7 @@ export default function CommentsPage() {
   }, [statusFilter]);
 
   useEffect(() => {
-    fetchComments();
+    queueMicrotask(() => fetchComments());
   }, [fetchComments]);
 
   const handleUpdateStatus = async (id: number, status: string) => {
@@ -74,8 +69,8 @@ export default function CommentsPage() {
       if (!res.ok) throw new Error("Gagal mengbarui status");
       toast.success(`Status komentar diubah ke ${status}`);
       fetchComments();
-    } catch (err: any) {
-      toast.error(err.message || "Gagal mengbarui status komentar");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Gagal mengbarui status komentar"));
     }
   };
 
@@ -86,8 +81,8 @@ export default function CommentsPage() {
       if (!res.ok) throw new Error("Gagal menghapus komentar");
       toast.success("Komentar berhasil dihapus");
       fetchComments();
-    } catch (err: any) {
-      toast.error(err.message || "Gagal menghapus komentar");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Gagal menghapus komentar"));
     }
   };
 
@@ -114,8 +109,8 @@ export default function CommentsPage() {
       setReplyingTo(null);
       setReplyContent("");
       fetchComments();
-    } catch (err: any) {
-      toast.error(err.message || "Gagal mengirim balasan");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Gagal mengirim balasan"));
     } finally {
       setIsSubmitting(false);
     }

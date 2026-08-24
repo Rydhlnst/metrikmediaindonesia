@@ -1,293 +1,276 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { DashboardTopbar } from "@/components/dashboard/topbar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  UploadSimple,
-  Trash,
-  Copy,
-  Image,
-  File,
-  X,
-  CircleNotch,
-  CaretLeft,
-  CaretRight,
-} from "@phosphor-icons/react/dist/ssr";
-import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
+import { Image, Video, FileText, Trash, MagnifyingGlass, List } from "@phosphor-icons/react/dist/ssr";
+import NextImage from "next/image";
 
 interface MediaItem {
   id: number;
   url: string;
   type: string;
-  mimeType: string;
-  size: number;
+  mimeType: string | null;
+  size: number | null;
   width: number | null;
   height: number | null;
   alt: string | null;
   caption: string | null;
+  credit: string | null;
   createdAt: string;
 }
 
-function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
+const typeIcons: Record<string, React.ReactNode> = {
+  image: <Image className="size-5" aria-hidden="true" alt="" />,
+  video: <Video className="size-5" aria-hidden="true" />,
+  file: <FileText className="size-5" aria-hidden="true" />,
+};
+
+const typeLabels: Record<string, string> = {
+  image: "Gambar",
+  video: "Video",
+  file: "File",
+};
 
 export default function MediaPage() {
   const [media, setMedia] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(0);
-  const [selectedMedia, setSelectedMedia] = useState<MediaItem | null>(null);
-  const [copied, setCopied] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [filterType, setFilterType] = useState("");
+  const [search, setSearch] = useState("");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [deleting, setDeleting] = useState<number | null>(null);
 
-  const fetchMedia = async (p: number) => {
+  const fetchMedia = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/upload?page=${p}&limit=20`);
+      const params = new URLSearchParams();
+      if (filterType) params.set("type", filterType);
+      params.set("limit", "50");
+
+      const res = await fetch(`/api/media?${params}`);
       const data = await res.json();
-      setMedia(data.data || []);
-      setTotalPages(data.pagination?.totalPages || 1);
-      setTotal(data.pagination?.total || 0);
+      if (res.ok) {
+        setMedia(data.data || []);
+      }
     } catch {
+      toast.error("Gagal memuat data media");
     } finally {
       setLoading(false);
     }
-  };
+  }, [filterType]);
 
   useEffect(() => {
-    fetchMedia(page);
-  }, [page]);
-
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploading(true);
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await fetch("/api/upload", { method: "POST", body: formData });
-      if (!res.ok) throw new Error("Upload gagal");
-      fetchMedia(page);
-    } catch {
-    } finally {
-      setUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    }
-  };
+    queueMicrotask(() => fetchMedia());
+  }, [fetchMedia]);
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Hapus media ini?")) return;
+    if (!confirm("Yakin ingin menghapus media ini?")) return;
+    setDeleting(id);
     try {
-      await fetch(`/api/upload/${id}`, { method: "DELETE" });
-      fetchMedia(page);
-      setSelectedMedia(null);
+      const res = await fetch(`/api/media/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        toast.success("Media berhasil dihapus");
+        setMedia((prev) => prev.filter((m) => m.id !== id));
+      } else {
+        const data = await res.json();
+        toast.error(data.message || "Gagal menghapus media");
+      }
     } catch {
+      toast.error("Gagal menghapus media");
+    } finally {
+      setDeleting(null);
     }
   };
 
-  const handleCopyUrl = (url: string) => {
-    navigator.clipboard.writeText(url);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const filteredMedia = media.filter((item) => {
+    if (search) {
+      const q = search.toLowerCase();
+      return (
+        (item.alt || "").toLowerCase().includes(q) ||
+        (item.caption || "").toLowerCase().includes(q) ||
+        item.url.toLowerCase().includes(q)
+      );
+    }
+    return true;
+  });
+
+  const formatSize = (bytes: number | null) => {
+    if (!bytes) return "-";
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-[#f8f9fa]">
       <DashboardTopbar />
       <div className="w-full flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
-        <Card className="rounded-none border border-black/10 bg-white shadow-2xs">
-          <CardHeader className="flex flex-row items-center justify-between border-b border-black/5 px-6 py-4">
-            <div className="flex items-center gap-3">
-              <CardTitle className="text-base font-bold text-foreground">Media Library</CardTitle>
-              <Badge variant="outline" className="rounded-none text-[10px] uppercase font-bold tracking-wider bg-black/5 text-foreground border-black/10">
-                {total} FILE
-              </Badge>
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/gif,image/webp"
-                className="hidden"
-                onChange={handleUpload}
-              />
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-black/5 pb-4">
+          <div>
+            <h1 className="text-xl font-bold text-foreground">Media Library</h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              Kelola gambar, video, dan file yang diunggah
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant={viewMode === "grid" ? "default" : "outline"}
+              size="icon"
+              className="size-8"
+              onClick={() => setViewMode("grid")}
+            >
+              <MagnifyingGlass className="size-4" />
+            </Button>
+            <Button
+              variant={viewMode === "list" ? "default" : "outline"}
+              size="icon"
+              className="size-8"
+              onClick={() => setViewMode("list")}
+            >
+              <List className="size-4" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Filters */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1">
+            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <Input
+              placeholder="Cari media..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          <div className="flex gap-2">
+            {["", "image", "video", "file"].map((t) => (
               <Button
+                key={t}
+                variant={filterType === t ? "default" : "outline"}
                 size="sm"
-                className="gap-2 rounded-none bg-primary text-white hover:bg-primary/90 font-bold uppercase tracking-wider text-xs"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={uploading}
+                onClick={() => setFilterType(t)}
               >
-                {uploading ? (
-                  <CircleNotch className="size-4 animate-spin" />
-                ) : (
-                  <UploadSimple className="size-4" weight="bold" />
-                )}
-                {uploading ? "Mengunggah..." : "Upload Media"}
+                {t ? typeLabels[t] : "Semua"}
               </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="p-6">
-            {loading ? (
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-                {Array.from({ length: 12 }).map((_, i) => (
-                  <div key={i} className="aspect-square animate-pulse rounded bg-muted/30" />
-                ))}
-              </div>
-            ) : media.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16 text-center">
-                <Image className="mb-3 size-10 text-muted-foreground/50" />
-                <p className="text-sm text-muted-foreground">Belum ada media</p>
-                <p className="text-xs text-muted-foreground/70">Upload gambar untuk memulai</p>
-              </div>
-            ) : (
-              <>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-                  {media.map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => setSelectedMedia(item)}
-                      className="group relative aspect-square overflow-hidden border border-border/50 bg-muted/10 transition-colors hover:border-foreground/20"
-                    >
-                      <img
-                        src={item.url}
-                        alt={item.alt || ""}
-                        className="h-full w-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/40">
-                        <div className="absolute bottom-0 left-0 right-0 p-2 opacity-0 transition-opacity group-hover:opacity-100">
-                          <p className="text-[10px] text-white line-clamp-1">{item.alt || "image"}</p>
-                          <p className="text-[10px] text-white/70">{formatFileSize(item.size)}</p>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
+            ))}
+          </div>
+        </div>
 
-                {totalPages > 1 && (
-                  <div className="mt-4 flex items-center justify-between">
-                    <p className="text-xs text-muted-foreground">
-                      Halaman {page} dari {totalPages}
-                    </p>
-                    <div className="flex items-center gap-1">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="size-8 rounded-none p-0"
-                        onClick={() => setPage((p) => Math.max(1, p - 1))}
-                        disabled={page === 1}
-                      >
-                        <CaretLeft className="size-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="size-8 rounded-none p-0"
-                        onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                        disabled={page === totalPages}
-                      >
-                        <CaretRight className="size-4" />
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-          </CardContent>
-        </Card>
-
-        <Dialog open={!!selectedMedia} onOpenChange={(open) => !open && setSelectedMedia(null)}>
-          <DialogContent className="max-w-2xl rounded-none">
-            <DialogHeader>
-              <DialogTitle className="text-lg font-bold">Detail Media</DialogTitle>
-            </DialogHeader>
-            {selectedMedia && (
-              <div className="space-y-4">
-                <div className="overflow-hidden border border-border/50">
-                  <img
-                    src={selectedMedia.url}
-                    alt={selectedMedia.alt || ""}
-                    className="w-full object-contain"
-                    style={{ maxHeight: "400px" }}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div>
-                    <span className="text-muted-foreground">Ukuran:</span>{" "}
-                    {formatFileSize(selectedMedia.size)}
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Tipe:</span>{" "}
-                    {selectedMedia.mimeType}
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Dimensi:</span>{" "}
-                    {selectedMedia.width && selectedMedia.height
-                      ? `${selectedMedia.width} × ${selectedMedia.height}`
-                      : "-"}
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Diunggah:</span>{" "}
-                    {new Date(selectedMedia.createdAt).toLocaleDateString("id-ID")}
-                  </div>
-                </div>
-                <div className="space-y-1.5">
-                  <span className="text-xs text-muted-foreground">URL:</span>
-                  <div className="flex items-center gap-2">
-                    <input
-                      readOnly
-                      value={selectedMedia.url}
-                      className="h-9 flex-1 border border-outline-variant bg-muted px-3 text-xs font-mono"
+        {/* Content */}
+        {loading ? (
+          <div className={viewMode === "grid" ? "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4" : "space-y-3"}>
+            {Array.from({ length: 8 }).map((_, i) => (
+              <Skeleton key={i} className={viewMode === "grid" ? "aspect-square rounded-lg" : "h-16 rounded-lg"} />
+            ))}
+          </div>
+        ) : filteredMedia.length === 0 ? (
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+                    <Image className="size-12 text-muted-foreground mb-3" aria-hidden="true" alt="" />
+              <p className="text-muted-foreground">Belum ada media yang diunggah</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Media akan muncul di sini setelah diunggah melalui form artikel
+              </p>
+            </CardContent>
+          </Card>
+        ) : viewMode === "grid" ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {filteredMedia.map((item) => (
+              <Card key={item.id} className="group overflow-hidden">
+                <div className="relative aspect-square bg-muted">
+                  {item.type === "image" ? (
+                    <NextImage
+                      src={item.url}
+                      alt={item.alt || ""}
+                      width={640}
+                      height={640}
+                      className="w-full h-full object-cover"
                     />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                      {typeIcons[item.type] || <FileText className="size-8" />}
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
                     <Button
-                      size="sm"
-                      variant="outline"
-                      className="gap-1 rounded-none"
-                      onClick={() => handleCopyUrl(selectedMedia.url)}
+                      variant="destructive"
+                      size="icon"
+                      className="size-8"
+                      onClick={() => handleDelete(item.id)}
+                      disabled={deleting === item.id}
                     >
-                      <Copy className="size-3" />
-                      {copied ? "Tersalin!" : "Salin"}
+                      <Trash className="size-4" />
                     </Button>
                   </div>
                 </div>
-                <div className="flex justify-end gap-2">
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    className="gap-1 rounded-none"
-                    onClick={() => handleDelete(selectedMedia.id)}
-                  >
-                    <Trash className="size-3" />
-                    Hapus
-                  </Button>
+                <div className="p-2">
+                  <p className="text-xs text-muted-foreground truncate">
+                    {item.alt || item.url.split("/").pop()}
+                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Badge variant="outline" className="text-[10px] px-1">
+                      {typeLabels[item.type] || item.type}
+                    </Badge>
+                    <span className="text-[10px] text-muted-foreground">
+                      {formatSize(item.size)}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {filteredMedia.map((item) => (
+              <Card key={item.id}>
+                <CardContent className="flex items-center gap-4 p-3">
+                  <div className="w-12 h-12 rounded bg-muted flex-shrink-0 overflow-hidden">
+                    {item.type === "image" ? (
+                      <NextImage
+                        src={item.url}
+                        alt={item.alt || ""}
+                        width={96}
+                        height={96}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                        {typeIcons[item.type] || <FileText className="size-5" />}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{item.alt || item.url.split("/").pop()}</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <Badge variant="outline" className="text-[10px] px-1">
+                        {typeLabels[item.type] || item.type}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">
+                        {formatSize(item.size)} · {item.width && item.height ? `${item.width}×${item.height}` : ""}
+                      </span>
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="size-8 text-destructive"
+                    onClick={() => handleDelete(item.id)}
+                    disabled={deleting === item.id}
+                  >
+                    <Trash className="size-4" />
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

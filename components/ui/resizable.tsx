@@ -1,6 +1,6 @@
 "use client"
 
-// @ts-ignore
+// @ts-expect-error react-resizable-panels has no compatible declaration in this dependency version.
 import * as ResizablePrimitive from "react-resizable-panels"
 
 import { cn } from "@/lib/utils"

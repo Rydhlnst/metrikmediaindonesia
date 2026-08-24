@@ -7,18 +7,17 @@ import { Breadcrumb } from "@/components/shared/breadcrumb";
 import { CategoryBadge } from "@/components/shared/category-badge";
 import { SectionHeader } from "@/components/shared/section-header";
 import { PublicPageHeader } from "@/components/shared/public-page-header";
-import { CATEGORIES } from "@/lib/constants";
+import type { Article, Category } from "@/lib/types";
+import { requestJson, toastApiError } from "@/lib/api-client";
 import {
   MagnifyingGlass,
   TrendUp,
   Clock,
-  ArrowRight,
   X,
   ChartLineUp,
   Trophy,
   GraduationCap,
   Buildings,
-  CircleNotch,
   Lightning,
   Tag,
 } from "@phosphor-icons/react/dist/ssr";
@@ -75,21 +74,24 @@ function SearchBar({ initialQuery }: { initialQuery: string }) {
 }
 
 function SearchRecommendations() {
-  const [trendingArticles, setTrendingArticles] = useState<any[]>([]);
-  const [recentArticles, setRecentArticles] = useState<any[]>([]);
+  const [trendingArticles, setTrendingArticles] = useState<Article[]>([]);
+  const [recentArticles, setRecentArticles] = useState<Article[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
     let cancelled = false;
     Promise.all([
-      fetch("/api/articles?sort=-viewCount&limit=5").then((r) => r.json()),
-      fetch("/api/articles?limit=6").then((r) => r.json()),
+      requestJson<{ data?: Article[] }>("/api/articles?sort=-viewCount&limit=5"),
+      requestJson<{ data?: Article[] }>("/api/articles?limit=6"),
+      requestJson<{ data?: Category[] }>("/api/public/categories"),
     ])
-      .then(([trendingData, recentData]) => {
+      .then(([trendingData, recentData, categoryData]) => {
         if (cancelled) return;
-        setTrendingArticles(trendingData.data || trendingData.docs || []);
-        setRecentArticles(recentData.data || recentData.docs || []);
+        setTrendingArticles(trendingData.data || []);
+        setRecentArticles(recentData.data || []);
+        setCategories(categoryData.data || []);
       })
-      .catch(() => {});
+      .catch(toastApiError);
     return () => {
       cancelled = true;
     };
@@ -124,13 +126,13 @@ function SearchRecommendations() {
           icon={<Tag className="size-4" weight="bold" />}
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <Link
               key={cat.slug}
               href={`/${cat.slug}`}
               className="group flex items-center gap-3 border border-black/10 bg-white p-4 transition-colors hover:border-gold/50"
             >
-              <CategoryIcon slug={cat.slug} color={cat.color} />
+              <CategoryIcon slug={cat.slug} color={cat.color || "#B8860B"} />
               <span className="text-sm font-medium transition-colors group-hover:text-gold-deep">
                 {cat.name}
               </span>
@@ -148,7 +150,7 @@ function SearchRecommendations() {
           icon={<TrendUp className="size-4" weight="bold" />}
         />
         <div className="space-y-3">
-          {trendingArticles.slice(0, 5).map((article: any, index: number) => (
+          {trendingArticles.slice(0, 5).map((article, index) => (
             <Link
               key={article.id}
               href={`/${article.category?.slug || "berita"}/${article.slug}`}
@@ -181,7 +183,7 @@ function SearchRecommendations() {
           icon={<Lightning className="size-4" weight="bold" />}
         />
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {recentArticles.map((article: any) => (
+          {recentArticles.map((article) => (
             <ArticleCard key={article.id} article={article} />
           ))}
         </div>
@@ -193,26 +195,28 @@ function SearchRecommendations() {
 function SearchResults() {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<Article[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
   const fetchResults = useCallback(async (q: string) => {
     if (!q.trim()) {
-      setResults([]);
-      setHasSearched(false);
+      queueMicrotask(() => {
+        setResults([]);
+        setHasSearched(false);
+      });
       return;
     }
 
     setLoading(true);
     try {
-      const res = await fetch(`/api/articles?search=${encodeURIComponent(q)}`);
-      const data = await res.json();
-      setResults(data.data || data.docs || []);
+      const data = await requestJson<{ data?: Article[] }>(`/api/articles?search=${encodeURIComponent(q)}`);
+      setResults(data.data || []);
       setHasSearched(true);
-    } catch {
+    } catch (error) {
       setResults([]);
+      toastApiError(error);
     } finally {
       setLoading(false);
     }
@@ -222,13 +226,15 @@ function SearchResults() {
     if (debounceTimer.current) clearTimeout(debounceTimer.current);
 
     if (query) {
-      setLoading(true);
+      queueMicrotask(() => setLoading(true));
       debounceTimer.current = setTimeout(() => {
         fetchResults(query);
       }, 500);
     } else {
-      setResults([]);
-      setHasSearched(false);
+      queueMicrotask(() => {
+        setResults([]);
+        setHasSearched(false);
+      });
     }
 
     return () => {
@@ -257,7 +263,7 @@ function SearchResults() {
 
           {!loading && hasSearched && results.length > 0 ? (
             <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {results.map((article: any) => (
+                {results.map((article) => (
                 <ArticleCard key={article.id} article={article} />
               ))}
             </div>

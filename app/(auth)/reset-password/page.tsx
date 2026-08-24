@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { CircleNotch, LockSimple, ArrowRight, CheckCircle, Warning } from "@phosphor-icons/react/dist/ssr";
 import { BrandName } from "@/components/shared/brand-name";
+import { requestJson, toastApiError } from "@/lib/api-client";
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState("");
@@ -36,21 +37,16 @@ export default function ResetPasswordPage() {
     }
 
     try {
-      const res = await fetch("/api/auth/reset-password", {
+      await requestJson("/api/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, newPassword: password }),
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Gagal reset password");
-      }
-
       setIsSuccess(true);
-    } catch (err: any) {
-      setError(err.message || "Terjadi kesalahan");
+    } catch (error: unknown) {
+      toastApiError(error);
+      setError(error instanceof Error ? error.message : "Gagal reset password");
     } finally {
       setIsLoading(false);
     }

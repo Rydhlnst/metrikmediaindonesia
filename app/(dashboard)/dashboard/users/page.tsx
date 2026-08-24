@@ -30,9 +30,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Plus, PencilSimple, Trash, MagnifyingGlass, CircleNotch } from "@phosphor-icons/react/dist/ssr";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/error-message";
 
 interface User {
-  id: number;
+  id: string;
   name: string;
   email: string;
   avatar: string | null;
@@ -85,7 +86,7 @@ export default function UsersPage() {
           totalPages: 1,
         }
       );
-    } catch (error) {
+    } catch {
       toast.error("Gagal mengambil data pengguna");
       setUsers([]);
       setPagination({
@@ -100,7 +101,7 @@ export default function UsersPage() {
   }, []);
 
   useEffect(() => {
-    fetchUsers();
+    queueMicrotask(() => fetchUsers());
   }, [fetchUsers]);
 
   const handleSearch = (value: string) => {
@@ -125,8 +126,8 @@ export default function UsersPage() {
       toast.success("Pengguna berhasil dihapus");
       setDeleteUser(null);
       fetchUsers(pagination.page, search);
-    } catch (error: any) {
-      toast.error(error.message || "Gagal menghapus pengguna");
+    } catch (error) {
+      toast.error(getErrorMessage(error, "Gagal menghapus pengguna"));
     }
   };
 

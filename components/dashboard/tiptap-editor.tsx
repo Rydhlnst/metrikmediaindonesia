@@ -39,9 +39,7 @@ import {
   LinkSimpleHorizontal as LinkIcon,
   Image as ImageIcon,
   VideoCamera,
-  Code as Code2,
   Quotes,
-  Minus,
   Highlighter,
   ArrowCounterClockwise,
   ArrowClockwise,
@@ -57,7 +55,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { toast } from "sonner";
 
 const lowlight = createLowlight(common);
@@ -66,12 +64,36 @@ interface TiptapEditorProps {
   content: string;
   onChange: (content: string) => void;
   placeholder?: string;
+  storageKey?: string;
+}
+
+interface ToolButtonProps {
+  onClick: () => void;
+  active?: boolean;
+  disabled?: boolean;
+  children: React.ReactNode;
+}
+
+function ToolButton({ onClick, active = false, disabled = false, children }: ToolButtonProps) {
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      className={`size-8 rounded-none ${active ? "bg-muted text-foreground" : "text-muted-foreground"}`}
+      onClick={onClick}
+      disabled={disabled}
+    >
+      {children}
+    </Button>
+  );
 }
 
 export function TiptapEditor({
   content,
   onChange,
   placeholder = "Tulis konten artikel di sini...",
+  storageKey,
 }: TiptapEditorProps) {
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
@@ -80,7 +102,10 @@ export function TiptapEditor({
   const [youtubeDialogOpen, setYoutubeDialogOpen] = useState(false);
   const [youtubeUrl, setYoutubeUrl] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const [autosaveStatus, setAutosaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [isDirty, setIsDirty] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const recoveredDraftRef = useRef(false);
 
   const editor = useEditor({
     extensions: [
@@ -123,8 +148,52 @@ export function TiptapEditor({
     },
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
+      setIsDirty(true);
     },
   });
+
+  useEffect(() => {
+    if (!storageKey || recoveredDraftRef.current) return;
+    recoveredDraftRef.current = true;
+    try {
+      const raw = window.localStorage.getItem(storageKey);
+      if (!raw) return;
+      const draft = JSON.parse(raw) as { content?: string; savedAt?: string };
+      if (draft.content && draft.content !== content && window.confirm("Recover the last safe draft for this editor?")) {
+        queueMicrotask(() => {
+          onChange(draft.content!);
+          setIsDirty(true);
+        });
+      }
+    } catch {
+      queueMicrotask(() => setAutosaveStatus("error"));
+    }
+  }, [content, onChange, storageKey]);
+
+  useEffect(() => {
+    if (!storageKey || !isDirty) return;
+    queueMicrotask(() => setAutosaveStatus("saving"));
+    const timeout = window.setTimeout(() => {
+      try {
+        window.localStorage.setItem(storageKey, JSON.stringify({ content, savedAt: new Date().toISOString() }));
+        setAutosaveStatus("saved");
+        setIsDirty(false);
+      } catch {
+        setAutosaveStatus("error");
+      }
+    }, 800);
+    return () => window.clearTimeout(timeout);
+  }, [content, isDirty, storageKey]);
+
+  useEffect(() => {
+    if (!isDirty) return;
+    const warnBeforeLeaving = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", warnBeforeLeaving);
+    return () => window.removeEventListener("beforeunload", warnBeforeLeaving);
+  }, [isDirty]);
 
   const addLink = useCallback(() => {
     if (!editor || !linkUrl) return;
@@ -176,8 +245,8 @@ export function TiptapEditor({
 
         editor.chain().focus().setImage({ src: data.data.url }).run();
         toast.success("Gambar berhasil diunggah");
-      } catch (error: any) {
-        toast.error(error.message || "Gagal mengunggah gambar");
+      } catch (error: unknown) {
+        toast.error(error instanceof Error ? error.message : "Gagal mengunggah gambar");
       } finally {
         setIsUploading(false);
         if (fileInputRef.current) {
@@ -189,29 +258,6 @@ export function TiptapEditor({
   );
 
   if (!editor) return null;
-
-  const ToolButton = ({
-    onClick,
-    active = false,
-    disabled = false,
-    children,
-  }: {
-    onClick: () => void;
-    active?: boolean;
-    disabled?: boolean;
-    children: React.ReactNode;
-  }) => (
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon"
-      className={`size-8 rounded-none ${active ? "bg-muted text-foreground" : "text-muted-foreground"}`}
-      onClick={onClick}
-      disabled={disabled}
-    >
-      {children}
-    </Button>
-  );
 
   const plainText = content.replace(/<[^>]*>/g, " ").trim();
   const wordCount = plainText ? plainText.split(/\s+/).filter(Boolean).length : 0;
@@ -403,8 +449,9 @@ export function TiptapEditor({
           <span>•</span>
           <span className="text-primary font-bold">~{readingMinutes} Menit Baca</span>
         </div>
-        <div className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground hidden sm:block">
-          Rich Text & Media Markdown
+        <div className="flex items-center gap-3 text-[10px] uppercase font-bold tracking-wider text-muted-foreground">
+          {storageKey ? <span aria-live="polite">{autosaveStatus === "saving" ? "Saving…" : autosaveStatus === "error" ? "Save error" : autosaveStatus === "saved" ? "Saved" : "Autosave ready"}</span> : null}
+          <span className="hidden sm:block">Rich Text & Media Markdown</span>
         </div>
       </div>
 

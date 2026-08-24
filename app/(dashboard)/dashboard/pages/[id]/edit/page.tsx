@@ -14,6 +14,7 @@ import { ArrowLeft, FloppyDisk, CircleNotch } from "@phosphor-icons/react/dist/s
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/error-message";
 
 export default function EditStaticPage({
   params,
@@ -88,8 +89,8 @@ export default function EditStaticPage({
 
       toast.success("Halaman berhasil diperbarui");
       router.push("/dashboard/pages");
-    } catch (err: any) {
-      toast.error(err.message || "Gagal memperbarui halaman");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Gagal memperbarui halaman"));
     } finally {
       setIsSubmitting(false);
     }

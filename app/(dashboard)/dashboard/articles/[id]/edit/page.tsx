@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, use } from "react";
+import NextImage from "next/image";
 import dynamic from "next/dynamic";
 import { DashboardTopbar } from "@/components/dashboard/topbar";
 const TiptapEditor = dynamic(
@@ -18,7 +19,7 @@ import {
   ArrowLeft,
   Plus,
   X,
-  Image,
+  Image as ImageIcon,
   CircleNotch,
   Trash,
   Sparkle,
@@ -27,10 +28,16 @@ import {
   Lightning,
   MapPin,
 } from "@phosphor-icons/react/dist/ssr";
-import { CATEGORIES } from "@/lib/constants";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useSession } from "@/lib/use-session";
+import { StatusBadge } from "@/components/shared/status-badge";
+import { WarningCircle } from "@phosphor-icons/react/dist/ssr";
+import { requestJson, toastApiError } from "@/lib/api-client";
+
+type AuthorOption = { id: number; name: string; role: string | null };
+type CategoryOption = { id: number; name: string; slug: string; isActive?: boolean };
 
 export default function EditArticlePage({
   params,
@@ -39,6 +46,8 @@ export default function EditArticlePage({
 }) {
   const { id } = use(params);
   const router = useRouter();
+  const { user } = useSession();
+  const isContributor = user?.role === "Kontributor";
 
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
@@ -50,6 +59,7 @@ export default function EditArticlePage({
   const [selectedLocation, setSelectedLocation] = useState("1");
   const [isFeatured, setIsFeatured] = useState(false);
   const [isBreaking, setIsBreaking] = useState(false);
+  const [isEditorsChoice, setIsEditorsChoice] = useState(false);
   const [imageCaption, setImageCaption] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
@@ -64,38 +74,39 @@ export default function EditArticlePage({
   const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [authorsList, setAuthorsList] = useState<any[]>([]);
+  const [authorsList, setAuthorsList] = useState<AuthorOption[]>([]);
+  const [categoriesList, setCategoriesList] = useState<CategoryOption[]>([]);
+  const [reviewNote, setReviewNote] = useState<string | null>(null);
 
   const thumbnailInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    // Fetch Authors
-    fetch("/api/authors")
-      .then((res) => (res.ok ? res.json() : []))
-      .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setAuthorsList(data);
-        } else {
-          setAuthorsList([
-            { id: 1, name: "Ahmad Rizky Pratama", role: "Chief Editor" },
-            { id: 2, name: "Siti Nurhaliza", role: "Senior Reporter" },
-            { id: 3, name: "Budi Santoso", role: "Jurnalis Investigasi" },
-          ]);
-        }
+    void Promise.all([
+      requestJson<AuthorOption[]>("/api/authors"),
+      requestJson<CategoryOption[]>("/api/categories"),
+    ])
+      .then(([authors, categories]) => {
+        setAuthorsList(authors);
+        setCategoriesList(categories.filter((category) => category.isActive !== false));
       })
-      .catch(() => {
-        setAuthorsList([
-          { id: 1, name: "Ahmad Rizky Pratama", role: "Chief Editor" },
-          { id: 2, name: "Siti Nurhaliza", role: "Senior Reporter" },
-          { id: 3, name: "Budi Santoso", role: "Jurnalis Investigasi" },
-        ]);
-      });
+      .catch(toastApiError);
 
     const fetchArticle = async () => {
       try {
         const res = await fetch(`/api/articles/${id}`);
         const data = await res.json();
         if (res.ok) {
+          // Guard: kontributor hanya boleh membuka artikel miliknya yang masih draft/perlu revisi
+          if (
+            user?.role === "Kontributor" &&
+            (data.authorId !== user.authorId ||
+              !["draft", "revision_required", "submitted"].includes(data.status))
+          ) {
+            toast.error("Anda tidak memiliki akses ke artikel ini");
+            router.push("/dashboard/my-articles");
+            return;
+          }
+
           setTitle(data.title || "");
           setSlug(data.slug || "");
           setSubtitle(data.subtitle || "");
@@ -106,17 +117,20 @@ export default function EditArticlePage({
           setStatus(data.status || "published");
           setSelectedCategory(data.categoryId ? String(data.categoryId) : "");
           setSelectedAuthor(data.authorId ? String(data.authorId) : "1");
+          setReviewNote(data.reviewNote || null);
           setSelectedLocation(data.locationId ? String(data.locationId) : "1");
           setIsFeatured(Boolean(data.featured));
           setIsBreaking(Boolean(data.breaking));
+          setIsEditorsChoice(Boolean(data.editorsChoice));
           setSeoTitle(data.seoTitle || "");
           setSeoDescription(data.seoDescription || "");
           setSeoKeywords(data.seoKeywords || "");
           setFocusKeyword(data.focusKeyword || "");
           setSeoScore(data.seoScore || 0);
+          setTags(data.tags?.map((tag: { name: string }) => tag.name) || []);
         } else {
           toast.error(data.message || "Artikel tidak ditemukan");
-          router.push("/dashboard/articles");
+          router.push(isContributor ? "/dashboard/my-articles" : "/dashboard/articles");
         }
       } catch {
         toast.error("Gagal mengambil data artikel");
@@ -126,7 +140,8 @@ export default function EditArticlePage({
     };
 
     fetchArticle();
-  }, [id, router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, user?.authorId, user?.role]);
 
   const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -151,8 +166,8 @@ export default function EditArticlePage({
 
       setThumbnailUrl(result.data.url);
       toast.success("Gambar utama berhasil diunggah (WebP)", { id: toastId });
-    } catch (err: any) {
-      toast.error(err.message || "Gagal mengunggah gambar", { id: toastId });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Gagal mengunggah gambar", { id: toastId });
     } finally {
       setIsUploadingThumbnail(false);
       if (thumbnailInputRef.current) thumbnailInputRef.current.value = "";
@@ -202,22 +217,29 @@ export default function EditArticlePage({
           locationId: selectedLocation ? parseInt(selectedLocation) : null,
           featured: isFeatured,
           breaking: isBreaking,
+          editorsChoice: isEditorsChoice,
           readingTime: calculatedReadingTime,
           seoTitle: seoTitle.trim() || title,
           seoDescription: seoDescription.trim() || excerpt.trim() || null,
           seoKeywords: seoKeywords.trim() || null,
           focusKeyword: focusKeyword.trim() || null,
           seoScore,
+          tags,
         }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Gagal memperbarui artikel");
 
-      toast.success("Artikel berhasil diperbarui!", { id: toastId });
-      router.push("/dashboard/articles");
-    } catch (err: any) {
-      toast.error(err.message || "Gagal memperbarui artikel", { id: toastId });
+      toast.success(
+        isContributor
+          ? "Artikel berhasil dikirim ulang! Menunggu review redaksi."
+          : "Artikel berhasil diperbarui!",
+        { id: toastId }
+      );
+      router.push(isContributor ? "/dashboard/my-articles" : "/dashboard/articles");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Gagal memperbarui artikel", { id: toastId });
     } finally {
       setIsSaving(false);
     }
@@ -244,14 +266,23 @@ export default function EditArticlePage({
         {/* Top Action Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-black/5 pb-4">
           <div className="flex items-center gap-3">
-            <Link href="/dashboard/articles">
+            <Link href={isContributor ? "/dashboard/my-articles" : "/dashboard/articles"}>
               <Button variant="ghost" size="icon" className="size-8 rounded-none border border-black/10 bg-white hover:bg-black/5">
                 <ArrowLeft className="size-4" />
               </Button>
             </Link>
             <div>
-              <h1 className="text-xl font-bold text-foreground">Edit Artikel Berita</h1>
-              <p className="text-xs text-muted-foreground">Perbarui naskah, atribusi reporter, dan optimasi SEO.</p>
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl font-bold text-foreground">
+                  {isContributor ? "Perbaiki Berita Anda" : "Edit Artikel Berita"}
+                </h1>
+                <StatusBadge status={status} />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {isContributor
+                  ? "Perbarui naskah Anda, lalu kirim ulang ke meja redaksi untuk ditinjau."
+                  : "Perbarui naskah, atribusi reporter, dan optimasi SEO."}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -264,16 +295,43 @@ export default function EditArticlePage({
               {isSaving ? <CircleNotch className="size-4 animate-spin" /> : <FloppyDisk className="size-4" weight="bold" />}
               Simpan Draft
             </Button>
-            <Button
-              disabled={isSaving}
-              onClick={() => handleUpdateArticle("published")}
-              className="gap-2 rounded-none bg-primary text-white hover:bg-primary/90 font-bold uppercase tracking-wider text-xs px-5 py-2.5 shadow-2xs"
-            >
-              {isSaving ? <CircleNotch className="size-4 animate-spin" /> : <PaperPlaneRight className="size-4" weight="bold" />}
-              Perbarui & Publish
-            </Button>
+            {isContributor ? (
+              <Button
+                disabled={isSaving}
+                onClick={() => handleUpdateArticle("submitted")}
+                className="gap-2 rounded-none bg-[#b8860b] text-white hover:bg-[#92700a] font-bold uppercase tracking-wider text-xs px-5 py-2.5 border border-[#92700a] shadow-xs"
+              >
+                {isSaving ? <CircleNotch className="size-4 animate-spin" /> : <PaperPlaneRight className="size-4" weight="bold" />}
+                Kirim Ulang ke Redaksi
+              </Button>
+            ) : (
+              <Button
+                disabled={isSaving}
+                onClick={() => handleUpdateArticle("published")}
+                className="gap-2 rounded-none bg-primary text-white hover:bg-primary/90 font-bold uppercase tracking-wider text-xs px-5 py-2.5 shadow-2xs"
+              >
+                {isSaving ? <CircleNotch className="size-4 animate-spin" /> : <PaperPlaneRight className="size-4" weight="bold" />}
+                Perbarui & Publish
+              </Button>
+            )}
           </div>
         </div>
+
+        {/* Catatan revisi dari redaksi */}
+        {isContributor && reviewNote && (
+          <div className="flex items-start gap-3 border border-red-500/30 border-l-4 border-l-red-500 bg-red-500/5 p-4">
+            <WarningCircle className="size-5 shrink-0 text-red-600" weight="bold" />
+            <div>
+              <p className="text-sm font-bold text-red-800">Catatan dari redaksi:</p>
+              <p className="mt-0.5 text-xs leading-relaxed text-red-700/90 italic">
+                &ldquo;{reviewNote}&rdquo;
+              </p>
+              <p className="mt-1 text-[11px] text-red-700/70">
+                Perbaiki bagian yang disebutkan, lalu klik &ldquo;Kirim Ulang ke Redaksi&rdquo;.
+              </p>
+            </div>
+          </div>
+        )}
 
         <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
           {/* Main Column */}
@@ -321,33 +379,35 @@ export default function EditArticlePage({
               >
                 Konten & Naskah Berita
               </button>
-              <button
-                onClick={() => setActiveTab("seo")}
-                className={`border-b-2 px-4 py-2 text-xs font-bold uppercase tracking-wider transition-colors flex items-center gap-1.5 ${
-                  activeTab === "seo"
-                    ? "border-primary text-primary"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <Sparkle className="size-3.5" weight="bold" />
-                Pengaturan SEO & Analisis
-                {seoScore > 0 && (
-                  <Badge className={`ml-1 text-[10px] rounded-none px-1.5 py-0 ${seoScore >= 70 ? 'bg-emerald-600' : 'bg-[#B8860B]'}`}>
-                    {seoScore}/100
-                  </Badge>
-                )}
-              </button>
+              {!isContributor && (
+                <button
+                  onClick={() => setActiveTab("seo")}
+                  className={`border-b-2 px-4 py-2 text-xs font-bold uppercase tracking-wider transition-colors flex items-center gap-1.5 ${
+                    activeTab === "seo"
+                      ? "border-primary text-primary"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <Sparkle className="size-3.5" weight="bold" />
+                  Pengaturan SEO & Analisis
+                  {seoScore > 0 && (
+                    <Badge className={`ml-1 text-[10px] rounded-none px-1.5 py-0 ${seoScore >= 70 ? 'bg-emerald-600' : 'bg-[#B8860B]'}`}>
+                      {seoScore}/100
+                    </Badge>
+                  )}
+                </button>
+              )}
             </div>
 
             {/* Content Tab */}
             {activeTab === "content" && (
               <div className="space-y-4">
-                <TiptapEditor content={content} onChange={setContent} />
+                <TiptapEditor content={content} onChange={setContent} storageKey={`metrik-article-draft:${id}`} />
               </div>
             )}
 
-            {/* SEO Tab */}
-            {activeTab === "seo" && (
+            {/* SEO Tab — hanya admin/redaksi */}
+            {activeTab === "seo" && !isContributor && (
               <div className="space-y-6">
                 <SeoTracker
                   title={title}
@@ -410,7 +470,8 @@ export default function EditArticlePage({
 
           {/* Sidebar Settings Column */}
           <div className="space-y-6">
-            {/* Editorial Toggles Card */}
+            {/* Editorial Toggles Card — hanya admin/redaksi */}
+            {!isContributor && (
             <Card className="rounded-none border border-black/10 bg-white shadow-2xs">
               <CardHeader className="border-b border-black/5 px-6 py-4">
                 <CardTitle className="text-base font-bold text-foreground">Status & Posisi Berita</CardTitle>
@@ -435,6 +496,14 @@ export default function EditArticlePage({
                 </label>
 
                 <label className="flex items-start gap-3 cursor-pointer p-2.5 border border-black/10 hover:bg-black/[0.02] transition-colors">
+                  <input type="checkbox" checked={isEditorsChoice} onChange={(e) => setIsEditorsChoice(e.target.checked)} className="mt-0.5 size-4 accent-[#B8860B]" />
+                  <div>
+                    <span className="flex items-center gap-1.5 text-xs font-bold text-foreground">Pilihan Editor</span>
+                    <p className="mt-1 text-[11px] text-muted-foreground">Tampilkan artikel di kurasi pilihan editor.</p>
+                  </div>
+                </label>
+
+                <label className="flex items-start gap-3 cursor-pointer p-2.5 border border-black/10 hover:bg-black/[0.02] transition-colors">
                   <input
                     type="checkbox"
                     checked={isBreaking}
@@ -453,6 +522,7 @@ export default function EditArticlePage({
                 </label>
               </CardContent>
             </Card>
+            )}
 
             {/* Author & Taxonomy Card */}
             <Card className="rounded-none border border-black/10 bg-white shadow-2xs">
@@ -460,7 +530,8 @@ export default function EditArticlePage({
                 <CardTitle className="text-base font-bold text-foreground">Atribusi & Klasifikasi</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 p-6">
-                {/* Author Dropdown */}
+                {/* Author Dropdown — hanya admin/redaksi */}
+                {!isContributor && (
                 <div>
                   <label className="mb-1.5 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-on-surface">
                     <User className="size-3.5 text-primary" />
@@ -479,6 +550,7 @@ export default function EditArticlePage({
                     ))}
                   </select>
                 </div>
+                )}
 
                 {/* Category Dropdown */}
                 <div>
@@ -491,8 +563,8 @@ export default function EditArticlePage({
                     className="w-full rounded-none border border-black/15 bg-white px-3 py-2 text-xs font-medium text-foreground outline-none focus:border-[#B8860B]"
                   >
                     <option value="">Pilih rubrik kategori</option>
-                    {CATEGORIES.map((cat) => (
-                      <option key={cat.id} value={cat.slug}>
+                    {categoriesList.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
                         {cat.name}
                       </option>
                     ))}
@@ -520,7 +592,8 @@ export default function EditArticlePage({
                   </select>
                 </div>
 
-                {/* Slug URL */}
+                {/* Slug URL — hanya admin/redaksi */}
+                {!isContributor && (
                 <div>
                   <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-on-surface">
                     Slug URL
@@ -532,6 +605,7 @@ export default function EditArticlePage({
                     className="rounded-none border-black/15 bg-white font-mono text-xs focus:border-[#B8860B]"
                   />
                 </div>
+                )}
 
                 {/* Tags */}
                 <div>
@@ -599,9 +673,11 @@ export default function EditArticlePage({
                 />
                 {thumbnailUrl ? (
                   <div className="relative aspect-video overflow-hidden border border-black/10 bg-muted">
-                    <img
+                    <NextImage
                       src={thumbnailUrl}
                       alt="Gambar Utama"
+                      width={800}
+                      height={450}
                       className="h-full w-full object-cover"
                     />
                     <Button
@@ -623,7 +699,7 @@ export default function EditArticlePage({
                       <CircleNotch className="size-8 animate-spin text-primary" />
                     ) : (
                       <div className="text-center p-3">
-                        <Image className="mx-auto size-8 text-muted-foreground/50" />
+                        <ImageIcon className="mx-auto size-8 text-muted-foreground/50" />
                         <p className="mt-2 text-xs font-bold uppercase tracking-wider text-foreground">
                           Klik untuk upload foto
                         </p>

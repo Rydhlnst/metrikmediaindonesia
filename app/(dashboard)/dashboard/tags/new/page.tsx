@@ -9,6 +9,7 @@ import { ArrowLeft, FloppyDisk, CircleNotch } from "@phosphor-icons/react/dist/s
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/error-message";
 
 export default function NewTagPage() {
   const router = useRouter();
@@ -50,8 +51,8 @@ export default function NewTagPage() {
 
       toast.success("Tag berhasil dibuat");
       router.push("/dashboard/tags");
-    } catch (err: any) {
-      toast.error(err.message || "Gagal membuat tag");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Gagal membuat tag"));
     } finally {
       setIsSubmitting(false);
     }

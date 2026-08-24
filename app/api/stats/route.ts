@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/server-session";
 import { getDb } from "@/db/index";
-import { articles, categories, authors, comments } from "@/db/schema/index";
-import { count, sum, desc, eq } from "drizzle-orm";
+import { articles, articleViewRollups, categories, authors, comments } from "@/db/schema/index";
+import { and, count, sum, desc, eq, gte, sql } from "drizzle-orm";
 
 export async function GET(request: NextRequest) {
+  const authGuard = await requireAdmin(request); if (authGuard.error) return authGuard.error;
   try {
     const db = await getDb();
 
@@ -53,19 +55,27 @@ export async function GET(request: NextRequest) {
       .limit(5);
 
     // 7. Top Articles by Views (Top 5)
+    const trendingCutoff = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const trendingCounts = db
+      .select({ articleId: articleViewRollups.articleId, views: sql<number>`sum(${articleViewRollups.viewCount})`.as("views") })
+      .from(articleViewRollups)
+      .where(and(gte(articleViewRollups.bucketStart, trendingCutoff), eq(articleViewRollups.bucketType, "hour")))
+      .groupBy(articleViewRollups.articleId)
+      .as("dashboard_trending_counts");
     const topArticlesList = await db
       .select({
         id: articles.id,
         title: articles.title,
-        viewCount: articles.viewCount,
+        viewCount: sql<number>`coalesce(${trendingCounts.views}, 0)`,
         slug: articles.slug,
         categoryName: categories.name,
         categoryColor: categories.color,
       })
       .from(articles)
       .leftJoin(categories, eq(articles.categoryId, categories.id))
+      .leftJoin(trendingCounts, eq(articles.id, trendingCounts.articleId))
       .where(eq(articles.status, "published"))
-      .orderBy(desc(articles.viewCount))
+      .orderBy(desc(sql`coalesce(${trendingCounts.views}, 0)`), desc(articles.viewCount))
       .limit(5);
 
     // 8. Monthly stats for charts (last 12 months)
@@ -110,7 +120,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       stats: {
         totalArticles: articlesCount?.count || 0,
-        totalViews: parseInt(viewsSum?.totalViews || "0"),
+        totalViews: Number(viewsSum?.totalViews || 0),
         activeAuthors: authorsCount?.count || 0,
         totalCategories: categoriesCount?.count || 0,
       },
@@ -120,7 +130,7 @@ export async function GET(request: NextRequest) {
       chartData,
       categoryStats,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("GET /api/stats error:", error);
     return NextResponse.json({ message: "Gagal mengambil statistik dashboard" }, { status: 500 });
   }

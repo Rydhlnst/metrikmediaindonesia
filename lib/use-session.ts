@@ -8,6 +8,8 @@ interface SessionUser {
   email: string;
   role?: string;
   avatar?: string;
+  authorId?: number;
+  slug?: string;
 }
 
 interface Session {
@@ -36,7 +38,7 @@ export function useSession(): Session & { signOut: () => Promise<void>; refresh:
   }, []);
 
   useEffect(() => {
-    fetchSession();
+    queueMicrotask(() => fetchSession());
   }, [fetchSession]);
 
   const signOut = async () => {

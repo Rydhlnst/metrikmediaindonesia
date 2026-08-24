@@ -25,6 +25,7 @@ import {
 import { Plus, PencilSimple, Trash, CircleNotch } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/error-message";
 
 interface Role {
   id: number;
@@ -56,7 +57,7 @@ export default function RolesPage() {
   };
 
   useEffect(() => {
-    fetchRoles();
+    queueMicrotask(() => fetchRoles());
   }, []);
 
   const handleDelete = async () => {
@@ -75,8 +76,8 @@ export default function RolesPage() {
       toast.success("Role berhasil dihapus");
       setDeleteItem(null);
       fetchRoles();
-    } catch (err: any) {
-      toast.error(err.message || "Gagal menghapus role");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Gagal menghapus role"));
     }
   };
 
@@ -115,7 +116,7 @@ export default function RolesPage() {
                   ) : roles.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={4} className="h-32 text-center text-muted-foreground">
-                        Belum ada role khusus. Klik "Role Baru" untuk membuat.
+                        Belum ada role khusus. Klik &quot;Role Baru&quot; untuk membuat.
                       </TableCell>
                     </TableRow>
                   ) : (

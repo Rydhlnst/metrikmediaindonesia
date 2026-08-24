@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getArticles, getTrendingArticles } from "@/lib/queries";
+import type { Article } from "@/lib/types";
 import { getImageUrl } from "@/lib/utils";
 import {
   getCategorySlug,
@@ -12,9 +13,12 @@ import {
 import { AnimateOnScroll } from "@/components/shared/animate-on-scroll";
 import { NewsletterForm } from "@/components/shared/newsletter-form";
 import { LoadMoreArticles } from "@/components/home/load-more-articles";
+import { AdvertisementSlot } from "@/components/advertising/advertisement-slot";
 import type { Metadata } from "next";
 import { SITE_CONFIG } from "@/lib/constants";
 import { Lightning, Play, TrendUp, Newspaper, ArrowRight } from "@phosphor-icons/react/dist/ssr";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: `${SITE_CONFIG.name} - Media Berita Digital Profesional Indonesia`,
@@ -32,104 +36,23 @@ export const metadata: Metadata = {
 
 export const revalidate = 60;
 
-const FALLBACK_ARTICLES = [
-  {
-    id: 101,
-    title: "Pemerintah Resmikan Peta Jalan Pertumbuhan Ekonomi 8 Persen 2026-2030",
-    slug: "pemerintah-resmikan-peta-jalan-pertumbuhan-ekonomi-8-persen",
-    subtitle: "Fokus utama pada hilirisasi industri, energi hijau, dan digitalisasi UMKM.",
-    excerpt: "Pemerintah meluncurkan target pertumbuhan ekonomi nasional sebesar 8 persen yang didukung efisiensi birokrasi dan investasi strategis.",
-    thumbnail: "https://picsum.photos/seed/ekonomi/800/450",
-    category: { name: "Nasional", slug: "nasional" },
-    author: { name: "Ahmad Rizky Pratama", slug: "ahmad-rizky-pratama" },
-    publishedAt: new Date().toISOString(),
-    readingTime: 5,
-    viewCount: 24500,
-    featured: true,
-    breaking: true,
-  },
-  {
-    id: 102,
-    title: "Dinamika Koalisi Parlemen dan Pembahasan RUU Pemilu 2029 Mulai Bergulir",
-    slug: "dinamika-koalisi-parlemen-dan-pembahasan-ruu-pemilu-2029",
-    subtitle: "Fraksi-fraksi di DPR mulai menyepakati poin krusial ambang batas parlemen.",
-    excerpt: "Pembahasan RUU Pemilu 2029 resmi dimulai di Senayan dengan fokus penyempurnaan sistem pemungutan suara elektronik.",
-    thumbnail: "https://picsum.photos/seed/politik/800/450",
-    category: { name: "Politik", slug: "politik" },
-    author: { name: "Siti Nurhaliza", slug: "siti-nurhaliza" },
-    publishedAt: new Date(Date.now() - 3600000).toISOString(),
-    readingTime: 4,
-    viewCount: 18900,
-  },
-  {
-    id: 103,
-    title: "Pasar Saham Indonesia Catat Rekor Tertinggi Sepanjang Sejarah Tembus 8.000",
-    slug: "pasar-saham-indonesia-catat-rekor-tertinggi-sepanjang-sejarah",
-    subtitle: "IHSG bergerak menguat didorong aksi beli bersih investor asing.",
-    excerpt: "Indeks Harga Saham Gabungan (IHSG) menembus level psikologis 8.000 didorong optimisme pertumbuhan ekonomi domestik.",
-    thumbnail: "https://picsum.photos/seed/saham/800/450",
-    category: { name: "Bisnis", slug: "bisnis" },
-    author: { name: "Ahmad Rizky Pratama", slug: "ahmad-rizky-pratama" },
-    publishedAt: new Date(Date.now() - 7200000).toISOString(),
-    readingTime: 5,
-    viewCount: 31200,
-  },
-  {
-    id: 104,
-    title: "Kedaulatan Data dan Kebijakan Pengembangan Artificial Intelligence Indonesia",
-    slug: "kedaulatan-data-dan-kebijakan-pengembangan-ai-indonesia",
-    subtitle: "Pemerintah merilis standar etika dan keamanan data nasional untuk adopsi AI.",
-    excerpt: "Pedoman nasional penggunaan AI dirilis guna memastikan perlindungan data pribadi konsumen dan etika algoritma.",
-    thumbnail: "https://picsum.photos/seed/tekno/800/450",
-    category: { name: "Teknologi", slug: "teknologi" },
-    author: { name: "Ahmad Rizky Pratama", slug: "ahmad-rizky-pratama" },
-    publishedAt: new Date(Date.now() - 10800000).toISOString(),
-    readingTime: 6,
-    viewCount: 19800,
-  },
-  {
-    id: 105,
-    title: "Timnas Garuda Muda Tampil Gemilang di Kualifikasi Piala Dunia U-20",
-    slug: "timnas-garuda-muda-tampil-gemilang-di-kualifikasi-piala-dunia-u-20",
-    subtitle: "Kemenangan dramatis 2-1 menegaskan kesiapan tim nasional di kancah dunia.",
-    excerpt: "Garuda Muda mengamankan tiket fase gugur setelah menaklukkan tim kuat dalam laga ketat di Stadion GBK.",
-    thumbnail: "https://picsum.photos/seed/timnas/800/450",
-    category: { name: "Sports", slug: "sports" },
-    author: { name: "Reza Firmansyah", slug: "reza-firmansyah" },
-    publishedAt: new Date(Date.now() - 14400000).toISOString(),
-    readingTime: 5,
-    viewCount: 34000,
-  },
-  {
-    id: 106,
-    title: "Pemerintah Daerah Jawa Barat Luncurkan Pusat Inovasi Pelayanan Publik Digital",
-    slug: "pemerintah-daerah-jawa-barat-luncurkan-pusat-inovasi-pelayanan-publik",
-    subtitle: "Layanan perizinan dan administrasi warga kini dapat diakses dalam satu aplikasi terpadu.",
-    excerpt: "Inovasi sistem digitalisasi Pemprov Jabar memangkas waktu pengurusan izin usaha menjadi hanya beberapa menit.",
-    thumbnail: "https://picsum.photos/seed/jabar/800/450",
-    category: { name: "Daerah", slug: "daerah" },
-    author: { name: "Siti Nurhaliza", slug: "siti-nurhaliza" },
-    publishedAt: new Date(Date.now() - 18000000).toISOString(),
-    readingTime: 4,
-    viewCount: 16700,
-  },
-];
-
 export default async function HomePage() {
-  let latestArticles: any[] = [];
-  let trendingArticles: any[] = [];
+  let latestArticles: Article[] = [];
+  let trendingArticles: Article[] = [];
+  let editorsChoiceArticles: Article[] = [];
 
   try {
-    [latestArticles, trendingArticles] = await Promise.all([
+    [latestArticles, trendingArticles, editorsChoiceArticles] = await Promise.all([
       getArticles({ limit: 20 }),
       getTrendingArticles(8),
+      getArticles({ editorsChoice: true, limit: 4 }),
     ]);
   } catch (err) {
     console.error("HomePage fetch error:", err);
   }
 
-  const articles = latestArticles.length > 0 ? latestArticles : FALLBACK_ARTICLES;
-  const trending = trendingArticles.length > 0 ? trendingArticles : articles.slice(0, 5);
+  const articles = latestArticles;
+  const trending = trendingArticles;
 
   const heroArticle = articles[0];
   const secondaryArticles = articles.slice(1, 5);
@@ -142,6 +65,7 @@ export default async function HomePage() {
       {/* 1. HERO FEATURED SPOTLIGHT SECTION (Editorial Lead Story)    */}
       {/* ============================================================ */}
       <section className="container-editorial pt-6 pb-8">
+        <AdvertisementSlot position="homepage" className="mb-6" />
         {heroArticle && (
           <article className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch border border-black/10 bg-white rounded-none p-5 sm:p-7 md:p-8 transition-colors hover:border-black/25">
 
@@ -152,7 +76,7 @@ export default async function HomePage() {
                     <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-gold text-white rounded-none">
                       {getCategoryName(heroArticle) || "UTAMA"}
                     </span>
-                    {heroArticle.breaking && (
+                    {heroArticle.isBreaking && (
                       <span className="px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider bg-black text-white rounded-none flex items-center gap-1 border border-white/20">
                         <Lightning className="size-3 text-gold fill-current" /> BREAKING
                       </span>
@@ -211,7 +135,28 @@ export default async function HomePage() {
 
             </article>
           )}
+        {!heroArticle && <div className="border border-black/10 bg-white p-8 text-sm text-muted-foreground">No published articles are available yet.</div>}
       </section>
+
+      {editorsChoiceArticles.length > 0 && (
+        <section className="container-editorial border-t border-black/10 py-8">
+          <div className="flex items-center justify-between border-b-2 border-black pb-2.5">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">Pilihan Editor</h2>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-gold-deep">Kurasi Redaksi</span>
+          </div>
+          <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {editorsChoiceArticles.map((article) => (
+              <article key={article.id} className="border border-black/10 bg-white p-4 transition-colors hover:border-black/25">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-gold-deep">{getCategoryName(article)}</span>
+                <h3 className="mt-2 line-clamp-3 font-serif text-lg font-bold leading-snug">
+                  <Link href={`/${getCategorySlug(article)}/${article.slug}`} className="hover:text-gold-deep">{article.title}</Link>
+                </h3>
+                <p className="mt-3 text-xs text-muted-foreground">{getTimeAgo(article.publishedAt || new Date())}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ============================================================ */}
       {/* 2. SECONDARY GRID + TRENDING SIDEBAR                          */}
@@ -233,7 +178,7 @@ export default async function HomePage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              {secondaryArticles.map((article: any, index: number) => (
+              {secondaryArticles.map((article, index) => (
                 <AnimateOnScroll key={article.id} animation="fade-up" delay={(index * 100) as 0 | 100 | 200}>
                   <article className="flex flex-col border border-black/10 bg-white rounded-none p-4 sm:p-5 hover:border-black/25 transition-colors group h-full justify-between">
                     <div>
@@ -293,7 +238,7 @@ export default async function HomePage() {
               </div>
 
               <div className="space-y-4">
-                {trending.map((item: any, idx: number) => (
+                {trending.map((item, idx) => (
                   <div key={item.id} className="flex items-start gap-3 pb-3 border-b border-black/5 last:border-0 last:pb-0 group">
                     <span className="text-xl font-black text-gold w-6 shrink-0 leading-none">
                       0{idx + 1}
@@ -331,26 +276,9 @@ export default async function HomePage() {
                 </Link>
               </div>
 
-              <div className="relative aspect-video w-full bg-black border border-white/10 rounded-none group overflow-hidden cursor-pointer">
-                <Image
-                  src="https://picsum.photos/seed/videodark/800/450"
-                  alt="Video Liputan Khusus"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  className="object-cover opacity-80 group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                  <div className="p-3 bg-gold text-white rounded-none group-hover:bg-gold/90 transition-colors">
-                    <Play className="size-6 fill-current" />
-                  </div>
-                </div>
+              <div className="relative aspect-video w-full bg-black border border-white/10 rounded-none flex items-center justify-center px-6 text-center">
+                <p className="text-xs text-white/60">No published video is available.</p>
               </div>
-
-              <h4 className="text-xs font-bold leading-snug text-white/90 hover:text-gold transition-colors">
-                <Link href="/video">
-                  Potensi Masa Depan Inovasi Teknologi & Broadband Indonesia 2026-2030
-                </Link>
-              </h4>
             </div>
 
           </aside>

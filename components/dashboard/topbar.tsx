@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -12,18 +11,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { User, Gear, SignOut, ArrowSquareOut } from "@phosphor-icons/react/dist/ssr";
+import { useSession } from "@/lib/use-session";
+import { NotificationBell } from "@/components/dashboard/notification-bell";
 
 export function DashboardTopbar() {
-  const [userName, setUserName] = useState("Admin");
-
-  useEffect(() => {
-    fetch("/api/auth/get-session")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data?.user?.name) setUserName(data.user.name.split(" ")[0]);
-      })
-      .catch(() => {});
-  }, []);
+  const { user } = useSession();
+  const isContributor = user?.role === "Kontributor";
+  const userName = user?.name?.split(" ")[0] || "Admin";
+  const panelLabel = isContributor ? "Panel Kontributor" : "Panel Admin";
 
   const handleSignOut = async () => {
     try {
@@ -60,6 +55,10 @@ export function DashboardTopbar() {
 
         <div className="h-4 w-px bg-black/10 hidden md:block" />
 
+        <NotificationBell />
+
+        <div className="h-4 w-px bg-black/10 hidden md:block" />
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="flex items-center gap-2.5 rounded-none p-1 transition-colors hover:bg-black/5 outline-none cursor-pointer">
@@ -74,28 +73,30 @@ export function DashboardTopbar() {
                   {userName}
                 </span>
                 <span className="text-[10px] font-semibold text-[#B8860B] uppercase tracking-wider leading-tight">
-                  Panel Admin
+                  {panelLabel}
                 </span>
               </div>
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52 rounded-none border border-black/10 bg-white shadow-md p-1">
             <div className="px-3 py-2 border-b border-black/5 mb-1">
-              <p className="text-xs font-bold text-foreground">{userName}</p>
-              <p className="text-[10px] text-muted-foreground font-mono">admin@metrikmedia.id</p>
+              <p className="text-xs font-bold text-foreground">{user?.name || userName}</p>
+              <p className="text-[10px] text-muted-foreground font-mono">{user?.email || "admin@metrikmedia.id"}</p>
             </div>
             <DropdownMenuItem asChild>
-              <Link href="/dashboard/settings" className="flex items-center gap-2 cursor-pointer text-xs font-medium px-3 py-2 rounded-none hover:bg-black/5">
+              <Link href={isContributor ? "/dashboard/profile" : "/dashboard/settings"} className="flex items-center gap-2 cursor-pointer text-xs font-medium px-3 py-2 rounded-none hover:bg-black/5">
                 <User className="size-4 text-muted-foreground" />
                 Profil Saya
               </Link>
             </DropdownMenuItem>
+            {!isContributor && (
             <DropdownMenuItem asChild>
               <Link href="/dashboard/settings" className="flex items-center gap-2 cursor-pointer text-xs font-medium px-3 py-2 rounded-none hover:bg-black/5">
                 <Gear className="size-4 text-muted-foreground" />
                 Pengaturan Sistem
               </Link>
             </DropdownMenuItem>
+            )}
             <DropdownMenuSeparator className="bg-black/10 my-1" />
             <DropdownMenuItem onClick={handleSignOut} className="flex items-center gap-2 cursor-pointer text-xs font-medium px-3 py-2 rounded-none text-destructive hover:bg-destructive/10 focus:text-destructive">
               <SignOut className="size-4" />

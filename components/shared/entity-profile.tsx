@@ -6,9 +6,9 @@ interface EntityProfileArticle {
   id: string | number;
   title: string;
   slug: string;
-  excerpt: string;
-  thumbnail: string;
-  publishedAt: string | Date;
+  excerpt?: string | null;
+  thumbnail?: string | null;
+  publishedAt?: string | Date | null;
   category: { name: string; slug: string };
 }
 
@@ -62,7 +62,7 @@ export function EntityProfile({
             >
               <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
                 <Image
-                  src={item.thumbnail}
+                  src={item.thumbnail || "/placeholder.png"}
                   alt={item.title}
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -77,14 +77,16 @@ export function EntityProfile({
                   <h3 className="font-bold text-foreground text-sm sm:text-base leading-snug group-hover:text-gold-deep transition-colors line-clamp-2">
                     {item.title}
                   </h3>
-                  <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-                    {item.excerpt}
-                  </p>
+                  {item.excerpt && (
+                    <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                      {item.excerpt}
+                    </p>
+                  )}
                 </div>
                 <div className="flex items-center justify-between border-t border-black/5 pt-2 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1 text-[11px]">
                     <Clock className="size-3.5" />
-                    {new Date(item.publishedAt).toLocaleDateString("id-ID", {
+                    {new Date(item.publishedAt || "1970-01-01").toLocaleDateString("id-ID", {
                       day: "numeric",
                       month: "short",
                       year: "numeric",

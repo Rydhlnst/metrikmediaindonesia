@@ -26,6 +26,7 @@ import {
 import { Plus, PencilSimple, Trash, CircleNotch } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/error-message";
 
 interface Author {
   id: number;
@@ -60,7 +61,7 @@ export default function AuthorsPage() {
   };
 
   useEffect(() => {
-    fetchAuthors();
+    queueMicrotask(() => fetchAuthors());
   }, []);
 
   const handleDelete = async () => {
@@ -79,8 +80,8 @@ export default function AuthorsPage() {
       toast.success("Penulis berhasil dihapus");
       setDeleteItem(null);
       fetchAuthors();
-    } catch (err: any) {
-      toast.error(err.message || "Gagal menghapus penulis");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Gagal menghapus penulis"));
     }
   };
 
@@ -120,7 +121,7 @@ export default function AuthorsPage() {
                   ) : authors.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={5} className="h-32 text-center text-muted-foreground">
-                        Belum ada penulis. Klik "Penulis Baru" untuk menambahkan profil redaksi.
+                        Belum ada penulis. Klik &quot;Penulis Baru&quot; untuk menambahkan profil redaksi.
                       </TableCell>
                     </TableRow>
                   ) : (

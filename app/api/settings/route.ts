@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/server-session";
 import { getDb } from "@/db/index";
 import { settings } from "@/db/schema/index";
 import { eq } from "drizzle-orm";
+import { settingsSchema } from "@/lib/validators/cms";
+import { zodError } from "@/lib/api-response";
 
 export async function GET(request: NextRequest) {
+  const authGuard = await requireAdmin(request); if (authGuard.error) return authGuard.error;
   try {
     const db = await getDb();
     const items = await db.select().from(settings);
@@ -15,16 +19,19 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json(settingsObject);
-  } catch (error: any) {
+  } catch (error) {
     console.error("GET /api/settings error:", error);
     return NextResponse.json({ message: "Gagal mengambil pengaturan" }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
+  const authGuard = await requireAdmin(request); if (authGuard.error) return authGuard.error;
   try {
     const db = await getDb();
-    const body: Record<string, string> = await request.json();
+    const parsed = settingsSchema.safeParse(await request.json().catch(() => null));
+    if (!parsed.success) return zodError(parsed.error);
+    const body = parsed.data;
 
     const entries = Object.entries(body);
 
@@ -49,7 +56,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ message: "Pengaturan berhasil disimpan" });
-  } catch (error: any) {
+  } catch (error) {
     console.error("POST /api/settings error:", error);
     return NextResponse.json({ message: "Gagal menyimpan pengaturan" }, { status: 500 });
   }

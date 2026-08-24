@@ -1,53 +1,35 @@
 import { MetadataRoute } from "next";
-import { articles, authors } from "@/lib/mock-data";
-import { CATEGORIES, SITE_CONFIG } from "@/lib/constants";
+import { and, desc, eq } from "drizzle-orm";
+import { getDb } from "@/db/index";
+import { articles, authors, categories } from "@/db/schema/index";
+import { SITE_CONFIG } from "@/lib/constants";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const dynamic = "force-dynamic";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = SITE_CONFIG.url;
+  const staticRoutes: MetadataRoute.Sitemap = ["", "/latest", "/video", "/foto", "/tentang-kami", "/tim-editorial", "/hubungi-kami", "/business-publication", "/submit"]
+    .map((route) => ({ url: `${baseUrl}${route}`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: route === "" ? 1 : 0.6 }));
 
-  const staticRoutes = [
-    "",
-    "/category/nasional",
-    "/category/politik",
-    "/category/bisnis",
-    "/category/teknologi",
-    "/category/lifestyle",
-    "/category/entertainment",
-    "/category/sports",
-    "/category/daerah",
-    "/video",
-    "/foto",
-    "/tentang-kami",
-    "/tim-editorial",
-    "/hubungi-kami",
-    "/business-publication",
-  ].map((route) => ({
-    url: `${baseUrl}${route}`,
-    lastModified: new Date(),
-    changeFrequency: "hourly" as const,
-    priority: route === "" ? 1.0 : 0.8,
-  }));
+  try {
+    const db = await getDb();
+    const [categoryRows, authorRows, articleRows] = await Promise.all([
+      db.select({ slug: categories.slug, updatedAt: categories.updatedAt }).from(categories).where(eq(categories.isActive, true)),
+      db.select({ slug: authors.slug, updatedAt: authors.updatedAt }).from(authors).where(eq(authors.status, "active")),
+      db.select({ slug: articles.slug, publishedAt: articles.publishedAt, updatedAt: articles.updatedAt, categorySlug: categories.slug })
+        .from(articles)
+        .innerJoin(categories, eq(articles.categoryId, categories.id))
+        .where(and(eq(articles.status, "published"), eq(categories.isActive, true)))
+        .orderBy(desc(articles.publishedAt)),
+    ]);
 
-  const categoryRoutes = CATEGORIES.map((cat) => ({
-    url: `${baseUrl}/category/${cat.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "hourly" as const,
-    priority: 0.8,
-  }));
-
-  const articleRoutes = articles.map((article) => ({
-    url: `${baseUrl}/news/${article.slug}`,
-    lastModified: new Date(article.publishedAt),
-    changeFrequency: "daily" as const,
-    priority: 0.9,
-  }));
-
-  const authorRoutes = authors.map((author) => ({
-    url: `${baseUrl}/author/${author.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.6,
-  }));
-
-  return [...staticRoutes, ...categoryRoutes, ...articleRoutes, ...authorRoutes];
+    return [
+      ...staticRoutes,
+      ...categoryRows.map((category) => ({ url: `${baseUrl}/${category.slug}`, lastModified: category.updatedAt, changeFrequency: "hourly" as const, priority: 0.8 })),
+      ...articleRows.map((article) => ({ url: `${baseUrl}/${article.categorySlug}/${article.slug}`, lastModified: article.updatedAt ?? article.publishedAt ?? new Date(), changeFrequency: "daily" as const, priority: 0.9 })),
+      ...authorRows.map((author) => ({ url: `${baseUrl}/author/${author.slug}`, lastModified: author.updatedAt, changeFrequency: "weekly" as const, priority: 0.6 })),
+    ];
+  } catch {
+    return staticRoutes;
+  }
 }

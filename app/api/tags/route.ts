@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireEditor, requireAuth } from "@/lib/server-session";
 import { getDb } from "@/db/index";
 import { tags, articleTags } from "@/db/schema/index";
 import { desc, eq, count } from "drizzle-orm";
+import { tagSchema } from "@/lib/validators/cms";
+import { zodError } from "@/lib/api-response";
 
 export async function GET(request: NextRequest) {
+  const authGuard = await requireAuth(request); if (authGuard.error) return authGuard.error;
   try {
     const db = await getDb();
     const { searchParams } = new URL(request.url);
@@ -23,42 +27,33 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(tag);
     }
 
-    const items = await db.select().from(tags).orderBy(desc(tags.createdAt));
-
-    const itemsWithCounts = await Promise.all(
-      items.map(async (tag) => {
-        const [articleCount] = await db
-          .select({ count: count() })
-          .from(articleTags)
-          .where(eq(articleTags.tagId, tag.id));
-
-        return {
-          ...tag,
-          articleCount: articleCount?.count || 0,
-        };
+    const items = await db
+      .select({
+        id: tags.id,
+        name: tags.name,
+        slug: tags.slug,
+        createdAt: tags.createdAt,
+        articleCount: count(articleTags.articleId),
       })
-    );
+      .from(tags)
+      .leftJoin(articleTags, eq(articleTags.tagId, tags.id))
+      .groupBy(tags.id)
+      .orderBy(desc(tags.createdAt));
 
-    return NextResponse.json(itemsWithCounts);
-  } catch (error: any) {
+    return NextResponse.json(items);
+  } catch (error) {
     console.error("GET /api/tags error:", error);
     return NextResponse.json({ message: "Gagal mengambil data tags" }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
+  const authGuard = await requireEditor(request); if (authGuard.error) return authGuard.error;
   try {
     const db = await getDb();
-    const body = await request.json();
-
-    const { name, slug } = body;
-
-    if (!name || !slug) {
-      return NextResponse.json(
-        { message: "Nama dan slug tag wajib diisi" },
-        { status: 400 }
-      );
-    }
+    const parsed = tagSchema.safeParse(await request.json().catch(() => null));
+    if (!parsed.success) return zodError(parsed.error);
+    const { name, slug } = parsed.data;
 
     const [existing] = await db
       .select()
@@ -82,7 +77,7 @@ export async function POST(request: NextRequest) {
       { message: "Tag berhasil dibuat", data: newTag },
       { status: 201 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("POST /api/tags error:", error);
     return NextResponse.json({ message: "Gagal membuat tag" }, { status: 500 });
   }

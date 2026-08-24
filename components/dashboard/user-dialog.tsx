@@ -21,6 +21,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { UploadSimple, X } from "@phosphor-icons/react/dist/ssr";
+import { requestJson, toastApiError } from "@/lib/api-client";
 
 interface Role {
   id: number;
@@ -29,7 +30,7 @@ interface Role {
 }
 
 interface User {
-  id: number;
+  id: string;
   name: string;
   email: string;
   avatar: string | null;
@@ -58,22 +59,6 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
 
   const isEditing = !!user;
 
-  useEffect(() => {
-    if (open) {
-      fetchRoles();
-      if (user) {
-        setName(user.name);
-        setEmail(user.email);
-        setPassword("");
-        setRoleId(user.roleId?.toString() || "");
-        setAvatar(user.avatar);
-        setIsActive(user.isActive);
-      } else {
-        resetForm();
-      }
-    }
-  }, [open, user]);
-
   const resetForm = () => {
     setName("");
     setEmail("");
@@ -85,13 +70,30 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
 
   const fetchRoles = async () => {
     try {
-      const res = await fetch("/api/roles");
-      const data = await res.json();
+      const data = await requestJson<{ data?: Role[] }>("/api/roles");
       setRoles(data.data || []);
     } catch (error) {
-      console.error("Failed to fetch roles:", error);
+      toastApiError(error);
     }
   };
+
+  useEffect(() => {
+    if (open) {
+      queueMicrotask(() => fetchRoles());
+      if (user) {
+        queueMicrotask(() => {
+          setName(user.name);
+          setEmail(user.email);
+          setPassword("");
+          setRoleId(user.roleId?.toString() || "");
+          setAvatar(user.avatar);
+          setIsActive(user.isActive);
+        });
+      } else {
+        queueMicrotask(() => resetForm());
+      }
+    }
+  }, [open, user]);
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -102,18 +104,15 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await fetch("/api/upload", {
+      const data = await requestJson<{ data: { url: string } }>("/api/upload", {
         method: "POST",
         body: formData,
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
-
       setAvatar(data.data.url);
       toast.success("Avatar berhasil diunggah");
-    } catch (error: any) {
-      toast.error(error.message || "Gagal mengunggah avatar");
+    } catch (error: unknown) {
+      toastApiError(error);
     } finally {
       setIsUploading(false);
     }
@@ -124,7 +123,7 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
     setIsSaving(true);
 
     try {
-      const body: any = {
+      const body: Record<string, string | number | boolean | null> = {
         name,
         email,
         roleId: roleId ? parseInt(roleId) : null,
@@ -139,20 +138,17 @@ export function UserDialog({ open, onOpenChange, user, onSuccess }: UserDialogPr
       const url = isEditing ? `/api/users/${user!.id}` : "/api/users";
       const method = isEditing ? "PATCH" : "POST";
 
-      const res = await fetch(url, {
+      await requestJson(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
-
       toast.success(isEditing ? "Pengguna berhasil diperbarui" : "Pengguna berhasil dibuat");
       onOpenChange(false);
       onSuccess();
-    } catch (error: any) {
-      toast.error(error.message || "Terjadi kesalahan");
+    } catch (error: unknown) {
+      toastApiError(error);
     } finally {
       setIsSaving(false);
     }

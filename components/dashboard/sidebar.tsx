@@ -18,12 +18,29 @@ import {
   SidebarSeparator,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { navSections } from "./data";
+import { adminNavSections, contributorNavSections } from "./data";
 import { cn } from "@/lib/utils";
 import { CaretDown } from "@phosphor-icons/react/dist/ssr";
+import { useSession } from "@/lib/use-session";
+
+function isAdminRole(role?: string | null) {
+  if (!role) return true; // default admin untuk sesi legacy/tanpa role
+  return role !== "Kontributor";
+}
 
 export function DashboardSidebar() {
   const pathname = usePathname();
+  const { user, isLoading } = useSession();
+
+  const isAdmin = isAdminRole(user?.role);
+  const navSections = isLoading ? adminNavSections : isAdmin ? adminNavSections : contributorNavSections;
+  const displayName = user?.name || "Admin";
+  const initials = displayName
+    .split(" ")
+    .map((w) => w.charAt(0))
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
   return (
     <Sidebar collapsible="icon" className="border-r border-black/10 overflow-hidden bg-background">
@@ -121,17 +138,17 @@ export function DashboardSidebar() {
           <SidebarMenuItem className="flex items-center gap-0">
             <SidebarMenuButton
               asChild
-              tooltip="Admin"
+              tooltip={displayName}
               className="h-11 flex-1 gap-3 px-3"
             >
-              <Link href="/dashboard/settings">
+              <Link href={isAdmin ? "/dashboard/settings" : "/dashboard/profile"}>
                 <Avatar className="size-6 shrink-0 bg-muted">
                   <AvatarFallback className="text-[10px]">
-                    AD
+                    {initials}
                   </AvatarFallback>
                 </Avatar>
                 <span className="flex-1 truncate text-sm font-medium">
-                  Admin
+                  {displayName}
                 </span>
                 <CaretDown className="size-4 shrink-0 text-muted-foreground" />
               </Link>

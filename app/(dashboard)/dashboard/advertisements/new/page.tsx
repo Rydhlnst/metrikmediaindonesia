@@ -9,6 +9,8 @@ import { ArrowLeft, FloppyDisk, CircleNotch, Image as ImageIcon, Trash } from "@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/error-message";
+import NextImage from "next/image";
 
 export default function NewAdvertisementPage() {
   const router = useRouter();
@@ -45,8 +47,8 @@ export default function NewAdvertisementPage() {
 
       setImage(result.data.url);
       toast.success("Banner iklan berhasil diunggah (WebP)", { id: toastId });
-    } catch (err: any) {
-      toast.error(err.message || "Gagal mengunggah gambar", { id: toastId });
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Gagal mengunggah gambar"), { id: toastId });
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -79,8 +81,8 @@ export default function NewAdvertisementPage() {
 
       toast.success("Iklan berhasil dipasang");
       router.push("/dashboard/advertisements");
-    } catch (err: any) {
-      toast.error(err.message || "Gagal memasang iklan");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Gagal memasang iklan"));
     } finally {
       setIsSubmitting(false);
     }
@@ -170,7 +172,7 @@ export default function NewAdvertisementPage() {
                 />
                 {image ? (
                   <div className="relative border border-black/10 bg-muted overflow-hidden">
-                    <img src={image} alt="Banner Preview" className="max-h-48 w-full object-contain" />
+                    <NextImage src={image} alt="Banner Preview" width={640} height={360} className="max-h-48 w-full object-contain" />
                     <Button
                       type="button"
                       variant="destructive"

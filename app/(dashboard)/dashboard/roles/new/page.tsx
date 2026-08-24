@@ -9,6 +9,7 @@ import { ArrowLeft, FloppyDisk, CircleNotch } from "@phosphor-icons/react/dist/s
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/error-message";
 
 export default function NewRolePage() {
   const router = useRouter();
@@ -36,8 +37,8 @@ export default function NewRolePage() {
 
       toast.success("Role berhasil dibuat");
       router.push("/dashboard/roles");
-    } catch (err: any) {
-      toast.error(err.message || "Gagal membuat role");
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Gagal membuat role"));
     } finally {
       setIsSubmitting(false);
     }

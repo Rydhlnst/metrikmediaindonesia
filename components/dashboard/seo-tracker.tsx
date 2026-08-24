@@ -48,6 +48,7 @@ export function SeoTracker({
 
     // Clean html tags from content
     const plainContent = content.replace(/<[^>]*>/g, " ").trim();
+    const metadataKeywords = seoKeywords.trim();
     const wordCount = plainContent ? plainContent.split(/\s+/).filter(Boolean).length : 0;
     const lowerKeyword = focusKeyword.trim().toLowerCase();
 
@@ -58,7 +59,7 @@ export function SeoTracker({
       label: "Focus Keyword Ditetapkan",
       status: hasKeyword ? "pass" : "fail",
       detail: hasKeyword
-        ? `Target keyword: "${focusKeyword}"`
+        ? `Target keyword: "${focusKeyword}"${metadataKeywords ? `; metadata: ${metadataKeywords}` : ""}`
         : "Tentukan Focus Keyword untuk mengukur relevansi SEO",
       score: hasKeyword ? 10 : 0,
     });
@@ -175,6 +176,7 @@ export function SeoTracker({
     content,
     thumbnailUrl,
     focusKeyword,
+    seoKeywords,
   ]);
 
   useEffect(() => {

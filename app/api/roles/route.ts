@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/server-session";
 import { getDb } from "@/db/index";
-import { roles, users } from "@/db/schema/index";
+import { roles, user as authUsers } from "@/db/schema/index";
 import { desc, eq, count } from "drizzle-orm";
+import { roleSchema } from "@/lib/validators/cms";
+import { zodError } from "@/lib/api-response";
 
 export async function GET(request: NextRequest) {
+  const authGuard = await requireAdmin(request); if (authGuard.error) return authGuard.error;
   try {
     const db = await getDb();
     const items = await db.select().from(roles).orderBy(desc(roles.createdAt));
@@ -12,8 +16,8 @@ export async function GET(request: NextRequest) {
       items.map(async (role) => {
         const [userCount] = await db
           .select({ count: count() })
-          .from(users)
-          .where(eq(users.roleId, role.id));
+          .from(authUsers)
+          .where(eq(authUsers.roleId, role.id));
 
         return {
           ...role,
@@ -23,22 +27,19 @@ export async function GET(request: NextRequest) {
     );
 
     return NextResponse.json(itemsWithCounts);
-  } catch (error: any) {
+  } catch (error) {
     console.error("GET /api/roles error:", error);
     return NextResponse.json({ message: "Gagal mengambil data roles" }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
+  const authGuard = await requireAdmin(request); if (authGuard.error) return authGuard.error;
   try {
     const db = await getDb();
-    const body = await request.json();
-
-    const { name, description } = body;
-
-    if (!name) {
-      return NextResponse.json({ message: "Nama role wajib diisi" }, { status: 400 });
-    }
+    const parsed = roleSchema.safeParse(await request.json().catch(() => null));
+    if (!parsed.success) return zodError(parsed.error);
+    const { name, description } = parsed.data;
 
     const [existing] = await db
       .select()
@@ -59,7 +60,7 @@ export async function POST(request: NextRequest) {
       { message: "Role berhasil dibuat", data: newRole },
       { status: 201 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("POST /api/roles error:", error);
     return NextResponse.json({ message: "Gagal membuat role" }, { status: 500 });
   }
