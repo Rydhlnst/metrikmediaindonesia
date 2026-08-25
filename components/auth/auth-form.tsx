@@ -87,9 +87,9 @@ export function AuthForm({ mode }: AuthFormProps) {
   };
 
   return (
-    <div className="flex min-h-screen w-full">
+    <div className="flex min-h-screen max-h-screen w-full items-center justify-center overflow-x-hidden overflow-y-auto lg:overflow-hidden">
       {/* Left - Form */}
-      <section className="flex flex-1 flex-col items-center justify-center px-6 py-16 sm:px-10 lg:max-w-xl lg:px-16">
+      <section className="flex min-h-screen w-full flex-1 flex-col items-center justify-center px-6 py-16 sm:px-10 lg:max-w-xl lg:px-16">
         <div className="w-full max-w-sm space-y-8">
           {/* Brand */}
           <div className="space-y-1">
