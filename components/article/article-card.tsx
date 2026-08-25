@@ -51,10 +51,7 @@ export function ArticleCard({
       <Link
         href={`/${categorySlug}/${article.slug}`}
         className={cn(
-          "group grid items-start gap-3 py-4 first:pt-0 last:pb-0",
-          rank !== undefined
-            ? "grid-cols-[auto_88px_minmax(0,1fr)]"
-            : "grid-cols-[88px_minmax(0,1fr)]",
+          "group flex min-w-0 max-w-full items-start gap-3 overflow-hidden py-4 first:pt-0 last:pb-0",
           className
         )}
       >
@@ -68,7 +65,7 @@ export function ArticleCard({
             {String(rank + 1).padStart(2, "0")}
           </span>
         )}
-        <div className="relative h-16 w-[88px] shrink-0 overflow-hidden bg-surface-container">
+        <div className="relative aspect-[4/3] w-1/4 min-w-[72px] max-w-28 shrink-0 overflow-hidden bg-surface-container">
           <ArticleImage
             src={article.featuredImage}
             alt={article.title}
@@ -107,9 +104,9 @@ export function ArticleCard({
     return (
       <Link
         href={`/${categorySlug}/${article.slug}`}
-        className={cn("group overflow-hidden border border-black/10 bg-white", className)}
+        className={cn("group min-w-0 max-w-full overflow-hidden border border-black/10 bg-white", className)}
       >
-          <div className="relative aspect-[16/10] w-full overflow-hidden bg-surface-container">
+          <div className="relative aspect-[16/10] w-full min-w-0 max-w-full overflow-hidden bg-surface-container">
             <ArticleImage
               src={article.featuredImage}
             alt={article.title}
@@ -155,9 +152,9 @@ export function ArticleCard({
   return (
     <Link
       href={`/${categorySlug}/${article.slug}`}
-      className={cn("group overflow-hidden border border-black/10 bg-white", className)}
+      className={cn("group min-w-0 max-w-full overflow-hidden border border-black/10 bg-white", className)}
     >
-      <div className={cn("relative overflow-hidden bg-surface-container", "aspect-[16/10]")}>
+      <div className={cn("relative min-w-0 max-w-full overflow-hidden bg-surface-container", "aspect-[16/10]")}>
         <ArticleImage
           src={article.featuredImage}
           alt={article.title}
