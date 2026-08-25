@@ -221,16 +221,15 @@ services:
   # 8. Cron Scheduler (Scheduled Publishing + Author Milestones)
   # ==============================================================================
   cron:
-    image: alpine:3.19
+    build:
+      context: .
+      dockerfile: Dockerfile.cron
+    image: metrikmedia-cron:local
     container_name: metrikmedia-cron
     restart: unless-stopped
-    entrypoint: /bin/sh
-    command: ["/app/cron-runner.sh"]
     environment:
       - APP_URL=http://app:3000
       - CRON_SECRET=${CRON_SECRET:?CRON_SECRET is required}
-    volumes:
-      - ./cron-runner.sh:/app/cron-runner.sh:ro
     depends_on:
       app:
         condition: service_started

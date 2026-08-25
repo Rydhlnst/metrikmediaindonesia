@@ -1,0 +1,6 @@
+FROM alpine:3.19
+
+COPY cron-runner.sh /app/cron-runner.sh
+RUN chmod 0755 /app/cron-runner.sh
+
+ENTRYPOINT ["/bin/sh", "/app/cron-runner.sh"]
