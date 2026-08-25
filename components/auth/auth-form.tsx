@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeSlash, CircleNotch, EnvelopeSimple, LockSimple, ArrowRight, GoogleLogo, GithubLogo } from "@phosphor-icons/react/dist/ssr";
+import { Eye, EyeSlash, CircleNotch, EnvelopeSimple, LockSimple, ArrowRight, GoogleLogo, FacebookLogo } from "@phosphor-icons/react/dist/ssr";
 import Blocks from "@/components/ui/blocks";
 import { BrandName } from "@/components/shared/brand-name";
 import { requestJson, toastApiError } from "@/lib/api-client";
@@ -123,8 +123,8 @@ export function AuthForm({ mode }: AuthFormProps) {
               type="button"
               className="flex h-10 items-center justify-center gap-2 border border-outline-variant bg-muted text-sm font-medium transition-colors hover:bg-muted/80 rounded-none"
             >
-              <GithubLogo className="h-4 w-4" />
-              GitHub
+              <FacebookLogo className="h-4 w-4" weight="fill" />
+              Facebook
             </button>
           </div>
 
