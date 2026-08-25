@@ -1,9 +1,8 @@
 import { notFound } from "next/navigation";
 import { headers, cookies } from "next/headers";
-import Image from "next/image";
 import Link from "next/link";
 import { SITE_CONFIG } from "@/lib/constants";
-import { getImageUrl } from "@/lib/utils";
+import { ArticleImage } from "@/components/shared/article-image";
 import { getArticleBySlug, getArticles, getRelatedArticles, getTrendingArticles, getCategories, incrementViewCount } from "@/lib/queries";
 import { ArticleCard } from "@/components/article/article-card";
 import { SectionHeader } from "@/components/shared/section-header";
@@ -171,10 +170,9 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
           <div>
             {/* Hero Image */}
             <div className="relative aspect-[16/9] w-full overflow-hidden bg-muted border border-black/10">
-              <Image
-                src={getImageUrl(article.thumbnail)}
+              <ArticleImage
+                src={article.thumbnail}
                 alt={article.title}
-                fill
                 sizes="(max-width: 1024px) 100vw, 640px"
                 className="object-cover"
                 priority
