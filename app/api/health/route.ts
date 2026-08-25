@@ -10,7 +10,7 @@ export async function GET() {
     const db = await getDb();
     await db.execute(sql`select 1`);
     const redis = getRedisClient();
-    if (!redis || redis.status !== "ready") {
+    if (!redis) {
       return NextResponse.json({ status: "degraded", database: "ok", redis: "unavailable" }, { status: 503 });
     }
     await redis.ping();
