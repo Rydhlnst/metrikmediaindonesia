@@ -50,19 +50,25 @@ export function ArticleCard({
     return (
       <Link
         href={`/${categorySlug}/${article.slug}`}
-        className={cn("group flex gap-3.5 py-3 first:pt-0 last:pb-0", className)}
+        className={cn(
+          "group grid items-start gap-3 py-4 first:pt-0 last:pb-0",
+          rank !== undefined
+            ? "grid-cols-[auto_88px_minmax(0,1fr)]"
+            : "grid-cols-[88px_minmax(0,1fr)]",
+          className
+        )}
       >
         {rank !== undefined && (
           <span
             className={cn(
-              "flex shrink-0 items-start font-serif text-3xl font-bold ranking-number",
+              "flex w-8 shrink-0 items-start font-serif text-2xl font-bold leading-none ranking-number",
               rank < 3 ? "text-gold" : "text-black/20"
             )}
           >
             {String(rank + 1).padStart(2, "0")}
           </span>
         )}
-        <div className="relative h-[72px] w-[100px] shrink-0 overflow-hidden bg-surface-container">
+        <div className="relative h-16 w-[88px] shrink-0 overflow-hidden bg-surface-container">
           <Image
             src={getImageUrl(article.featuredImage, "thumbnail")}
             alt={article.title}
@@ -71,22 +77,22 @@ export function ArticleCard({
             className="object-cover card-image-zoom"
           />
         </div>
-        <div className="flex flex-1 min-w-0 flex-col justify-center gap-1">
+        <div className="min-w-0 self-stretch">
           <CategoryBadge>{categoryName}</CategoryBadge>
-          <h3 className="text-[15px] font-semibold leading-snug line-clamp-2 text-foreground group-hover:text-gold-deep transition-colors">
+          <h3 className="mt-1 text-[15px] font-semibold leading-snug line-clamp-2 text-foreground group-hover:text-gold-deep transition-colors">
             {article.title}
           </h3>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            {authorName && <span>{authorName}</span>}
+          <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+            {authorName && <span className="max-w-[9rem] truncate">{authorName}</span>}
             {authorName && <span>·</span>}
-            <span className="flex items-center gap-1">
+            <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap">
               <Clock className="size-3" />
               {getTimeAgo(publishedDate)}
             </span>
             {showViews && (
               <>
                 <span>·</span>
-                <span className="flex items-center gap-1">
+                <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap">
                   <Eye className="size-3" />
                   {formatViews(article.viewCount || 0)}
                 </span>
