@@ -34,6 +34,12 @@ function getTransporter() {
  */
 export async function sendEmail(options: SendEmailOptions): Promise<{ success: boolean; messageId?: string; simulated?: boolean }> {
   const from = process.env.EMAIL_FROM || process.env.SMTP_FROM || '"Metrik Media Indonesia" <redaksi@metrikmediaindonesia.id>';
+
+  if (process.env.DEMO_MODE === "true") {
+    console.warn("[Email Simulation] DEMO_MODE is enabled; email was not sent.");
+    return { success: true, simulated: true, messageId: `demo-email-${Date.now()}` };
+  }
+
   const transporter = getTransporter();
 
   if (transporter) {

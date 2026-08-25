@@ -4,12 +4,18 @@ import Redis from "ioredis";
 
 const required = ["BETTER_AUTH_SECRET", "CRON_SECRET", "POSTGRES_URL", "REDIS_URL", "MINIO_ENDPOINT", "MINIO_BUCKET"];
 const missing = required.filter((key) => !process.env[key] || /generate_|change_in_production|super_secret|replace_with|local_/i.test(process.env[key] ?? ""));
-const hasSmtp = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
-const hasResend = Boolean(process.env.RESEND_API_KEY);
+const demoMode = process.env.DEMO_MODE === "true";
+const isPlaceholder = (value?: string) => !value || /your_real|generate_|change_in_production|super_secret|replace_with|local_/i.test(value);
+const hasSmtp = !isPlaceholder(process.env.SMTP_HOST) && !isPlaceholder(process.env.SMTP_USER) && !isPlaceholder(process.env.SMTP_PASS);
+const hasResend = !isPlaceholder(process.env.RESEND_API_KEY);
 
-if (missing.length || (!hasSmtp && !hasResend)) {
-  console.error(`Invalid production configuration: ${[...missing, !hasSmtp && !hasResend ? "SMTP_* or RESEND_API_KEY" : ""].filter(Boolean).join(", ")}`);
+if (missing.length || (!demoMode && !hasSmtp && !hasResend)) {
+  console.error(`Invalid production configuration: ${[...missing, !demoMode && !hasSmtp && !hasResend ? "SMTP_* or RESEND_API_KEY" : ""].filter(Boolean).join(", ")}`);
   process.exit(1);
+}
+
+if (demoMode && !hasSmtp && !hasResend) {
+  console.warn("DEMO_MODE is enabled; email delivery will be simulated.");
 }
 
 async function main() {

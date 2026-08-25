@@ -3,10 +3,20 @@ import Redis from "ioredis";
 
 const required = ["BETTER_AUTH_SECRET", "CRON_SECRET", "POSTGRES_URL", "REDIS_URL"];
 const missing = required.filter((key) => !process.env[key] || /generate_|change_in_production|super_secret|replace_with|local_/i.test(process.env[key] ?? ""));
-const hasEmail = Boolean((process.env.RESEND_API_KEY ?? "") || (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS));
-if (missing.length || !hasEmail) {
-  console.error(`Invalid production configuration: ${[...missing, !hasEmail ? "SMTP_* or RESEND_API_KEY" : ""].filter(Boolean).join(", ")}`);
+const demoMode = process.env.DEMO_MODE === "true";
+const isPlaceholder = (value) => !value || /your_real|generate_|change_in_production|super_secret|replace_with|local_/i.test(value);
+const hasEmail = !isPlaceholder(process.env.RESEND_API_KEY) || (
+  !isPlaceholder(process.env.SMTP_HOST) &&
+  !isPlaceholder(process.env.SMTP_USER) &&
+  !isPlaceholder(process.env.SMTP_PASS)
+);
+if (missing.length || (!demoMode && !hasEmail)) {
+  console.error(`Invalid production configuration: ${[...missing, !demoMode && !hasEmail ? "SMTP_* or RESEND_API_KEY" : ""].filter(Boolean).join(", ")}`);
   process.exit(1);
+}
+
+if (demoMode && !hasEmail) {
+  console.warn("DEMO_MODE is enabled; email delivery will be simulated.");
 }
 
 const db = postgres(process.env.POSTGRES_URL, { max: 1, connect_timeout: 5 });
