@@ -94,7 +94,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           {/* Brand */}
           <div className="space-y-1">
             <Link href="/" className="inline-block">
-              <BrandName size="sm" />
+              <BrandName size="md" />
             </Link>
           </div>
 
