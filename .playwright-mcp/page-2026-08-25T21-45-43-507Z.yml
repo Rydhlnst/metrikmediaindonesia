@@ -1,0 +1,375 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e5]:
+      - link "Metrik Media Indonesia METRIK MEDIA INDONESIA" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e8]:
+          - img "Metrik Media Indonesia" [ref=e10]
+          - generic [ref=e11]:
+            - generic [ref=e12]: METRIK MEDIA
+            - generic [ref=e13]: INDONESIA
+      - generic [ref=e15]:
+        - textbox "Cari topik, berita, atau daerah..." [ref=e19]
+        - button "Cari" [ref=e20] [cursor=pointer]
+      - generic [ref=e24]:
+        - link "Disimpan" [ref=e25] [cursor=pointer]:
+          - /url: /saved
+        - link "Masuk" [ref=e29] [cursor=pointer]:
+          - /url: /login
+    - navigation [ref=e35]:
+      - link "Beranda" [ref=e36] [cursor=pointer]:
+        - /url: /
+      - link "Nasional" [ref=e37] [cursor=pointer]:
+        - /url: /nasional
+      - link "Politik" [ref=e38] [cursor=pointer]:
+        - /url: /politik
+      - link "Bisnis" [ref=e39] [cursor=pointer]:
+        - /url: /bisnis
+      - link "Teknologi" [ref=e40] [cursor=pointer]:
+        - /url: /teknologi
+      - link "Lifestyle" [ref=e41] [cursor=pointer]:
+        - /url: /lifestyle
+      - link "Entertainment" [ref=e42] [cursor=pointer]:
+        - /url: /entertainment
+      - link "Sports" [ref=e43] [cursor=pointer]:
+        - /url: /sports
+      - link "Daerah" [ref=e44] [cursor=pointer]:
+        - /url: /daerah
+      - link "Video HD" [ref=e45] [cursor=pointer]:
+        - /url: /video
+        - text: Video
+        - generic [ref=e46]: HD
+      - link "Foto" [ref=e47] [cursor=pointer]:
+        - /url: /foto
+      - link "Publish Business" [ref=e48] [cursor=pointer]:
+        - /url: /business-publication
+  - main [ref=e49]:
+    - generic [ref=e50]:
+      - article [ref=e52]:
+        - generic [ref=e53]:
+          - generic [ref=e54]:
+            - generic [ref=e55]: Nasional
+            - heading [level=1] [ref=e57]:
+              - link "Tren Kriminalitas dan Tantangan Keamanan Ruang Publik" [ref=e58] [cursor=pointer]:
+                - /url: /nasional/tren-kriminalitas-dan-tantangan-keamanan-ruang-publik
+            - paragraph [ref=e59]: Membaca data kriminalitas dan pertanyaan tentang rasa aman masyarakat.
+            - paragraph [ref=e60]: Data kriminalitas menjadi pintu masuk untuk melihat bagaimana keamanan ruang publik dibentuk oleh kebijakan, kondisi sosial, dan partisipasi warga.
+          - generic [ref=e61]:
+            - generic [ref=e62]: Oleh Redaksi Metrik Media
+            - generic [ref=e63]: •
+            - generic [ref=e64]: 22 jam lalu
+            - generic [ref=e65]: •
+            - generic [ref=e66]: 3 Menit Baca
+            - generic [ref=e67]: •
+            - generic [ref=e68]: 1.9k Pembaca
+        - link [ref=e70] [cursor=pointer]:
+          - /url: /nasional/tren-kriminalitas-dan-tantangan-keamanan-ruang-publik
+          - img "Tren Kriminalitas dan Tantangan Keamanan Ruang Publik" [ref=e71]
+      - generic [ref=e72]:
+        - generic [ref=e73]:
+          - heading "Pilihan Editor" [level=2] [ref=e74]
+          - generic [ref=e75]: Kurasi Redaksi
+        - generic [ref=e76]:
+          - article [ref=e77]:
+            - text: Nasional
+            - heading [level=3] [ref=e78]:
+              - link "Tren Kriminalitas dan Tantangan Keamanan Ruang Publik" [ref=e79] [cursor=pointer]:
+                - /url: /nasional/tren-kriminalitas-dan-tantangan-keamanan-ruang-publik
+            - paragraph [ref=e80]: 22 jam lalu
+          - article [ref=e81]:
+            - text: Politik
+            - heading [level=3] [ref=e82]:
+              - link "Kecerdasan Buatan Mulai Mengubah Percakapan Kampanye Politik" [ref=e83] [cursor=pointer]:
+                - /url: /politik/kecerdasan-buatan-mulai-mengubah-percakapan-kampanye-politik
+            - paragraph [ref=e84]: 1 hari lalu
+          - article [ref=e85]:
+            - text: Bisnis
+            - heading [level=3] [ref=e86]:
+              - link "Survei Tempat Kerja Menyoroti Standar Baru Pengalaman Karyawan" [ref=e87] [cursor=pointer]:
+                - /url: /bisnis/survei-tempat-kerja-menyoroti-standar-baru-pengalaman-karyawan
+            - paragraph [ref=e88]: 2 hari lalu
+      - generic [ref=e90]:
+        - generic [ref=e91]:
+          - generic [ref=e92]:
+            - heading "Berita Terkini & Populer" [level=2] [ref=e93]
+            - link "Lihat Semua Indeks" [ref=e97] [cursor=pointer]:
+              - /url: /pencarian
+          - generic [ref=e101]:
+            - article [ref=e103]:
+              - generic [ref=e104]:
+                - generic [ref=e105]:
+                  - link "Kecerdasan Buatan Mulai Mengubah Percakapan Kampanye Politik":
+                    - /url: /politik/kecerdasan-buatan-mulai-mengubah-percakapan-kampanye-politik
+                    - img "Kecerdasan Buatan Mulai Mengubah Percakapan Kampanye Politik" [ref=e106] [cursor=pointer]
+                - generic [ref=e107]: Politik
+                - heading [level=3] [ref=e108]:
+                  - link "Kecerdasan Buatan Mulai Mengubah Percakapan Kampanye Politik" [ref=e109] [cursor=pointer]:
+                    - /url: /politik/kecerdasan-buatan-mulai-mengubah-percakapan-kampanye-politik
+                - paragraph [ref=e110]: Penggunaan kecerdasan buatan dalam kampanye politik menuntut aturan transparansi, literasi digital, dan perlindungan pemilih dari manipulasi informasi.
+              - generic [ref=e111]:
+                - generic [ref=e112]: 1 hari lalu
+                - generic [ref=e113]: 1.8k dibaca
+            - article [ref=e115]:
+              - generic [ref=e116]:
+                - generic [ref=e117]:
+                  - link "Survei Tempat Kerja Menyoroti Standar Baru Pengalaman Karyawan":
+                    - /url: /bisnis/survei-tempat-kerja-menyoroti-standar-baru-pengalaman-karyawan
+                    - img "Survei Tempat Kerja Menyoroti Standar Baru Pengalaman Karyawan" [ref=e118] [cursor=pointer]
+                - generic [ref=e119]: Bisnis
+                - heading [level=3] [ref=e120]:
+                  - link "Survei Tempat Kerja Menyoroti Standar Baru Pengalaman Karyawan" [ref=e121] [cursor=pointer]:
+                    - /url: /bisnis/survei-tempat-kerja-menyoroti-standar-baru-pengalaman-karyawan
+                - paragraph [ref=e122]: Survei kolaborasi Tempo dan Statista menempatkan pengalaman, kepuasan, inovasi, serta peluang karier sebagai bagian penting dari daya saing perusahaan.
+              - generic [ref=e123]:
+                - generic [ref=e124]: 2 hari lalu
+                - generic [ref=e125]: 1.6k dibaca
+            - article [ref=e127]:
+              - generic [ref=e128]:
+                - generic [ref=e129]:
+                  - link "Infrastruktur Digital dan AI Menjadi Pengungkit Ekonomi Indonesia":
+                    - /url: /teknologi/infrastruktur-digital-dan-ai-menjadi-pengungkit-ekonomi-indonesia
+                    - img "Infrastruktur Digital dan AI Menjadi Pengungkit Ekonomi Indonesia" [ref=e130] [cursor=pointer]
+                - generic [ref=e131]: Teknologi
+                - heading [level=3] [ref=e132]:
+                  - link "Infrastruktur Digital dan AI Menjadi Pengungkit Ekonomi Indonesia" [ref=e133] [cursor=pointer]:
+                    - /url: /teknologi/infrastruktur-digital-dan-ai-menjadi-pengungkit-ekonomi-indonesia
+                - paragraph [ref=e134]: Investasi infrastruktur digital, adopsi AI, dan hilirisasi menjadi tiga tema yang membentuk peluang pertumbuhan ekonomi Indonesia.
+              - generic [ref=e135]:
+                - generic [ref=e136]: 3 hari lalu
+                - generic [ref=e137]: 1.5k dibaca
+            - article [ref=e139]:
+              - generic [ref=e140]:
+                - generic [ref=e141]:
+                  - link "Selera Musik Indonesia Tumbuh di Tengah Perubahan Platform Digital":
+                    - /url: /lifestyle/selera-musik-indonesia-tumbuh-di-tengah-perubahan-platform-digital
+                    - img "Selera Musik Indonesia Tumbuh di Tengah Perubahan Platform Digital" [ref=e142] [cursor=pointer]
+                - generic [ref=e143]: Lifestyle
+                - heading [level=3] [ref=e144]:
+                  - link "Selera Musik Indonesia Tumbuh di Tengah Perubahan Platform Digital" [ref=e145] [cursor=pointer]:
+                    - /url: /lifestyle/selera-musik-indonesia-tumbuh-di-tengah-perubahan-platform-digital
+                - paragraph [ref=e146]: Perjalanan musik Indonesia memperlihatkan hubungan antara kebiasaan pendengar, teknologi distribusi, dan keberagaman karya lokal.
+              - generic [ref=e147]:
+                - generic [ref=e148]: 4 hari lalu
+                - generic [ref=e149]: 1.4k dibaca
+          - generic [ref=e150]:
+            - generic [ref=e151]:
+              - link "Panggung Pertunjukan Beradaptasi ke Ekosistem Digital — No image available Entertainment Panggung Pertunjukan Beradaptasi ke Ekosistem Digital Perkembangan pertunjukan digital menunjukkan bagaimana karya seni dapat menemukan penonton baru tanpa kehilangan pengalaman panggung. Redaksi Metrik Media · 5 hari lalu" [ref=e153] [cursor=pointer]:
+                - /url: /entertainment/panggung-pertunjukan-beradaptasi-ke-ekosistem-digital
+                - img "Panggung Pertunjukan Beradaptasi ke Ekosistem Digital — No image available" [ref=e155]
+                - generic [ref=e158]:
+                  - generic [ref=e159]: Entertainment
+                  - heading "Panggung Pertunjukan Beradaptasi ke Ekosistem Digital" [level=3] [ref=e160]
+                  - paragraph [ref=e161]: Perkembangan pertunjukan digital menunjukkan bagaimana karya seni dapat menemukan penonton baru tanpa kehilangan pengalaman panggung.
+                  - generic [ref=e162]:
+                    - generic [ref=e163]: Redaksi Metrik Media
+                    - generic [ref=e164]: ·
+                    - generic [ref=e165]: 5 hari lalu
+              - link "Konsistensi Klub Menjadi Kunci di Balik Hattrick Juara — No image available Sports Konsistensi Klub Menjadi Kunci di Balik Hattrick Juara Kesuksesan Persib mencatat sejarah hattrick juara memperlihatkan pentingnya konsistensi strategi di dalam dan luar lapangan. Redaksi Metrik Media · 6 hari lalu" [ref=e169] [cursor=pointer]:
+                - /url: /sports/konsistensi-klub-menjadi-kunci-di-balik-hattrick-juara
+                - img "Konsistensi Klub Menjadi Kunci di Balik Hattrick Juara — No image available" [ref=e171]
+                - generic [ref=e174]:
+                  - generic [ref=e175]: Sports
+                  - heading "Konsistensi Klub Menjadi Kunci di Balik Hattrick Juara" [level=3] [ref=e176]
+                  - paragraph [ref=e177]: Kesuksesan Persib mencatat sejarah hattrick juara memperlihatkan pentingnya konsistensi strategi di dalam dan luar lapangan.
+                  - generic [ref=e178]:
+                    - generic [ref=e179]: Redaksi Metrik Media
+                    - generic [ref=e180]: ·
+                    - generic [ref=e181]: 6 hari lalu
+              - link "Dampak El Nino Menuntut Adaptasi Daerah yang Lebih Terukur — No image available Daerah Dampak El Nino Menuntut Adaptasi Daerah yang Lebih Terukur Laporan khusus Tempo tentang dampak El Nino memperlihatkan pentingnya data wilayah, kesiapan pangan, dan kolaborasi masyarakat. Redaksi Metrik Media · 7 hari lalu" [ref=e185] [cursor=pointer]:
+                - /url: /daerah/dampak-el-nino-menuntut-adaptasi-daerah-yang-lebih-terukur
+                - img "Dampak El Nino Menuntut Adaptasi Daerah yang Lebih Terukur — No image available" [ref=e187]
+                - generic [ref=e190]:
+                  - generic [ref=e191]: Daerah
+                  - heading "Dampak El Nino Menuntut Adaptasi Daerah yang Lebih Terukur" [level=3] [ref=e192]
+                  - paragraph [ref=e193]: Laporan khusus Tempo tentang dampak El Nino memperlihatkan pentingnya data wilayah, kesiapan pangan, dan kolaborasi masyarakat.
+                  - generic [ref=e194]:
+                    - generic [ref=e195]: Redaksi Metrik Media
+                    - generic [ref=e196]: ·
+                    - generic [ref=e197]: 7 hari lalu
+            - button "Muat Lebih Banyak" [ref=e201] [cursor=pointer]
+        - complementary [ref=e202]:
+          - generic [ref=e203]:
+            - heading "Paling Banyak Dibaca (#Trending)" [level=3] [ref=e207]
+            - generic [ref=e208]:
+              - generic [ref=e209]:
+                - generic [ref=e210]: "01"
+                - generic [ref=e211]:
+                  - generic [ref=e212]: Nasional
+                  - heading [level=4] [ref=e213]:
+                    - link "Tren Kriminalitas dan Tantangan Keamanan Ruang Publik" [ref=e214] [cursor=pointer]:
+                      - /url: /nasional/tren-kriminalitas-dan-tantangan-keamanan-ruang-publik
+                  - generic [ref=e215]: 1.9k kali dibaca
+              - generic [ref=e216]:
+                - generic [ref=e217]: "02"
+                - generic [ref=e218]:
+                  - generic [ref=e219]: Teknologi
+                  - heading [level=4] [ref=e220]:
+                    - link "Infrastruktur Digital dan AI Menjadi Pengungkit Ekonomi Indonesia" [ref=e221] [cursor=pointer]:
+                      - /url: /teknologi/infrastruktur-digital-dan-ai-menjadi-pengungkit-ekonomi-indonesia
+                  - generic [ref=e222]: 1.5k kali dibaca
+              - generic [ref=e223]:
+                - generic [ref=e224]: "03"
+                - generic [ref=e225]:
+                  - generic [ref=e226]: Lifestyle
+                  - heading [level=4] [ref=e227]:
+                    - link "Selera Musik Indonesia Tumbuh di Tengah Perubahan Platform Digital" [ref=e228] [cursor=pointer]:
+                      - /url: /lifestyle/selera-musik-indonesia-tumbuh-di-tengah-perubahan-platform-digital
+                  - generic [ref=e229]: 1.4k kali dibaca
+              - generic [ref=e230]:
+                - generic [ref=e231]: "04"
+                - generic [ref=e232]:
+                  - generic [ref=e233]: Politik
+                  - heading [level=4] [ref=e234]:
+                    - link "Kecerdasan Buatan Mulai Mengubah Percakapan Kampanye Politik" [ref=e235] [cursor=pointer]:
+                      - /url: /politik/kecerdasan-buatan-mulai-mengubah-percakapan-kampanye-politik
+                  - generic [ref=e236]: 1.8k kali dibaca
+              - generic [ref=e237]:
+                - generic [ref=e238]: "05"
+                - generic [ref=e239]:
+                  - generic [ref=e240]: Bisnis
+                  - heading [level=4] [ref=e241]:
+                    - link "Survei Tempat Kerja Menyoroti Standar Baru Pengalaman Karyawan" [ref=e242] [cursor=pointer]:
+                      - /url: /bisnis/survei-tempat-kerja-menyoroti-standar-baru-pengalaman-karyawan
+                  - generic [ref=e243]: 1.6k kali dibaca
+              - generic [ref=e244]:
+                - generic [ref=e245]: "06"
+                - generic [ref=e246]:
+                  - generic [ref=e247]: Entertainment
+                  - heading [level=4] [ref=e248]:
+                    - link "Panggung Pertunjukan Beradaptasi ke Ekosistem Digital" [ref=e249] [cursor=pointer]:
+                      - /url: /entertainment/panggung-pertunjukan-beradaptasi-ke-ekosistem-digital
+                  - generic [ref=e250]: 1.2k kali dibaca
+              - generic [ref=e251]:
+                - generic [ref=e252]: "07"
+                - generic [ref=e253]:
+                  - generic [ref=e254]: Sports
+                  - heading [level=4] [ref=e255]:
+                    - link "Konsistensi Klub Menjadi Kunci di Balik Hattrick Juara" [ref=e256] [cursor=pointer]:
+                      - /url: /sports/konsistensi-klub-menjadi-kunci-di-balik-hattrick-juara
+                  - generic [ref=e257]: 1.1k kali dibaca
+              - generic [ref=e258]:
+                - generic [ref=e259]: "08"
+                - generic [ref=e260]:
+                  - generic [ref=e261]: Daerah
+                  - heading [level=4] [ref=e262]:
+                    - link "Dampak El Nino Menuntut Adaptasi Daerah yang Lebih Terukur" [ref=e263] [cursor=pointer]:
+                      - /url: /daerah/dampak-el-nino-menuntut-adaptasi-daerah-yang-lebih-terukur
+                  - generic [ref=e264]: 938 kali dibaca
+          - generic [ref=e265]:
+            - generic [ref=e266]:
+              - heading "Metrik Video HD" [level=3] [ref=e270]
+              - link "Lihat Video" [ref=e271] [cursor=pointer]:
+                - /url: /video
+            - paragraph [ref=e276]: No published video is available.
+      - generic [ref=e279]:
+        - generic [ref=e280]: METRIK MEDIA ESSENTIAL
+        - heading "Intellectual Clarity & Independent Press Journalism" [level=2] [ref=e282]
+        - paragraph [ref=e283]: Dapatkan analisis ekonomi makro, liputan kebijakan publik, dan kabar terkini Indonesia langsung ke inbox Anda setiap hari. Tanpa spam, hanya informasi berdampak.
+        - generic [ref=e285]:
+          - textbox "ALAMAT EMAIL ANDA" [ref=e286]
+          - button "Subscribe" [ref=e287] [cursor=pointer]
+  - contentinfo [ref=e288]:
+    - generic [ref=e289]:
+      - generic [ref=e290]:
+        - generic [ref=e291]:
+          - link "Metrik Media Indonesia METRIK MEDIA INDONESIA" [ref=e292] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e293]:
+              - img "Metrik Media Indonesia" [ref=e295]
+              - generic [ref=e296]:
+                - generic [ref=e297]: METRIK MEDIA
+                - generic [ref=e298]: INDONESIA
+          - paragraph [ref=e299]: Metrik Media Indonesia adalah portal berita digital profesional yang menyajikan jurnalisme terpercaya di bidang Ekonomi, Politik, Teknologi, dan Isu Nasional.
+          - generic [ref=e300]:
+            - link "Twitter" [ref=e301] [cursor=pointer]:
+              - /url: https://twitter.com
+            - link "Facebook" [ref=e304] [cursor=pointer]:
+              - /url: https://facebook.com
+            - link "Instagram" [ref=e307] [cursor=pointer]:
+              - /url: https://instagram.com
+            - link "YouTube" [ref=e310] [cursor=pointer]:
+              - /url: https://youtube.com
+            - link "LinkedIn" [ref=e313] [cursor=pointer]:
+              - /url: https://linkedin.com
+        - generic [ref=e316]:
+          - generic [ref=e317]:
+            - heading "Kanal Berita" [level=4] [ref=e318]
+            - list [ref=e319]:
+              - listitem [ref=e320]:
+                - link "Nasional" [ref=e321] [cursor=pointer]:
+                  - /url: /nasional
+              - listitem [ref=e322]:
+                - link "Politik" [ref=e323] [cursor=pointer]:
+                  - /url: /politik
+              - listitem [ref=e324]:
+                - link "Bisnis" [ref=e325] [cursor=pointer]:
+                  - /url: /bisnis
+              - listitem [ref=e326]:
+                - link "Teknologi" [ref=e327] [cursor=pointer]:
+                  - /url: /teknologi
+              - listitem [ref=e328]:
+                - link "Lifestyle" [ref=e329] [cursor=pointer]:
+                  - /url: /lifestyle
+              - listitem [ref=e330]:
+                - link "Entertainment" [ref=e331] [cursor=pointer]:
+                  - /url: /entertainment
+              - listitem [ref=e332]:
+                - link "Olahraga" [ref=e333] [cursor=pointer]:
+                  - /url: /sports
+              - listitem [ref=e334]:
+                - link "Daerah" [ref=e335] [cursor=pointer]:
+                  - /url: /daerah
+          - generic [ref=e336]:
+            - heading "Portal Media" [level=4] [ref=e337]
+            - list [ref=e338]:
+              - listitem [ref=e339]:
+                - link "Metrik Video HD" [ref=e340] [cursor=pointer]:
+                  - /url: /video
+              - listitem [ref=e341]:
+                - link "Galeri Foto" [ref=e342] [cursor=pointer]:
+                  - /url: /foto
+              - listitem [ref=e343]:
+                - link "Topik Trending" [ref=e344] [cursor=pointer]:
+                  - /url: /pencarian
+              - listitem [ref=e345]:
+                - link "Indeks Berita" [ref=e346] [cursor=pointer]:
+                  - /url: /pencarian
+              - listitem [ref=e347]:
+                - link "Publish Business" [ref=e348] [cursor=pointer]:
+                  - /url: /business-publication
+          - generic [ref=e349]:
+            - heading "Redaksi & Legal" [level=4] [ref=e350]
+            - list [ref=e351]:
+              - listitem [ref=e352]:
+                - link "Tentang Kami" [ref=e353] [cursor=pointer]:
+                  - /url: /tentang-kami
+              - listitem [ref=e354]:
+                - link "Tim Editorial" [ref=e355] [cursor=pointer]:
+                  - /url: /tim-editorial
+              - listitem [ref=e356]:
+                - link "Hubungi Kami" [ref=e357] [cursor=pointer]:
+                  - /url: /hubungi-kami
+              - listitem [ref=e358]:
+                - link "Pedoman Siber" [ref=e359] [cursor=pointer]:
+                  - /url: /tentang-kami
+              - listitem [ref=e360]:
+                - link "Privasi & Syarat" [ref=e361] [cursor=pointer]:
+                  - /url: /tentang-kami
+      - generic [ref=e362]:
+        - generic [ref=e363]: Gedung Press Center Jakarta, Jl. Jend. Sudirman No. 45, Jakarta Pusat
+        - generic [ref=e367]: "Redaksi: redaksi@metrikmediaindonesia.id"
+        - generic [ref=e371]: Tunduk pada Pedoman Media Siber Dewan Pers Indonesia
+    - generic [ref=e376]:
+      - generic [ref=e377]:
+        - text: © 2026
+        - strong [ref=e378]: METRIK MEDIA INDONESIA
+        - text: . All rights reserved.
+      - generic [ref=e379]:
+        - link "Pedoman Siber" [ref=e380] [cursor=pointer]:
+          - /url: /tentang-kami
+        - generic [ref=e381]: •
+        - link "Privasi" [ref=e382] [cursor=pointer]:
+          - /url: /tentang-kami
+        - generic [ref=e383]: •
+        - link "Kontak Redaksi" [ref=e384] [cursor=pointer]:
+          - /url: /hubungi-kami

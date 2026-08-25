@@ -26,6 +26,7 @@ required_vars=(
     NODE_ENV DOMAIN NEXT_PUBLIC_APP_URL BETTER_AUTH_SECRET CRON_SECRET
     POSTGRES_URL POSTGRES_DB POSTGRES_USER POSTGRES_PASSWORD
     REDIS_URL MINIO_ROOT_USER MINIO_ROOT_PASSWORD MINIO_BUCKET MINIO_PUBLIC_URL
+    ADMIN_EMAIL ADMIN_PASSWORD
 )
 
 for required in "${required_vars[@]}"; do
@@ -35,6 +36,16 @@ for required in "${required_vars[@]}"; do
         exit 1
     fi
 done
+
+if [[ ! "${ADMIN_EMAIL}" =~ ^[^[:space:]@]+@[^[:space:]@]+\.[^[:space:]@]+$ ]] || [[ "${ADMIN_EMAIL}" == *@example.com ]] || [[ "${ADMIN_EMAIL}" == *@example.invalid ]]; then
+    echo "❌ Error: ADMIN_EMAIL must be a valid email address."
+    exit 1
+fi
+
+if (( ${#ADMIN_PASSWORD} < 12 )) || [[ "${ADMIN_PASSWORD}" == "admin123" ]] || [[ "${ADMIN_PASSWORD}" == use-a-strong-password* ]]; then
+    echo "❌ Error: ADMIN_PASSWORD must be at least 12 characters long."
+    exit 1
+fi
 
 if [ "${NODE_ENV}" != "production" ]; then
     echo "❌ Error: NODE_ENV must be production."

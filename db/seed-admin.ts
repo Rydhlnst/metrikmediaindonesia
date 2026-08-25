@@ -1,80 +1,95 @@
 import { config } from "dotenv";
 import { resolve } from "path";
 import bcrypt from "bcryptjs";
+import { and, eq } from "drizzle-orm";
 import { getDb } from "../db/index";
-import { user, account, roles, users } from "../db/schema/index";
-import { eq } from "drizzle-orm";
+import { account, user, users } from "../db/schema/index";
+import { getAdminSeedConfig } from "./admin-seed-config";
+import { seedAccessControl } from "./seed-access";
 
 config({ path: resolve(process.cwd(), ".env.local") });
+config({ path: resolve(process.cwd(), ".env") });
 
-const ADMIN_EMAIL = "admin@metrikmedia.id";
-const ADMIN_PASSWORD = "admin123";
-
-async function seedAdminUser() {
-  console.log("Seeding admin user...");
+export async function seedAdminUser() {
+  const { email, password } = getAdminSeedConfig(process.env);
+  console.log(`Seeding admin user for ${email}...`);
 
   const db = await getDb();
-  const [superAdminRole] = await db.select().from(roles).where(eq(roles.name, "super_admin")).limit(1);
-  const passwordHash = await bcrypt.hash(ADMIN_PASSWORD, 10);
+  const superAdminRole = await seedAccessControl(db);
+  const passwordHash = await bcrypt.hash(password, 10);
 
-  const [existing] = await db.select().from(user).where(eq(user.email, ADMIN_EMAIL)).limit(1);
+  const [existingAuthUser] = await db
+    .select()
+    .from(user)
+    .where(eq(user.email, email))
+    .limit(1);
 
-  if (existing) {
-    console.log("Admin user already exists, skipping Better Auth creation...");
-  } else {
-    const userId = crypto.randomUUID();
+  const authUserId = existingAuthUser?.id ?? crypto.randomUUID();
 
+  if (!existingAuthUser) {
     await db.insert(user).values({
-      id: userId,
+      id: authUserId,
       name: "Admin Metrik Media",
-      email: ADMIN_EMAIL,
+      email,
       emailVerified: true,
-      roleId: superAdminRole?.id ?? null,
+      roleId: superAdminRole.id,
       isActive: true,
     });
-
-    await db.insert(account).values({
-      id: crypto.randomUUID(),
-      accountId: userId,
-      providerId: "credential",
-      userId,
-      password: passwordHash,
-    });
-
-    console.log("Admin user created successfully:", { id: userId, email: ADMIN_EMAIL });
+    console.log("Better Auth admin user created");
+  } else {
+    await db
+      .update(user)
+      .set({ roleId: superAdminRole.id, isActive: true, emailVerified: true, updatedAt: new Date() })
+      .where(eq(user.id, existingAuthUser.id));
+    console.log("Better Auth admin user already exists; password preserved");
   }
 
-  // Sinkron ke tabel users legacy (dipakai untuk FK editorId di articles)
+  const [credentialAccount] = await db
+    .select({ id: account.id })
+    .from(account)
+    .where(and(eq(account.userId, authUserId), eq(account.providerId, "credential")))
+    .limit(1);
+
+  if (!credentialAccount) {
+    await db.insert(account).values({
+      id: crypto.randomUUID(),
+      accountId: authUserId,
+      providerId: "credential",
+      userId: authUserId,
+      password: passwordHash,
+    });
+    console.log("Credential account created");
+  }
+
   const [legacyUser] = await db
     .select()
     .from(users)
-    .where(eq(users.email, ADMIN_EMAIL))
+    .where(eq(users.email, email))
     .limit(1);
 
   if (!legacyUser) {
     await db.insert(users).values({
       name: "Admin Metrik Media",
-      email: ADMIN_EMAIL,
+      email,
       password: passwordHash,
-      roleId: superAdminRole?.id ?? null,
+      roleId: superAdminRole.id,
       isActive: true,
     });
-    console.log("Legacy users row created for admin");
-  } else if (legacyUser.roleId !== (superAdminRole?.id ?? null)) {
-    await db.update(users).set({ roleId: superAdminRole?.id ?? null }).where(eq(users.email, ADMIN_EMAIL));
+    console.log("Legacy admin user created");
+  } else {
+    await db
+      .update(users)
+      .set({ roleId: superAdminRole.id, isActive: true, updatedAt: new Date() })
+      .where(eq(users.id, legacyUser.id));
+    console.log("Legacy admin user already exists; password preserved");
   }
 
-  console.log("\nLogin credentials:");
-  console.log(`Email: ${ADMIN_EMAIL}`);
-  console.log(`Password: ${ADMIN_PASSWORD}`);
+  console.log("Admin seed completed");
 }
 
 seedAdminUser()
-  .then(() => {
-    console.log("\nSeed completed!");
-    process.exit(0);
-  })
+  .then(() => process.exit(0))
   .catch((error) => {
-    console.error("Seed failed:", error);
+    console.error("Admin seed failed:", error instanceof Error ? error.message : "unknown error");
     process.exit(1);
   });

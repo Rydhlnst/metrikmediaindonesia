@@ -1,0 +1,175 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - link "Metrik Media Indonesia METRIK MEDIA INDONESIA" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e8]:
+            - img "Metrik Media Indonesia" [ref=e10]
+            - generic [ref=e11]:
+              - generic [ref=e12]: METRIK MEDIA
+              - generic [ref=e13]: INDONESIA
+        - generic [ref=e15]:
+          - textbox "Cari topik, berita, atau daerah..." [ref=e19]: kecerdasan buatan
+          - button "Bersihkan pencarian" [ref=e386]
+          - button "Cari" [ref=e20] [cursor=pointer]
+        - generic [ref=e24]:
+          - link "Disimpan" [ref=e25] [cursor=pointer]:
+            - /url: /saved
+          - link "Masuk" [ref=e29] [cursor=pointer]:
+            - /url: /login
+      - navigation [ref=e35]:
+        - link "Beranda" [ref=e36] [cursor=pointer]:
+          - /url: /
+        - link "Nasional" [ref=e37] [cursor=pointer]:
+          - /url: /nasional
+        - link "Politik" [ref=e38] [cursor=pointer]:
+          - /url: /politik
+        - link "Bisnis" [ref=e39] [cursor=pointer]:
+          - /url: /bisnis
+        - link "Teknologi" [ref=e40] [cursor=pointer]:
+          - /url: /teknologi
+        - link "Lifestyle" [ref=e41] [cursor=pointer]:
+          - /url: /lifestyle
+        - link "Entertainment" [ref=e42] [cursor=pointer]:
+          - /url: /entertainment
+        - link "Sports" [ref=e43] [cursor=pointer]:
+          - /url: /sports
+        - link "Daerah" [ref=e44] [cursor=pointer]:
+          - /url: /daerah
+        - link "Video HD" [ref=e45] [cursor=pointer]:
+          - /url: /video
+          - text: Video
+          - generic [ref=e46]: HD
+        - link "Foto" [ref=e47] [cursor=pointer]:
+          - /url: /foto
+        - link "Publish Business" [ref=e48] [cursor=pointer]:
+          - /url: /business-publication
+    - main [ref=e49]:
+      - generic [ref=e389]:
+        - navigation [ref=e390]:
+          - link [ref=e391] [cursor=pointer]:
+            - /url: /
+          - generic [ref=e394]: Pencarian
+          - generic [ref=e398]: kecerdasan buatan
+        - generic [ref=e403]:
+          - textbox "Cari berita, topik, atau kata kunci..." [active] [ref=e406]: kecerdasan buatan
+          - button [ref=e407]
+        - generic [ref=e410]:
+          - generic [ref=e411]:
+            - heading "Hasil Pencarian" [level=1] [ref=e412]
+            - paragraph [ref=e413]: 1 hasil ditemukan untuk "kecerdasan buatan"
+          - link "Kecerdasan Buatan Mulai Mengubah Percakapan Kampanye Politik — No image available Kecerdasan Buatan Mulai Mengubah Percakapan Kampanye Politik · 1 hari lalu" [ref=e415] [cursor=pointer]:
+            - /url: /berita/kecerdasan-buatan-mulai-mengubah-percakapan-kampanye-politik
+            - img "Kecerdasan Buatan Mulai Mengubah Percakapan Kampanye Politik — No image available" [ref=e417]
+            - generic [ref=e420]:
+              - heading "Kecerdasan Buatan Mulai Mengubah Percakapan Kampanye Politik" [level=3] [ref=e422]
+              - generic [ref=e423]:
+                - generic [ref=e424]: ·
+                - generic [ref=e425]: 1 hari lalu
+    - contentinfo [ref=e288]:
+      - generic [ref=e289]:
+        - generic [ref=e290]:
+          - generic [ref=e291]:
+            - link "Metrik Media Indonesia METRIK MEDIA INDONESIA" [ref=e292] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e293]:
+                - img "Metrik Media Indonesia" [ref=e295]
+                - generic [ref=e296]:
+                  - generic [ref=e297]: METRIK MEDIA
+                  - generic [ref=e298]: INDONESIA
+            - paragraph [ref=e299]: Metrik Media Indonesia adalah portal berita digital profesional yang menyajikan jurnalisme terpercaya di bidang Ekonomi, Politik, Teknologi, dan Isu Nasional.
+            - generic [ref=e300]:
+              - link "Twitter" [ref=e301] [cursor=pointer]:
+                - /url: https://twitter.com
+              - link "Facebook" [ref=e304] [cursor=pointer]:
+                - /url: https://facebook.com
+              - link "Instagram" [ref=e307] [cursor=pointer]:
+                - /url: https://instagram.com
+              - link "YouTube" [ref=e310] [cursor=pointer]:
+                - /url: https://youtube.com
+              - link "LinkedIn" [ref=e313] [cursor=pointer]:
+                - /url: https://linkedin.com
+          - generic [ref=e316]:
+            - generic [ref=e317]:
+              - heading "Kanal Berita" [level=4] [ref=e318]
+              - list [ref=e319]:
+                - listitem [ref=e320]:
+                  - link "Nasional" [ref=e321] [cursor=pointer]:
+                    - /url: /nasional
+                - listitem [ref=e322]:
+                  - link "Politik" [ref=e323] [cursor=pointer]:
+                    - /url: /politik
+                - listitem [ref=e324]:
+                  - link "Bisnis" [ref=e325] [cursor=pointer]:
+                    - /url: /bisnis
+                - listitem [ref=e326]:
+                  - link "Teknologi" [ref=e327] [cursor=pointer]:
+                    - /url: /teknologi
+                - listitem [ref=e328]:
+                  - link "Lifestyle" [ref=e329] [cursor=pointer]:
+                    - /url: /lifestyle
+                - listitem [ref=e330]:
+                  - link "Entertainment" [ref=e331] [cursor=pointer]:
+                    - /url: /entertainment
+                - listitem [ref=e332]:
+                  - link "Olahraga" [ref=e333] [cursor=pointer]:
+                    - /url: /sports
+                - listitem [ref=e334]:
+                  - link "Daerah" [ref=e335] [cursor=pointer]:
+                    - /url: /daerah
+            - generic [ref=e336]:
+              - heading "Portal Media" [level=4] [ref=e337]
+              - list [ref=e338]:
+                - listitem [ref=e339]:
+                  - link "Metrik Video HD" [ref=e340] [cursor=pointer]:
+                    - /url: /video
+                - listitem [ref=e341]:
+                  - link "Galeri Foto" [ref=e342] [cursor=pointer]:
+                    - /url: /foto
+                - listitem [ref=e343]:
+                  - link "Topik Trending" [ref=e344] [cursor=pointer]:
+                    - /url: /pencarian
+                - listitem [ref=e345]:
+                  - link "Indeks Berita" [ref=e346] [cursor=pointer]:
+                    - /url: /pencarian
+                - listitem [ref=e347]:
+                  - link "Publish Business" [ref=e348] [cursor=pointer]:
+                    - /url: /business-publication
+            - generic [ref=e349]:
+              - heading "Redaksi & Legal" [level=4] [ref=e350]
+              - list [ref=e351]:
+                - listitem [ref=e352]:
+                  - link "Tentang Kami" [ref=e353] [cursor=pointer]:
+                    - /url: /tentang-kami
+                - listitem [ref=e354]:
+                  - link "Tim Editorial" [ref=e355] [cursor=pointer]:
+                    - /url: /tim-editorial
+                - listitem [ref=e356]:
+                  - link "Hubungi Kami" [ref=e357] [cursor=pointer]:
+                    - /url: /hubungi-kami
+                - listitem [ref=e358]:
+                  - link "Pedoman Siber" [ref=e359] [cursor=pointer]:
+                    - /url: /tentang-kami
+                - listitem [ref=e360]:
+                  - link "Privasi & Syarat" [ref=e361] [cursor=pointer]:
+                    - /url: /tentang-kami
+        - generic [ref=e362]:
+          - generic [ref=e363]: Gedung Press Center Jakarta, Jl. Jend. Sudirman No. 45, Jakarta Pusat
+          - generic [ref=e367]: "Redaksi: redaksi@metrikmediaindonesia.id"
+          - generic [ref=e371]: Tunduk pada Pedoman Media Siber Dewan Pers Indonesia
+      - generic [ref=e376]:
+        - generic [ref=e377]:
+          - text: © 2026
+          - strong [ref=e378]: METRIK MEDIA INDONESIA
+          - text: . All rights reserved.
+        - generic [ref=e379]:
+          - link "Pedoman Siber" [ref=e380] [cursor=pointer]:
+            - /url: /tentang-kami
+          - generic [ref=e381]: •
+          - link "Privasi" [ref=e382] [cursor=pointer]:
+            - /url: /tentang-kami
+          - generic [ref=e383]: •
+          - link "Kontak Redaksi" [ref=e384] [cursor=pointer]:
+            - /url: /hubungi-kami
+  - alert [ref=e385]: Pencarian | Metrik Media

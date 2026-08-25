@@ -182,11 +182,13 @@ services:
         DATABASE_TYPE: ${DATABASE_TYPE:-postgresql}
     container_name: metrikmedia-db-seed
     restart: "no"
-    command: ["pnpm", "db:seed:news"]
+    command: ["sh", "-c", "pnpm db:seed:news && pnpm db:seed-admin"]
     environment:
       DATABASE_TYPE: ${DATABASE_TYPE:-postgresql}
       POSTGRES_URL: ${POSTGRES_URL:?POSTGRES_URL is required}
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:?NEXT_PUBLIC_APP_URL is required}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:?ADMIN_EMAIL is required}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?ADMIN_PASSWORD is required}
     depends_on:
       db-migrate:
         condition: service_completed_successfully
