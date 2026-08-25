@@ -9,6 +9,10 @@ import { eq } from "drizzle-orm";
 const connectionString = process.env.POSTGRES_URL || "postgresql://postgres:postgres@localhost:5432/metrikmedia";
 const client = postgres(connectionString);
 const db = drizzle(client, { schema });
+const configuredBaseUrl = process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL;
+const baseURL = configuredBaseUrl?.startsWith("http://") || configuredBaseUrl?.startsWith("https://")
+  ? configuredBaseUrl
+  : "http://localhost:3000";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -85,7 +89,8 @@ export const auth = betterAuth({
     },
   },
   basePath: "/api/auth",
-  trustedOrigins: [process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"],
+  baseURL,
+  trustedOrigins: [baseURL],
 });
 
 export type Session = typeof auth.$Infer.Session;
