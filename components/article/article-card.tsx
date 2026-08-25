@@ -1,9 +1,9 @@
 import Link from "next/link";
-import Image from "next/image";
-import { cn, getImageUrl } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { getCategorySlug, getCategoryName, getAuthorName, getTimeAgo, formatViews } from "@/lib/article-helpers";
 import { Clock, Eye, BookmarkSimple } from "@phosphor-icons/react/dist/ssr";
 import { CategoryBadge } from "@/components/shared/category-badge";
+import { ArticleImage } from "@/components/shared/article-image";
 
 interface ArticleCardData {
   id: number;
@@ -69,10 +69,9 @@ export function ArticleCard({
           </span>
         )}
         <div className="relative h-16 w-[88px] shrink-0 overflow-hidden bg-surface-container">
-          <Image
-            src={getImageUrl(article.featuredImage, "thumbnail")}
+          <ArticleImage
+            src={article.featuredImage}
             alt={article.title}
-            fill
             sizes="100px"
             className="object-cover card-image-zoom"
           />
@@ -111,10 +110,9 @@ export function ArticleCard({
         className={cn("group overflow-hidden border border-black/10 bg-white", className)}
       >
           <div className="relative aspect-[16/10] w-full overflow-hidden bg-surface-container">
-            <Image
-              src={getImageUrl(article.featuredImage, "card")}
+            <ArticleImage
+              src={article.featuredImage}
             alt={article.title}
-            fill
             sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover card-image-zoom"
             priority={priority}
@@ -160,10 +158,9 @@ export function ArticleCard({
       className={cn("group overflow-hidden border border-black/10 bg-white", className)}
     >
       <div className={cn("relative overflow-hidden bg-surface-container", "aspect-[16/10]")}>
-        <Image
-          src={getImageUrl(article.featuredImage, "card")}
+        <ArticleImage
+          src={article.featuredImage}
           alt={article.title}
-          fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
           className="object-cover card-image-zoom"
           priority={priority}

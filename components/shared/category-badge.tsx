@@ -8,8 +8,8 @@ interface CategoryBadgeProps {
 
 const variantClasses = {
   inline: "text-xs font-bold uppercase tracking-wider text-gold-deep",
-  pill: "inline-flex items-center bg-gold text-white px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-none",
-  solid: "inline-flex items-center bg-black text-white px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-none",
+  pill: "inline-flex items-center bg-gold text-white p-2 text-[10px] font-bold uppercase tracking-wider rounded-none",
+  solid: "inline-flex items-center bg-black text-white p-2 text-[10px] font-bold uppercase tracking-wider rounded-none",
   bordered: "text-xs font-bold uppercase tracking-wider text-gold-deep border-b-2 border-gold pb-0.5",
 };
 
