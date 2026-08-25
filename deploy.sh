@@ -1,67 +1,89 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # ==============================================================================
 # METRIK MEDIA INDONESIA - SINGLE-SERVER PRODUCTION DEPLOY SCRIPT
 # ==============================================================================
 
-set -e
+set -Eeuo pipefail
+
+cd "$(dirname "${BASH_SOURCE[0]}")"
+
+ENV_FILE="${ENV_FILE:-.env}"
+COMPOSE=(docker compose --env-file "$ENV_FILE")
 
 echo "🚀 Starting Metrik Media Indonesia Deployment..."
 
 # 1. Check if .env exists
-if [ ! -f ".env" ]; then
-    echo "❌ Error: .env file missing. Create it from .env.example and set production secrets."
+if [ ! -f "$ENV_FILE" ]; then
+    echo "❌ Error: $ENV_FILE is missing. Create it from .env.example and set production secrets."
     exit 1
 fi
 
 set -a
-. ./.env
+. "./$ENV_FILE"
 set +a
 
-for required in BETTER_AUTH_SECRET CRON_SECRET POSTGRES_PASSWORD MINIO_ROOT_PASSWORD; do
-    if [ -z "${!required:-}" ] || [[ "${!required}" == *"change_in_production"* ]] || [[ "${!required}" == *"generate_"* ]]; then
+required_vars=(
+    NODE_ENV DOMAIN NEXT_PUBLIC_APP_URL BETTER_AUTH_SECRET CRON_SECRET
+    POSTGRES_URL POSTGRES_DB POSTGRES_USER POSTGRES_PASSWORD
+    REDIS_URL MINIO_ROOT_USER MINIO_ROOT_PASSWORD MINIO_BUCKET MINIO_PUBLIC_URL
+)
+
+for required in "${required_vars[@]}"; do
+    value="${!required:-}"
+    if [ -z "$value" ] || [[ "$value" =~ (change_in_production|generate_|change_me|local_.*change_me) ]]; then
         echo "❌ Error: ${required} must be set to a unique production value."
         exit 1
     fi
 done
 
+if [ "${NODE_ENV}" != "production" ]; then
+    echo "❌ Error: NODE_ENV must be production."
+    exit 1
+fi
+
+if [ "${TRUST_PROXY_HEADERS:-false}" != "true" ]; then
+    echo "❌ Error: TRUST_PROXY_HEADERS must be true behind Caddy/Cloudflare."
+    exit 1
+fi
+
+if [ -z "${SMTP_HOST:-}" ] && [ -z "${RESEND_API_KEY:-}" ]; then
+    echo "❌ Error: configure SMTP_* or RESEND_API_KEY for production email."
+    exit 1
+fi
+
+command -v docker >/dev/null 2>&1 || { echo "❌ Error: Docker is not installed."; exit 1; }
+
 # 2. Pull latest git changes (if in git repo)
 if [ -d ".git" ]; then
+    branch="$(git branch --show-current)"
+    if [ "$branch" != "main" ] && [ "$branch" != "master" ]; then
+        echo "❌ Error: deploy from the main or master branch only (current: ${branch:-detached})."
+        exit 1
+    fi
     echo "📥 Pulling latest git repository updates..."
-    git pull origin main || git pull origin master || echo "⚠️ Git pull skipped or not on main branch."
+    git pull --ff-only origin "$branch"
 fi
+
+echo "🔍 Validating Docker Compose configuration..."
+"${COMPOSE[@]}" config --quiet
 
 # 3. Pull latest base images
 echo "🐳 Pulling Docker base images..."
-docker compose pull postgres redis minio minio-init caddy
+"${COMPOSE[@]}" pull postgres redis minio minio-init caddy
 
 # 4. Build Application Image
-echo "🔨 Building Next.js application container..."
-docker compose build app
+echo "🔨 Building application and migration containers..."
+"${COMPOSE[@]}" build app db-migrate
 
 # 5. Start Core Services
-echo "📦 Starting Database and Storage services..."
-docker compose up -d postgres redis minio minio-init
+echo "🌐 Starting services, migrations, application, proxy, and cron..."
+"${COMPOSE[@]}" up -d --build --remove-orphans --wait
 
-# 6. Wait for Postgres to be healthy
-echo "⏳ Waiting for PostgreSQL to be ready..."
-docker compose exec postgres /bin/sh -c 'until pg_isready -U postgres -d metrikmedia; do sleep 1; done'
-
-# 7. Run Database Migrations
-echo "🗄️ Running database migrations..."
-if command -v pnpm &> /dev/null; then
-    pnpm db:migrate || echo "⚠️ Host migration skipped, relying on container/seed."
-fi
-
-# 8. Start All Services & Reverse Proxy
-echo "🌐 Starting Application and Reverse Proxy..."
-docker compose up -d --remove-orphans
-
-# 9. Clean up old unused images
-echo "🧹 Cleaning up unused Docker images..."
-docker image prune -f
+echo "📋 Service status:"
+"${COMPOSE[@]}" ps
 
 echo "✅ ====================================================================="
 echo "🎉 Metrik Media Indonesia is successfully running with Docker Compose!"
-echo "👉 Check status with: docker compose ps"
-echo "👉 Check logs with  : docker compose logs -f"
+echo "👉 Check status with: ${COMPOSE[*]} ps"
+echo "👉 Check logs with  : ${COMPOSE[*]} logs -f"
 echo "======================================================================="

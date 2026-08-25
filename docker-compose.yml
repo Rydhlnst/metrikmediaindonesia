@@ -10,24 +10,22 @@ services:
         DATABASE_TYPE: ${DATABASE_TYPE:-postgresql}
     container_name: metrikmedia-app
     restart: unless-stopped
-    ports:
-      - "3000:3000"
     environment:
-      - NODE_ENV=${NODE_ENV:-production}
+      - NODE_ENV=${NODE_ENV:?NODE_ENV is required}
       - DATABASE_TYPE=${DATABASE_TYPE:-postgresql}
-      - POSTGRES_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-local_postgres_password}@postgres:5432/${POSTGRES_DB:-metrikmedia}
+      - POSTGRES_URL=${POSTGRES_URL:?POSTGRES_URL is required}
       - MINIO_ENDPOINT=minio
       - MINIO_PORT=9000
-      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER:-minioadmin}
-      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD:-local_minio_password}
-      - MINIO_BUCKET=${MINIO_BUCKET:-metrikmedia}
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER:?MINIO_ROOT_USER is required}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD is required}
+      - MINIO_BUCKET=${MINIO_BUCKET:?MINIO_BUCKET is required}
       - MINIO_USE_SSL=false
-      - MINIO_PUBLIC_URL=${MINIO_PUBLIC_URL:-http://localhost:9000}
-      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
-      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
-      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-local_better_auth_secret_change_me}
-      - CRON_SECRET=${CRON_SECRET:-local_cron_secret_change_me}
-      - TRUST_PROXY_HEADERS=${TRUST_PROXY_HEADERS:-false}
+      - MINIO_PUBLIC_URL=${MINIO_PUBLIC_URL:?MINIO_PUBLIC_URL is required}
+      - REDIS_URL=${REDIS_URL:?REDIS_URL is required}
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:?NEXT_PUBLIC_APP_URL is required}
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:?BETTER_AUTH_SECRET is required}
+      - CRON_SECRET=${CRON_SECRET:?CRON_SECRET is required}
+      - TRUST_PROXY_HEADERS=${TRUST_PROXY_HEADERS:?TRUST_PROXY_HEADERS is required}
       - SMTP_HOST=${SMTP_HOST:-}
       - SMTP_PORT=${SMTP_PORT:-587}
       - SMTP_USER=${SMTP_USER:-}
@@ -56,16 +54,14 @@ services:
     image: postgres:16-alpine
     container_name: metrikmedia-postgres
     restart: unless-stopped
-    ports:
-      - "5432:5432"
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-metrikmedia}
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local_postgres_password}
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB is required}
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-metrikmedia}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:?POSTGRES_USER is required} -d ${POSTGRES_DB:?POSTGRES_DB is required}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -79,8 +75,6 @@ services:
     image: redis:7-alpine
     container_name: metrikmedia-redis
     restart: unless-stopped
-    ports:
-      - "6379:6379"
     volumes:
       - redis_data:/data
     healthcheck:
@@ -98,12 +92,9 @@ services:
     image: minio/minio:latest
     container_name: metrikmedia-minio
     restart: unless-stopped
-    ports:
-      - "9000:9000"
-      - "9001:9001"
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-local_minio_password}
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?MINIO_ROOT_USER is required}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD is required}
     command: server /data --console-address ":9001"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
@@ -126,9 +117,9 @@ services:
       minio:
         condition: service_healthy
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-local_minio_password}
-      MINIO_BUCKET: ${MINIO_BUCKET:-metrikmedia}
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?MINIO_ROOT_USER is required}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD is required}
+      MINIO_BUCKET: ${MINIO_BUCKET:?MINIO_BUCKET is required}
     entrypoint: >
       /bin/sh -c "
       echo 'Waiting for MinIO...';
@@ -160,7 +151,7 @@ services:
     restart: "no"
     environment:
       DATABASE_TYPE: ${DATABASE_TYPE:-postgresql}
-      POSTGRES_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-local_postgres_password}@postgres:5432/${POSTGRES_DB:-metrikmedia}
+      POSTGRES_URL: ${POSTGRES_URL:?POSTGRES_URL is required}
     depends_on:
       postgres:
         condition: service_healthy
@@ -178,7 +169,7 @@ services:
       - "80:80"
       - "443:443"
     environment:
-      - DOMAIN=${DOMAIN:-localhost}
+      - DOMAIN=${DOMAIN:?DOMAIN is required}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
@@ -202,7 +193,7 @@ services:
     command: ["/app/cron-runner.sh"]
     environment:
       - APP_URL=http://app:3000
-      - CRON_SECRET=${CRON_SECRET:-local_cron_secret_change_me}
+      - CRON_SECRET=${CRON_SECRET:?CRON_SECRET is required}
     volumes:
       - ./cron-runner.sh:/app/cron-runner.sh:ro
     depends_on:
@@ -221,10 +212,10 @@ services:
       - tools
     restart: unless-stopped
     ports:
-      - "5050:80"
+      - "127.0.0.1:5050:80"
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@metrikmediaindonesia.id
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@example.invalid}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-change_me_before_enabling_tools}
     depends_on:
       postgres:
         condition: service_healthy

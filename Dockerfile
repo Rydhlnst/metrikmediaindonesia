@@ -1,7 +1,7 @@
 FROM node:20-alpine AS base
 
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Install the repository's pinned package manager version.
+RUN corepack enable && corepack prepare pnpm@11.22.0 --activate
 
 # ============================================
 # Dependencies
