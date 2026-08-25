@@ -67,10 +67,10 @@ export default async function HomePage() {
       <section className="container-editorial pt-6 pb-8">
         <AdvertisementSlot position="homepage" className="mb-6" />
         {heroArticle && (
-          <article className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch border border-black/10 bg-white rounded-none p-5 sm:p-7 md:p-8 transition-colors hover:border-black/25">
+          <article className="grid min-w-0 max-w-full grid-cols-1 items-stretch gap-6 overflow-hidden border border-black/10 bg-white rounded-none p-5 sm:p-7 md:p-8 transition-colors hover:border-black/25 lg:grid-cols-12 lg:gap-8">
 
               {/* Left Column: Headline Info (7 cols) */}
-              <div className="lg:col-span-7 flex flex-col justify-between space-y-4">
+              <div className="min-w-0 max-w-full lg:col-span-7 flex flex-col justify-between space-y-4">
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-gold text-white rounded-none">
@@ -120,14 +120,14 @@ export default async function HomePage() {
               </div>
 
               {/* Right Column: Hero Image (5 cols) */}
-              <div className="lg:col-span-5 relative min-h-[220px] sm:min-h-[300px] lg:min-h-full aspect-[16/10] lg:aspect-auto overflow-hidden border border-black/10 rounded-none bg-muted">
-                <Link href={`/${getCategorySlug(heroArticle)}/${heroArticle.slug}`} className="block size-full relative">
+              <div className="relative min-h-[220px] w-full min-w-0 max-w-full overflow-hidden border border-black/10 rounded-none bg-muted aspect-[16/10] lg:col-span-5 lg:h-full lg:min-h-0 lg:aspect-auto">
+                <Link href={`/${getCategorySlug(heroArticle)}/${heroArticle.slug}`} className="absolute inset-0 block">
                   <Image
                     src={getImageUrl(heroArticle.thumbnail || heroArticle.featuredImage)}
                     alt={heroArticle.title}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
-                    className="object-cover transition-transform duration-300 hover:scale-105"
+                    className="max-w-full object-cover transition-transform duration-300 hover:scale-105"
                     priority
                   />
                 </Link>
