@@ -8,6 +8,7 @@ services:
       dockerfile: Dockerfile
       args:
         DATABASE_TYPE: ${DATABASE_TYPE:-postgresql}
+    entrypoint: ["/bin/sh", "/app/docker-entrypoint.sh"]
     container_name: metrikmedia-app
     restart: unless-stopped
     environment:
