@@ -210,7 +210,7 @@ services:
       - caddy_config:/config
     depends_on:
       app:
-        condition: service_healthy
+        condition: service_started
       minio:
         condition: service_healthy
     networks:
@@ -232,7 +232,7 @@ services:
       - ./cron-runner.sh:/app/cron-runner.sh:ro
     depends_on:
       app:
-        condition: service_healthy
+        condition: service_started
     networks:
       - metrikmedia-net
 
