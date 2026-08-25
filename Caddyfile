@@ -4,7 +4,7 @@
 }
 
 # Main Application & Storage Proxy
-{$DOMAIN:localhost} {
+http://{$DOMAIN:localhost} {
     encode gzip zstd
 
     # Security Headers
@@ -28,7 +28,6 @@
             header_up Host {host}
             header_up X-Real-IP {remote_host}
             header_up X-Forwarded-For {remote_host}
-            header_up X-Forwarded-Proto {scheme}
         }
     }
 }

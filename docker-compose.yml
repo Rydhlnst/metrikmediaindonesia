@@ -195,9 +195,8 @@ services:
     image: metrikmedia-caddy:local
     container_name: metrikmedia-caddy
     restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
+    expose:
+      - "80"
     environment:
       - DOMAIN=${DOMAIN:?DOMAIN is required}
     volumes:
