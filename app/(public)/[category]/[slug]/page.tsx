@@ -155,7 +155,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
         ]}
       />
 
-      <div className="container-editorial py-8 pb-20 md:pb-8">
+      <div className="container-editorial min-w-0 overflow-x-hidden py-8 pb-20 md:pb-8">
         <AdvertisementSlot position="article_top" className="mb-6" />
         {/* Back button */}
         <Link
@@ -166,8 +166,8 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
           {article.category.name}
         </Link>
 
-        <article className="grid gap-8 lg:grid-cols-[1fr_320px]">
-          <div>
+        <article className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="min-w-0">
             {/* Hero Image */}
             <div className="relative aspect-[16/9] w-full overflow-hidden bg-muted border border-black/10">
               <ArticleImage
