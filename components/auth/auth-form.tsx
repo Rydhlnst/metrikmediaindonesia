@@ -87,9 +87,9 @@ export function AuthForm({ mode }: AuthFormProps) {
   };
 
   return (
-    <div className="flex min-h-screen max-h-screen w-full items-center justify-center overflow-x-hidden overflow-y-auto lg:overflow-hidden">
+    <div className="flex min-h-screen w-full flex-col overflow-x-hidden overflow-y-auto lg:h-screen lg:max-h-screen lg:flex-row lg:items-stretch lg:overflow-hidden">
       {/* Left - Form */}
-      <section className="flex min-h-screen w-full flex-1 flex-col items-center justify-center px-6 py-16 sm:px-10 lg:max-w-xl lg:px-16">
+      <section className="flex min-h-screen w-full min-w-0 flex-1 flex-col items-center justify-center px-6 py-16 sm:px-10 lg:h-full lg:min-h-0 lg:max-w-xl lg:px-16">
         <div className="w-full max-w-sm space-y-8">
           {/* Brand */}
           <div className="space-y-1">
@@ -270,7 +270,7 @@ export function AuthForm({ mode }: AuthFormProps) {
       {/* Right - Blocks Animation */}
       <section
         ref={containerRef}
-        className="relative hidden flex-1 items-center justify-center overflow-hidden bg-on-surface lg:flex"
+        className="relative hidden min-h-screen min-w-0 flex-1 items-center justify-center overflow-hidden bg-on-surface lg:flex lg:h-full lg:min-h-0"
       >
         <Blocks
           containerRef={containerRef}
