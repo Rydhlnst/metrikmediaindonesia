@@ -1,4 +1,4 @@
-FROM node:20-alpine AS base
+FROM node:22-alpine AS base
 
 # Install the repository's pinned package manager version.
 RUN corepack enable && corepack prepare pnpm@11.22.0 --activate
@@ -8,7 +8,7 @@ RUN corepack enable && corepack prepare pnpm@11.22.0 --activate
 # ============================================
 FROM base AS deps
 WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 
 # ============================================
