@@ -244,7 +244,7 @@ async function seed() {
         subtitle: a.subtitle,
         excerpt: a.excerpt,
         content: a.content,
-        thumbnail: `https://picsum.photos/seed/${a.slug}/800/450`,
+        thumbnail: "/placeholder.png",
         status: "published",
         publishedAt: new Date(now.getTime() - i * 7200 * 1000),
         categoryId: cat.id,

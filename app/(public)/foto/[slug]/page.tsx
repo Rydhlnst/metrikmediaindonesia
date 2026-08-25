@@ -6,6 +6,7 @@ import { getArticleBySlug } from "@/lib/queries";
 import { getArticleMedia } from "@/lib/article-media";
 import { generateMetadata as createSeoMetadata } from "@/lib/seo";
 import { SITE_CONFIG } from "@/lib/constants";
+import { getImageUrl } from "@/lib/utils";
 import { CalendarBlank, User, ArrowLeft } from "@phosphor-icons/react/dist/ssr";
 
 export const dynamic = "force-dynamic";
@@ -88,7 +89,7 @@ export default async function PhotoDetailPage({ params }: PhotoPageProps) {
             <figure key={idx} className="rounded-none border border-black/10 bg-white p-4 sm:p-6 space-y-3">
               <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
                 <Image
-                  src={img.url || "/placeholder.png"}
+                  src={getImageUrl(img.url)}
                   alt={img.altText || `Galeri foto ${idx + 1}`}
                   fill
                   sizes="(max-width: 768px) 100vw, 896px"

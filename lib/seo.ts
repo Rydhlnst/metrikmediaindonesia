@@ -95,7 +95,7 @@ export function generateNewsArticleSchema(article: {
     },
     headline: article.headline,
     description: article.description,
-    image: article.imageUrl ? [article.imageUrl] : [`${SITE_CONFIG.url}/og-image.jpg`],
+    image: article.imageUrl ? [article.imageUrl] : [`${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`],
     datePublished: article.datePublished,
     dateModified: article.dateModified || article.datePublished,
     author: {

@@ -21,14 +21,15 @@ export function getImageUrl(image: unknown, _size: ImageSize = "original"): stri
   if (!image) return PLACEHOLDER;
 
   if (typeof image === "string") {
-    return image.trim() || PLACEHOLDER;
+    const value = image.trim();
+    return !value || value.includes("picsum.photos") ? PLACEHOLDER : value;
   }
 
   if (typeof image === "object" && image !== null) {
     const candidate = image as { thumbnail?: unknown; featuredImage?: unknown; url?: unknown };
-    if (typeof candidate.thumbnail === "string") return candidate.thumbnail;
-    if (typeof candidate.featuredImage === "string") return candidate.featuredImage;
-    if (typeof candidate.url === "string") return candidate.url;
+    if (typeof candidate.thumbnail === "string") return getImageUrl(candidate.thumbnail);
+    if (typeof candidate.featuredImage === "string") return getImageUrl(candidate.featuredImage);
+    if (typeof candidate.url === "string") return getImageUrl(candidate.url);
   }
 
   return PLACEHOLDER;

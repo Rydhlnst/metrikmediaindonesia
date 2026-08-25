@@ -4,7 +4,7 @@ export const SITE_CONFIG = {
   tagline: "Media Berita Digital Terpercaya Indonesia",
   description: "Platform media berita digital profesional yang menyediakan berita aktual, informatif, dan terstruktur berdasarkan kategori, topik, wilayah, serta entitas di Indonesia.",
   url: process.env.NEXT_PUBLIC_APP_URL || "https://metrikmediaindonesia.id",
-  ogImage: "/og-image.jpg",
+  ogImage: "/placeholder.png",
   twitterHandle: "@metrikmediaid",
   company: "PT Metrik Media Indonesia",
 } as const;

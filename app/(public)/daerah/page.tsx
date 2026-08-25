@@ -4,6 +4,7 @@ import Image from "next/image";
 import { getArticles } from "@/lib/queries";
 import { generateMetadata } from "@/lib/seo";
 import { SITE_CONFIG } from "@/lib/constants";
+import { getImageUrl } from "@/lib/utils";
 import { MapPin, Clock, ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { PublicPageHeader } from "@/components/shared/public-page-header";
 import { SectionHeader } from "@/components/shared/section-header";
@@ -72,7 +73,7 @@ export default async function DaerahIndexPage() {
           >
             <div className="relative aspect-[16/10] w-full bg-muted overflow-hidden">
               <Image
-                src={item.thumbnail || "/placeholder.png"}
+                src={getImageUrl(item.thumbnail)}
                 alt={item.title}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

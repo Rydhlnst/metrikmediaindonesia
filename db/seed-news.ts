@@ -238,7 +238,8 @@ async function seed() {
       subtitle: article.subtitle,
       excerpt: article.excerpt,
       content: htmlContent(article.paragraphs),
-      thumbnail: `https://picsum.photos/seed/metrik-${article.slug}/1200/675`,
+      // Keep demo media self-contained so production never depends on an external image host.
+      thumbnail: "/placeholder.png",
       imageCaption: "Ilustrasi editorial",
       imageCredit: "Metrik Media Indonesia — demo fixture",
       status: "published",

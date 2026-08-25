@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { SITE_CONFIG } from "@/lib/constants";
+import { getImageUrl } from "@/lib/utils";
 import { getArticles, getCategoryBySlug } from "@/lib/queries";
 import { WebsiteJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { CategoryBadge } from "@/components/shared/category-badge";
@@ -90,7 +91,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             <div className="md:col-span-8 group cursor-pointer">
               <div className="relative w-full aspect-[4/3] mb-6 overflow-hidden bg-muted">
                 <Image
-                  src={featured.thumbnail || "/og-image.jpg"}
+                  src={getImageUrl(featured.thumbnail)}
                   alt={featured.title}
                   fill
                   sizes="(max-width: 768px) 100vw, 66vw"
@@ -137,7 +138,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             <article className="md:col-span-4 group cursor-pointer flex flex-col">
               <div className="w-full aspect-[3/4] mb-4 overflow-hidden bg-muted">
                 <Image
-                  src={secondary[0].thumbnail || "/og-image.jpg"}
+                  src={getImageUrl(secondary[0].thumbnail)}
                   alt={secondary[0].title}
                   fill
                   sizes="(max-width: 768px) 100vw, 33vw"
@@ -170,7 +171,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             <article className="md:col-span-4 group cursor-pointer flex flex-col">
               <div className="w-full aspect-square mb-4 overflow-hidden bg-muted">
                 <Image
-                  src={secondary[1].thumbnail || "/og-image.jpg"}
+                  src={getImageUrl(secondary[1].thumbnail)}
                   alt={secondary[1].title}
                   fill
                   sizes="(max-width: 768px) 100vw, 33vw"

@@ -67,6 +67,8 @@ type ArticleJoinRow = {
 };
 
 function mapRowToArticle(row: ArticleJoinRow, tagList: string[]): Article {
+  const thumbnail = row.thumbnail?.includes("picsum.photos") ? "/placeholder.png" : row.thumbnail;
+
   return {
     id: row.id,
     title: row.title,
@@ -74,8 +76,8 @@ function mapRowToArticle(row: ArticleJoinRow, tagList: string[]): Article {
     slug: row.slug,
     excerpt: row.excerpt,
     content: row.content,
-    thumbnail: row.thumbnail,
-    featuredImage: row.thumbnail,
+    thumbnail,
+    featuredImage: thumbnail,
     publishedAt: row.publishedAt ? row.publishedAt.toISOString() : null,
     readingTime: row.readingTime ?? 5,
     viewCount: row.viewCount ?? 0,
