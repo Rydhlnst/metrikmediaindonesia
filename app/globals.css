@@ -186,7 +186,12 @@
     @apply bg-background text-on-background;
   }
   html {
-    @apply scroll-smooth;
+    @apply scroll-smooth overflow-x-hidden;
+  }
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: clip;
   }
 }
 
