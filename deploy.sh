@@ -73,7 +73,7 @@ echo "🐳 Pulling Docker base images..."
 
 # 4. Build Application Image
 echo "🔨 Building application and migration containers..."
-"${COMPOSE[@]}" build app db-migrate
+"${COMPOSE[@]}" build app db-migrate db-seed caddy
 
 # 5. Start Core Services
 echo "🌐 Starting services, migrations, application, proxy, and cron..."

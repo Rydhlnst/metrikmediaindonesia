@@ -17,6 +17,7 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx db/seed.ts",
+    "db:seed:news": "tsx db/seed-news.ts",
     "db:seed-admin": "tsx db/seed-admin.ts",
     "validate:production": "tsx scripts/validate-production.ts",
     "db:reset": "drizzle-kit drop && pnpm db:migrate && pnpm db:seed"

@@ -1,10 +1,10 @@
-import { redirect } from "next/navigation";
+import { permanentRedirect } from "next/navigation";
 
-export default async function CategoryRedirectPage({
-  params,
-}: {
+interface LegacyCategoryPageProps {
   params: Promise<{ slug: string }>;
-}) {
+}
+
+export default async function LegacyCategoryPage({ params }: LegacyCategoryPageProps) {
   const { slug } = await params;
-  redirect(`/${slug}`);
+  permanentRedirect(`/${slug}`);
 }

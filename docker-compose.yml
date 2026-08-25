@@ -46,6 +46,8 @@ services:
         condition: service_completed_successfully
       db-migrate:
         condition: service_completed_successfully
+      db-seed:
+        condition: service_completed_successfully
     networks:
       - metrikmedia-net
 
@@ -161,10 +163,36 @@ services:
       - metrikmedia-net
 
   # ==============================================================================
+  # ============================================================================
+  # 6b. Idempotent Editorial Demo Seed
+  # ============================================================================
+  db-seed:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: migrator
+      args:
+        DATABASE_TYPE: ${DATABASE_TYPE:-postgresql}
+    container_name: metrikmedia-db-seed
+    restart: "no"
+    command: ["pnpm", "db:seed:news"]
+    environment:
+      DATABASE_TYPE: ${DATABASE_TYPE:-postgresql}
+      POSTGRES_URL: ${POSTGRES_URL:?POSTGRES_URL is required}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:?NEXT_PUBLIC_APP_URL is required}
+    depends_on:
+      db-migrate:
+        condition: service_completed_successfully
+    networks:
+      - metrikmedia-net
+
   # 7. Caddy Reverse Proxy (Auto Let's Encrypt SSL)
   # ==============================================================================
   caddy:
-    image: caddy:2-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile.caddy
+    image: metrikmedia-caddy:local
     container_name: metrikmedia-caddy
     restart: unless-stopped
     ports:
@@ -173,7 +201,6 @@ services:
     environment:
       - DOMAIN=${DOMAIN:?DOMAIN is required}
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
