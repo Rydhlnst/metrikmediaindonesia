@@ -1,9 +1,8 @@
 import { notFound } from "next/navigation";
-import { headers, cookies } from "next/headers";
 import Link from "next/link";
 import { SITE_CONFIG } from "@/lib/constants";
 import { ArticleImage } from "@/components/shared/article-image";
-import { getArticleBySlug, getArticles, getRelatedArticles, getTrendingArticles, getCategories, incrementViewCount } from "@/lib/queries";
+import { getArticleBySlug, getArticles, getRelatedArticles, getTrendingArticles, getCategories } from "@/lib/queries";
 import { ArticleCard } from "@/components/article/article-card";
 import { SectionHeader } from "@/components/shared/section-header";
 import { AvatarAuthor } from "@/components/shared/avatar-author";
@@ -12,7 +11,9 @@ import { ContentCard } from "@/components/shared/content-card";
 import { sanitizeRichHtml } from "@/lib/content-sanitizer";
 import { CopyLinkButton } from "@/components/article/copy-link-button";
 import { ReadingHistoryTracker } from "@/components/article/reading-history-tracker";
+import { ArticleViewTracker } from "@/components/article/article-view-tracker";
 import { BookmarkButton } from "@/components/article/bookmark-button";
+import { ArticleFontSizeControls } from "@/components/article/article-font-size-controls";
 import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { ReadingProgress } from "@/components/shared/animate-on-scroll";
 import { AdvertisementSlot } from "@/components/advertising/advertisement-slot";
@@ -101,14 +102,6 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
 
   if (!article) notFound();
 
-  const requestHeaders = await headers();
-  const requestCookies = await cookies();
-  void incrementViewCount(slug, {
-    ip: requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() || requestHeaders.get("x-real-ip") || undefined,
-    userAgent: requestHeaders.get("user-agent") || undefined,
-    sessionToken: requestCookies.get("better-auth.session_token")?.value,
-  });
-
   const [relatedRes, latestRes, trendingRes, categoriesRes] = await Promise.allSettled([
     getRelatedArticles(article, 5),
     getArticles({ limit: 8 }),
@@ -137,6 +130,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
   return (
     <>
       <ReadingHistoryTracker articleId={article.id} />
+      <ArticleViewTracker slug={article.slug} />
       <ReadingProgress />
       <ArticleJsonLd
         title={article.title}
@@ -232,23 +226,27 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
             </header>
 
             {/* Article Content */}
-            <div className="prose mt-8 max-w-none">
-              {article.content ? (
-                <div dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(article.content) || "" }} />
-              ) : (
-                <>
-                  <p>{article.excerpt}</p>
-                  <p className="text-muted-foreground italic">Konten artikel sedang diperbarui.</p>
-                </>
-              )}
+            <div className="mt-8">
+              <ArticleFontSizeControls>
+                <div className="prose max-w-none">
+                  {article.content ? (
+                    <div dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(article.content) || "" }} />
+                  ) : (
+                    <>
+                      <p>{article.excerpt}</p>
+                      <p className="text-muted-foreground italic">Konten artikel sedang diperbarui.</p>
+                    </>
+                  )}
+                </div>
+              </ArticleFontSizeControls>
             </div>
 
             {/* Tags */}
             <div className="mt-8 flex flex-wrap gap-2">
               {article.tags.map((tag) => (
-                <span key={tag} className="border border-black/10 bg-white px-3 py-1 text-sm text-muted-foreground cursor-pointer hover:border-gold/50 hover:text-foreground transition-colors">
+                <Link key={tag} href={`/tag/${encodeURIComponent(tag.toLowerCase().replace(/\s+/g, "-"))}`} className="border border-black/10 bg-white px-3 py-1 text-sm text-muted-foreground hover:border-gold/50 hover:text-foreground transition-colors">
                   #{tag}
-                </span>
+                </Link>
               ))}
             </div>
 

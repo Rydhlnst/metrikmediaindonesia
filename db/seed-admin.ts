@@ -1,6 +1,7 @@
 import { config } from "dotenv";
 import { resolve } from "path";
 import bcrypt from "bcryptjs";
+import { hashPassword, verifyPassword } from "better-auth/crypto";
 import { and, eq } from "drizzle-orm";
 import { getDb } from "../db/index";
 import { account, user, users } from "../db/schema/index";
@@ -16,7 +17,6 @@ export async function seedAdminUser() {
 
   const db = await getDb();
   const superAdminRole = await seedAccessControl(db);
-  const passwordHash = await bcrypt.hash(password, 10);
 
   const [existingAuthUser] = await db
     .select()
@@ -45,12 +45,13 @@ export async function seedAdminUser() {
   }
 
   const [credentialAccount] = await db
-    .select({ id: account.id })
+    .select({ id: account.id, password: account.password })
     .from(account)
     .where(and(eq(account.userId, authUserId), eq(account.providerId, "credential")))
     .limit(1);
 
   if (!credentialAccount) {
+    const passwordHash = await hashPassword(password);
     await db.insert(account).values({
       id: crypto.randomUUID(),
       accountId: authUserId,
@@ -59,6 +60,12 @@ export async function seedAdminUser() {
       password: passwordHash,
     });
     console.log("Credential account created");
+  } else if (!(await isBetterAuthPasswordHash(credentialAccount.password))) {
+    await db
+      .update(account)
+      .set({ password: await hashPassword(password), updatedAt: new Date() })
+      .where(eq(account.id, credentialAccount.id));
+    console.log("Credential account password hash repaired");
   }
 
   const [legacyUser] = await db
@@ -68,6 +75,7 @@ export async function seedAdminUser() {
     .limit(1);
 
   if (!legacyUser) {
+    const passwordHash = await bcrypt.hash(password, 10);
     await db.insert(users).values({
       name: "Admin Metrik Media",
       email,
@@ -85,6 +93,17 @@ export async function seedAdminUser() {
   }
 
   console.log("Admin seed completed");
+}
+
+async function isBetterAuthPasswordHash(passwordHash: string | null): Promise<boolean> {
+  if (!passwordHash) return false;
+
+  try {
+    await verifyPassword({ hash: passwordHash, password: "" });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 seedAdminUser()

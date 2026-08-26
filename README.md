@@ -73,7 +73,7 @@ chmod +x deploy.sh
 Atau jalankan manual dengan Docker Compose:
 ```bash
 # Build dan jalankan seluruh container di background
-docker compose up -d --build
+docker compose --profile vps up -d --build
 ```
 
 ---

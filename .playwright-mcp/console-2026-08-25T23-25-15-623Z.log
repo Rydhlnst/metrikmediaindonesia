@@ -1,0 +1,2 @@
+[   26645ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://metrikmediaindonesia.beres.io/api/reading-history:0
+[   26650ms] [ERROR] Failed to load resource: the server responded with a status of 401 () @ https://metrikmediaindonesia.beres.io/api/bookmarks:0

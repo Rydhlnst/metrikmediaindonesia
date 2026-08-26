@@ -3,6 +3,7 @@ import { getDb } from "@/db/index";
 import { notifications } from "@/db/schema/index";
 import { eq, and, inArray } from "drizzle-orm";
 import { canManageEditorial, requireAuth } from "@/lib/server-session";
+import { getEditorialRecipientIds } from "@/lib/notifications";
 
 export async function PUT(request: NextRequest) {
   try {
@@ -12,7 +13,9 @@ export async function PUT(request: NextRequest) {
 
     const db = await getDb();
     const recipientIds = [sessionUser.id];
-    if (canManageEditorial(sessionUser)) recipientIds.push("admin");
+    if (canManageEditorial(sessionUser)) {
+      recipientIds.push(...(await getEditorialRecipientIds()));
+    }
 
     await db
       .update(notifications)

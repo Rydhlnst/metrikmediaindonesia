@@ -5,6 +5,7 @@ import { eq, and, inArray } from "drizzle-orm";
 import { canManageEditorial, requireAuth } from "@/lib/server-session";
 import { positiveIdSchema } from "@/lib/validators/cms";
 import { zodError } from "@/lib/api-response";
+import { getEditorialRecipientIds } from "@/lib/notifications";
 
 export async function PUT(
   request: NextRequest,
@@ -20,7 +21,9 @@ export async function PUT(
     if (!parsedId.success) return zodError(parsedId.error);
     const db = await getDb();
     const recipientIds = [sessionUser.id];
-    if (canManageEditorial(sessionUser)) recipientIds.push("admin");
+    if (canManageEditorial(sessionUser)) {
+      recipientIds.push(...(await getEditorialRecipientIds()));
+    }
 
     const [updated] = await db
       .update(notifications)
@@ -64,7 +67,9 @@ export async function DELETE(
     if (!parsedId.success) return zodError(parsedId.error);
     const db = await getDb();
     const recipientIds = [sessionUser.id];
-    if (canManageEditorial(sessionUser)) recipientIds.push("admin");
+    if (canManageEditorial(sessionUser)) {
+      recipientIds.push(...(await getEditorialRecipientIds()));
+    }
 
     const [deleted] = await db
       .delete(notifications)

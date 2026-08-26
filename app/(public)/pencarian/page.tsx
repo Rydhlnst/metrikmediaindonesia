@@ -81,7 +81,7 @@ function SearchRecommendations() {
   useEffect(() => {
     let cancelled = false;
     Promise.all([
-      requestJson<{ data?: Article[] }>("/api/articles?sort=-viewCount&limit=5"),
+      requestJson<{ data?: Article[] }>("/api/articles?sort=popular&limit=5"),
       requestJson<{ data?: Article[] }>("/api/articles?limit=6"),
       requestJson<{ data?: Category[] }>("/api/public/categories"),
     ])

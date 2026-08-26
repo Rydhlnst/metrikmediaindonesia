@@ -9,6 +9,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -20,6 +21,7 @@
     "db:seed:news": "tsx db/seed-news.ts",
     "db:seed-admin": "tsx db/seed-admin.ts",
     "validate:production": "tsx scripts/validate-production.ts",
+    "smoke": "node scripts/smoke-public.mjs",
     "db:reset": "drizzle-kit drop && pnpm db:migrate && pnpm db:seed"
   },
   "dependencies": {

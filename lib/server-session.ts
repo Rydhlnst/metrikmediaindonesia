@@ -88,7 +88,9 @@ export async function getSessionFromRequest(
         authorId: author.id,
         name: sessionUser.name,
         email: sessionUser.email,
-        role: author.role || authUser?.roleName || "contributor",
+        // The Better Auth role is authoritative for authorization. The author
+        // role is editorial display metadata and must not downgrade an admin.
+        role: normalizeRole(authUser?.roleName || author.role || "contributor"),
         slug: author.slug,
         avatar: sessionUser.image || null,
         permissions: permissionKeys,
@@ -99,7 +101,7 @@ export async function getSessionFromRequest(
       id: sessionUser.id,
       name: sessionUser.name,
       email: sessionUser.email,
-      role: authUser?.roleName || "user",
+      role: normalizeRole(authUser?.roleName),
       avatar: sessionUser.image || null,
       permissions: permissionKeys,
     };

@@ -12,6 +12,9 @@ import {
   settingsSchema,
   slugSchema,
   positiveIdSchema,
+  mediaCreateSchema,
+  mediaUpdateSchema,
+  mediaQuerySchema,
 } from "@/lib/validators/cms";
 
 describe("slugSchema", () => {
@@ -116,5 +119,34 @@ describe("settingsSchema", () => {
 
   it("rejects empty record", () => {
     expect(settingsSchema.safeParse({}).success).toBe(false);
+  });
+});
+
+describe("media schemas", () => {
+  it("accepts validated media metadata", () => {
+    const result = mediaCreateSchema.safeParse({
+      url: "/storage/uploads/article.webp",
+      type: "image",
+      size: 1024,
+      width: 640,
+      height: 360,
+      alt: "Article cover",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects unsupported media types and oversized files", () => {
+    expect(mediaCreateSchema.safeParse({ url: "/file.bin", type: "script" }).success).toBe(false);
+    expect(mediaCreateSchema.safeParse({ url: "/file.bin", size: 101 * 1024 * 1024 }).success).toBe(false);
+  });
+
+  it("requires a valid paginated media query", () => {
+    expect(mediaQuerySchema.safeParse({ page: "2", limit: "50", type: "video" }).success).toBe(true);
+    expect(mediaQuerySchema.safeParse({ page: "0" }).success).toBe(false);
+  });
+
+  it("requires at least one editable media field", () => {
+    expect(mediaUpdateSchema.safeParse({ alt: "Updated alt" }).success).toBe(true);
+    expect(mediaUpdateSchema.safeParse({}).success).toBe(false);
   });
 });

@@ -18,3 +18,34 @@ export const pageSchema = z.object({ title: z.string().trim().min(2).max(255), s
 export const roleSchema = z.object({ name: z.string().trim().min(2).max(50), description: z.string().trim().max(2_000).nullable().optional(), permissionKeys: z.array(z.string().trim().min(1).max(120)).max(100).optional() });
 export const profileUpdateSchema = z.object({ name: z.string().trim().min(2).max(100).optional(), bio: z.string().trim().max(10_000).nullable().optional(), avatar: z.string().trim().max(2_000).nullable().optional(), socialLinks: authorSocialLinksSchema });
 export const settingsSchema = z.record(z.string().trim().min(1).max(100), z.string().max(10_000)).refine((value) => Object.keys(value).length > 0, "At least one setting is required");
+
+const mediaUrlSchema = z.union([
+  z.string().url().max(2_000),
+  z.string().trim().startsWith("/").max(2_000),
+]);
+
+export const mediaTypeSchema = z.enum(["image", "video", "file"]);
+
+export const mediaQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).max(10_000).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+  type: mediaTypeSchema.optional(),
+});
+
+export const mediaCreateSchema = z.object({
+  url: mediaUrlSchema,
+  type: mediaTypeSchema.default("image"),
+  mimeType: z.string().trim().max(100).nullable().optional(),
+  size: z.coerce.number().int().min(0).max(100 * 1024 * 1024).nullable().optional(),
+  width: z.coerce.number().int().min(0).max(20_000).nullable().optional(),
+  height: z.coerce.number().int().min(0).max(20_000).nullable().optional(),
+  alt: z.string().trim().max(1_000).nullable().optional(),
+  caption: z.string().trim().max(5_000).nullable().optional(),
+  credit: z.string().trim().max(500).nullable().optional(),
+});
+
+export const mediaUpdateSchema = z.object({
+  alt: z.string().trim().max(1_000).nullable().optional(),
+  caption: z.string().trim().max(5_000).nullable().optional(),
+  credit: z.string().trim().max(500).nullable().optional(),
+}).strict().refine((value) => Object.keys(value).length > 0, "At least one media field is required");

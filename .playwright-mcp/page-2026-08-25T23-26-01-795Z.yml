@@ -1,0 +1,213 @@
+- generic [active] [ref=f8e1]:
+  - generic [ref=f8e2]:
+    - banner [ref=f8e3]:
+      - generic [ref=f8e5]:
+        - link "Metrik Media Indonesia METRIK MEDIA INDONESIA" [ref=f8e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=f8e8]:
+            - img "Metrik Media Indonesia" [ref=f8e10]
+            - generic [ref=f8e11]:
+              - generic [ref=f8e12]: METRIK MEDIA
+              - generic [ref=f8e13]: INDONESIA
+        - generic [ref=f8e15]:
+          - textbox "Cari topik, berita, atau daerah..." [ref=f8e19]
+          - button "Cari" [ref=f8e20] [cursor=pointer]
+        - generic [ref=f8e24]:
+          - link "Disimpan" [ref=f8e25] [cursor=pointer]:
+            - /url: /saved
+          - link "Masuk" [ref=f8e29] [cursor=pointer]:
+            - /url: /login
+      - navigation [ref=f8e35]:
+        - link "Beranda" [ref=f8e36] [cursor=pointer]:
+          - /url: /
+        - link "Nasional" [ref=f8e37] [cursor=pointer]:
+          - /url: /nasional
+        - link "Politik" [ref=f8e38] [cursor=pointer]:
+          - /url: /politik
+        - link "Bisnis" [ref=f8e39] [cursor=pointer]:
+          - /url: /bisnis
+        - link "Teknologi" [ref=f8e40] [cursor=pointer]:
+          - /url: /teknologi
+        - link "Lifestyle" [ref=f8e41] [cursor=pointer]:
+          - /url: /lifestyle
+        - link "Entertainment" [ref=f8e42] [cursor=pointer]:
+          - /url: /entertainment
+        - link "Sports" [ref=f8e43] [cursor=pointer]:
+          - /url: /sports
+        - link "Daerah" [ref=f8e44] [cursor=pointer]:
+          - /url: /daerah
+        - link "Video HD" [ref=f8e45] [cursor=pointer]:
+          - /url: /video
+          - text: Video
+          - generic [ref=f8e46]: HD
+        - link "Foto" [ref=f8e47] [cursor=pointer]:
+          - /url: /foto
+        - link "Publish Business" [ref=f8e48] [cursor=pointer]:
+          - /url: /business-publication
+    - main [ref=f8e49]:
+      - generic [ref=f8e50]:
+        - navigation [ref=f8e51]:
+          - link [ref=f8e52] [cursor=pointer]:
+            - /url: /
+          - generic [ref=f8e55]: Hubungi Kami
+        - generic [ref=f8e59]:
+          - heading "Hubungi Kami" [level=1] [ref=f8e60]
+          - paragraph [ref=f8e61]: Punya pertanyaan, masukan, atau kerja sama? Jangan ragu untuk menghubungi kami.
+        - generic [ref=f8e62]:
+          - generic [ref=f8e64]:
+            - generic [ref=f8e65]:
+              - generic [ref=f8e66]:
+                - text: Nama Lengkap
+                - textbox "Nama Lengkap" [ref=f8e67]:
+                  - /placeholder: Masukkan nama Anda
+              - generic [ref=f8e68]:
+                - text: Email
+                - textbox "Email" [ref=f8e69]:
+                  - /placeholder: Masukkan email Anda
+            - generic [ref=f8e70]:
+              - text: Subjek
+              - textbox "Subjek" [ref=f8e71]:
+                - /placeholder: Subjek pesan
+            - generic [ref=f8e72]:
+              - text: Pesan
+              - textbox "Pesan" [ref=f8e73]:
+                - /placeholder: Tulis pesan Anda...
+            - button "Kirim Pesan" [ref=f8e74] [cursor=pointer]
+          - generic [ref=f8e77]:
+            - generic [ref=f8e78]:
+              - heading "Informasi Kontak" [level=3] [ref=f8e79]
+              - generic [ref=f8e80]:
+                - generic [ref=f8e84]:
+                  - paragraph [ref=f8e85]: Alamat
+                  - paragraph [ref=f8e86]: Jl. Sudirman No. 123, Jakarta Selatan, DKI Jakarta 12190
+                - generic [ref=f8e90]:
+                  - paragraph [ref=f8e91]: Email
+                  - paragraph [ref=f8e92]: redaksi@metrikmediaindonesia.id
+                - generic [ref=f8e96]:
+                  - paragraph [ref=f8e97]: Telepon
+                  - paragraph [ref=f8e98]: +62 21 1234 5678
+                - generic [ref=f8e102]:
+                  - paragraph [ref=f8e103]: Jam Operasional
+                  - paragraph [ref=f8e104]: "Senin - Jumat: 08:00 - 17:00 WIB"
+            - generic [ref=f8e105]:
+              - heading "Ikuti Kami" [level=3] [ref=f8e106]
+              - generic [ref=f8e107]:
+                - link [ref=f8e108] [cursor=pointer]:
+                  - /url: https://facebook.com/metrikmediaid
+                - link [ref=f8e111] [cursor=pointer]:
+                  - /url: https://twitter.com/metrikmediaid
+                - link [ref=f8e114] [cursor=pointer]:
+                  - /url: https://instagram.com/metrikmediaid
+                - link [ref=f8e117] [cursor=pointer]:
+                  - /url: https://youtube.com/@metrikmediaid
+            - iframe [ref=f8e121]:
+              
+            - generic [ref=f8e127]:
+              - paragraph [ref=f8e128]: Keamanan
+              - paragraph [ref=f8e129]: Formulir ini dilindungi dari spam oleh sistem keamanan kami.
+    - contentinfo [ref=f8e130]:
+      - generic [ref=f8e131]:
+        - generic [ref=f8e132]:
+          - generic [ref=f8e133]:
+            - link "Metrik Media Indonesia METRIK MEDIA INDONESIA" [ref=f8e134] [cursor=pointer]:
+              - /url: /
+              - generic [ref=f8e135]:
+                - img "Metrik Media Indonesia" [ref=f8e137]
+                - generic [ref=f8e138]:
+                  - generic [ref=f8e139]: METRIK MEDIA
+                  - generic [ref=f8e140]: INDONESIA
+            - paragraph [ref=f8e141]: Metrik Media Indonesia adalah portal berita digital profesional yang menyajikan jurnalisme terpercaya di bidang Ekonomi, Politik, Teknologi, dan Isu Nasional.
+            - generic [ref=f8e142]:
+              - link "Twitter" [ref=f8e143] [cursor=pointer]:
+                - /url: https://twitter.com
+              - link "Facebook" [ref=f8e146] [cursor=pointer]:
+                - /url: https://facebook.com
+              - link "Instagram" [ref=f8e149] [cursor=pointer]:
+                - /url: https://instagram.com
+              - link "YouTube" [ref=f8e152] [cursor=pointer]:
+                - /url: https://youtube.com
+              - link "LinkedIn" [ref=f8e155] [cursor=pointer]:
+                - /url: https://linkedin.com
+          - generic [ref=f8e158]:
+            - generic [ref=f8e159]:
+              - heading "Kanal Berita" [level=4] [ref=f8e160]
+              - list [ref=f8e161]:
+                - listitem [ref=f8e162]:
+                  - link "Nasional" [ref=f8e163] [cursor=pointer]:
+                    - /url: /nasional
+                - listitem [ref=f8e164]:
+                  - link "Politik" [ref=f8e165] [cursor=pointer]:
+                    - /url: /politik
+                - listitem [ref=f8e166]:
+                  - link "Bisnis" [ref=f8e167] [cursor=pointer]:
+                    - /url: /bisnis
+                - listitem [ref=f8e168]:
+                  - link "Teknologi" [ref=f8e169] [cursor=pointer]:
+                    - /url: /teknologi
+                - listitem [ref=f8e170]:
+                  - link "Lifestyle" [ref=f8e171] [cursor=pointer]:
+                    - /url: /lifestyle
+                - listitem [ref=f8e172]:
+                  - link "Entertainment" [ref=f8e173] [cursor=pointer]:
+                    - /url: /entertainment
+                - listitem [ref=f8e174]:
+                  - link "Olahraga" [ref=f8e175] [cursor=pointer]:
+                    - /url: /sports
+                - listitem [ref=f8e176]:
+                  - link "Daerah" [ref=f8e177] [cursor=pointer]:
+                    - /url: /daerah
+            - generic [ref=f8e178]:
+              - heading "Portal Media" [level=4] [ref=f8e179]
+              - list [ref=f8e180]:
+                - listitem [ref=f8e181]:
+                  - link "Metrik Video HD" [ref=f8e182] [cursor=pointer]:
+                    - /url: /video
+                - listitem [ref=f8e183]:
+                  - link "Galeri Foto" [ref=f8e184] [cursor=pointer]:
+                    - /url: /foto
+                - listitem [ref=f8e185]:
+                  - link "Topik Trending" [ref=f8e186] [cursor=pointer]:
+                    - /url: /pencarian
+                - listitem [ref=f8e187]:
+                  - link "Indeks Berita" [ref=f8e188] [cursor=pointer]:
+                    - /url: /pencarian
+                - listitem [ref=f8e189]:
+                  - link "Publish Business" [ref=f8e190] [cursor=pointer]:
+                    - /url: /business-publication
+            - generic [ref=f8e191]:
+              - heading "Redaksi & Legal" [level=4] [ref=f8e192]
+              - list [ref=f8e193]:
+                - listitem [ref=f8e194]:
+                  - link "Tentang Kami" [ref=f8e195] [cursor=pointer]:
+                    - /url: /tentang-kami
+                - listitem [ref=f8e196]:
+                  - link "Tim Editorial" [ref=f8e197] [cursor=pointer]:
+                    - /url: /tim-editorial
+                - listitem [ref=f8e198]:
+                  - link "Hubungi Kami" [ref=f8e199] [cursor=pointer]:
+                    - /url: /hubungi-kami
+                - listitem [ref=f8e200]:
+                  - link "Pedoman Siber" [ref=f8e201] [cursor=pointer]:
+                    - /url: /tentang-kami
+                - listitem [ref=f8e202]:
+                  - link "Privasi & Syarat" [ref=f8e203] [cursor=pointer]:
+                    - /url: /tentang-kami
+        - generic [ref=f8e204]:
+          - generic [ref=f8e205]: Gedung Press Center Jakarta, Jl. Jend. Sudirman No. 45, Jakarta Pusat
+          - generic [ref=f8e209]: "Redaksi: redaksi@metrikmediaindonesia.id"
+          - generic [ref=f8e213]: Tunduk pada Pedoman Media Siber Dewan Pers Indonesia
+      - generic [ref=f8e218]:
+        - generic [ref=f8e219]:
+          - text: © 2026
+          - strong [ref=f8e220]: METRIK MEDIA INDONESIA
+          - text: . All rights reserved.
+        - generic [ref=f8e221]:
+          - link "Pedoman Siber" [ref=f8e222] [cursor=pointer]:
+            - /url: /tentang-kami
+          - generic [ref=f8e223]: •
+          - link "Privasi" [ref=f8e224] [cursor=pointer]:
+            - /url: /tentang-kami
+          - generic [ref=f8e225]: •
+          - link "Kontak Redaksi" [ref=f8e226] [cursor=pointer]:
+            - /url: /hubungi-kami
+  - alert [ref=f8e227]

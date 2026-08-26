@@ -1,0 +1,153 @@
+- generic [active] [ref=f2e1]:
+  - generic [ref=f2e2]:
+    - banner [ref=f2e3]:
+      - generic [ref=f2e5]:
+        - link "Metrik Media Indonesia METRIK MEDIA INDONESIA" [ref=f2e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=f2e8]:
+            - img "Metrik Media Indonesia" [ref=f2e10]
+            - generic [ref=f2e11]:
+              - generic [ref=f2e12]: METRIK MEDIA
+              - generic [ref=f2e13]: INDONESIA
+        - generic [ref=f2e15]:
+          - textbox "Cari topik, berita, atau daerah..." [ref=f2e19]
+          - button "Cari" [ref=f2e20] [cursor=pointer]
+        - generic [ref=f2e24]:
+          - link "Disimpan" [ref=f2e25] [cursor=pointer]:
+            - /url: /saved
+          - link "Masuk" [ref=f2e29] [cursor=pointer]:
+            - /url: /login
+      - navigation [ref=f2e35]:
+        - link "Beranda" [ref=f2e36] [cursor=pointer]:
+          - /url: /
+        - link "Nasional" [ref=f2e37] [cursor=pointer]:
+          - /url: /nasional
+        - link "Politik" [ref=f2e38] [cursor=pointer]:
+          - /url: /politik
+        - link "Bisnis" [ref=f2e39] [cursor=pointer]:
+          - /url: /bisnis
+        - link "Teknologi" [ref=f2e40] [cursor=pointer]:
+          - /url: /teknologi
+        - link "Lifestyle" [ref=f2e41] [cursor=pointer]:
+          - /url: /lifestyle
+        - link "Entertainment" [ref=f2e42] [cursor=pointer]:
+          - /url: /entertainment
+        - link "Sports" [ref=f2e43] [cursor=pointer]:
+          - /url: /sports
+        - link "Daerah" [ref=f2e44] [cursor=pointer]:
+          - /url: /daerah
+        - link "Video HD" [ref=f2e45] [cursor=pointer]:
+          - /url: /video
+          - text: Video
+          - generic [ref=f2e46]: HD
+        - link "Foto" [ref=f2e47] [cursor=pointer]:
+          - /url: /foto
+        - link "Publish Business" [ref=f2e48] [cursor=pointer]:
+          - /url: /business-publication
+    - main [ref=f2e49]
+    - contentinfo [ref=f2e91]:
+      - generic [ref=f2e92]:
+        - generic [ref=f2e93]:
+          - generic [ref=f2e94]:
+            - link "Metrik Media Indonesia METRIK MEDIA INDONESIA" [ref=f2e95] [cursor=pointer]:
+              - /url: /
+              - generic [ref=f2e96]:
+                - img "Metrik Media Indonesia" [ref=f2e98]
+                - generic [ref=f2e99]:
+                  - generic [ref=f2e100]: METRIK MEDIA
+                  - generic [ref=f2e101]: INDONESIA
+            - paragraph [ref=f2e102]: Metrik Media Indonesia adalah portal berita digital profesional yang menyajikan jurnalisme terpercaya di bidang Ekonomi, Politik, Teknologi, dan Isu Nasional.
+            - generic [ref=f2e103]:
+              - link "Twitter" [ref=f2e104] [cursor=pointer]:
+                - /url: https://twitter.com
+              - link "Facebook" [ref=f2e107] [cursor=pointer]:
+                - /url: https://facebook.com
+              - link "Instagram" [ref=f2e110] [cursor=pointer]:
+                - /url: https://instagram.com
+              - link "YouTube" [ref=f2e113] [cursor=pointer]:
+                - /url: https://youtube.com
+              - link "LinkedIn" [ref=f2e116] [cursor=pointer]:
+                - /url: https://linkedin.com
+          - generic [ref=f2e119]:
+            - generic [ref=f2e120]:
+              - heading "Kanal Berita" [level=4] [ref=f2e121]
+              - list [ref=f2e122]:
+                - listitem [ref=f2e123]:
+                  - link "Nasional" [ref=f2e124] [cursor=pointer]:
+                    - /url: /nasional
+                - listitem [ref=f2e125]:
+                  - link "Politik" [ref=f2e126] [cursor=pointer]:
+                    - /url: /politik
+                - listitem [ref=f2e127]:
+                  - link "Bisnis" [ref=f2e128] [cursor=pointer]:
+                    - /url: /bisnis
+                - listitem [ref=f2e129]:
+                  - link "Teknologi" [ref=f2e130] [cursor=pointer]:
+                    - /url: /teknologi
+                - listitem [ref=f2e131]:
+                  - link "Lifestyle" [ref=f2e132] [cursor=pointer]:
+                    - /url: /lifestyle
+                - listitem [ref=f2e133]:
+                  - link "Entertainment" [ref=f2e134] [cursor=pointer]:
+                    - /url: /entertainment
+                - listitem [ref=f2e135]:
+                  - link "Olahraga" [ref=f2e136] [cursor=pointer]:
+                    - /url: /sports
+                - listitem [ref=f2e137]:
+                  - link "Daerah" [ref=f2e138] [cursor=pointer]:
+                    - /url: /daerah
+            - generic [ref=f2e139]:
+              - heading "Portal Media" [level=4] [ref=f2e140]
+              - list [ref=f2e141]:
+                - listitem [ref=f2e142]:
+                  - link "Metrik Video HD" [ref=f2e143] [cursor=pointer]:
+                    - /url: /video
+                - listitem [ref=f2e144]:
+                  - link "Galeri Foto" [ref=f2e145] [cursor=pointer]:
+                    - /url: /foto
+                - listitem [ref=f2e146]:
+                  - link "Topik Trending" [ref=f2e147] [cursor=pointer]:
+                    - /url: /pencarian
+                - listitem [ref=f2e148]:
+                  - link "Indeks Berita" [ref=f2e149] [cursor=pointer]:
+                    - /url: /pencarian
+                - listitem [ref=f2e150]:
+                  - link "Publish Business" [ref=f2e151] [cursor=pointer]:
+                    - /url: /business-publication
+            - generic [ref=f2e152]:
+              - heading "Redaksi & Legal" [level=4] [ref=f2e153]
+              - list [ref=f2e154]:
+                - listitem [ref=f2e155]:
+                  - link "Tentang Kami" [ref=f2e156] [cursor=pointer]:
+                    - /url: /tentang-kami
+                - listitem [ref=f2e157]:
+                  - link "Tim Editorial" [ref=f2e158] [cursor=pointer]:
+                    - /url: /tim-editorial
+                - listitem [ref=f2e159]:
+                  - link "Hubungi Kami" [ref=f2e160] [cursor=pointer]:
+                    - /url: /hubungi-kami
+                - listitem [ref=f2e161]:
+                  - link "Pedoman Siber" [ref=f2e162] [cursor=pointer]:
+                    - /url: /tentang-kami
+                - listitem [ref=f2e163]:
+                  - link "Privasi & Syarat" [ref=f2e164] [cursor=pointer]:
+                    - /url: /tentang-kami
+        - generic [ref=f2e165]:
+          - generic [ref=f2e166]: Gedung Press Center Jakarta, Jl. Jend. Sudirman No. 45, Jakarta Pusat
+          - generic [ref=f2e170]: "Redaksi: redaksi@metrikmediaindonesia.id"
+          - generic [ref=f2e174]: Tunduk pada Pedoman Media Siber Dewan Pers Indonesia
+      - generic [ref=f2e179]:
+        - generic [ref=f2e180]:
+          - text: © 2026
+          - strong [ref=f2e181]: METRIK MEDIA INDONESIA
+          - text: . All rights reserved.
+        - generic [ref=f2e182]:
+          - link "Pedoman Siber" [ref=f2e183] [cursor=pointer]:
+            - /url: /tentang-kami
+          - generic [ref=f2e184]: •
+          - link "Privasi" [ref=f2e185] [cursor=pointer]:
+            - /url: /tentang-kami
+          - generic [ref=f2e186]: •
+          - link "Kontak Redaksi" [ref=f2e187] [cursor=pointer]:
+            - /url: /hubungi-kami
+  - alert [ref=f2e188]

@@ -9,6 +9,7 @@ import { hasPermission, PERMISSIONS } from "@/lib/permissions";
 import { zodError } from "@/lib/api-response";
 import { sanitizeRichHtml } from "@/lib/content-sanitizer";
 import { writeAuditLog } from "@/lib/audit-log";
+import { getEditorialRecipientIds } from "@/lib/notifications";
 
 const submissionSchema = z.object({
   title: z.string().trim().min(10).max(255),
@@ -121,13 +122,18 @@ export async function POST(request: NextRequest) {
       reviewerId: authResult.id,
       action: "submitted",
     });
-    await db.insert(notifications).values({
-      userId: "admin",
-      type: "submission_received",
-      title: "New public submission",
-      message: `${authResult.name} submitted “${submission.title}”.`,
-      link: `/dashboard/submissions/${submission.id}`,
-    });
+    const editorialRecipients = await getEditorialRecipientIds();
+    if (editorialRecipients.length > 0) {
+      await db.insert(notifications).values(
+        editorialRecipients.map((userId) => ({
+          userId,
+          type: "submission_received",
+          title: "New public submission",
+          message: `${authResult.name} submitted “${submission.title}”.`,
+          link: `/dashboard/submissions/${submission.id}`,
+        }))
+      );
+    }
   }
 
   return NextResponse.json({ data: submission }, { status: 201 });

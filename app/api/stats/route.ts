@@ -79,13 +79,14 @@ export async function GET(request: NextRequest) {
       .limit(5);
 
     // 8. Monthly stats for charts (last 12 months)
+    const monthlyCutoff = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000);
     const monthlyStats = await db
       .select({
         month: articles.publishedAt,
         viewCount: articles.viewCount,
       })
       .from(articles)
-      .where(eq(articles.status, "published"))
+      .where(and(eq(articles.status, "published"), gte(articles.publishedAt, monthlyCutoff)))
       .orderBy(desc(articles.publishedAt));
 
     // Process monthly stats

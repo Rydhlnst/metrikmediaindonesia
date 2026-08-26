@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { unstable_cache, revalidateTag } from "next/cache";
-import { desc, eq, and, like, or, not, inArray, sql, gt, gte, isNull, lte } from "drizzle-orm";
+import { desc, eq, and, ilike, or, not, inArray, sql, gt, gte, isNull, lte } from "drizzle-orm";
 import { getDb } from "@/db/index";
 import {
   articles,
@@ -195,7 +195,14 @@ async function listArticlesRaw(options: GetArticlesOptions): Promise<Article[]> 
   if (options.search) {
     const term = `%${options.search}%`;
     conditions.push(
-      or(like(articles.title, term), like(articles.excerpt, term))!
+      or(
+        ilike(articles.title, term),
+        ilike(articles.subtitle, term),
+        ilike(articles.excerpt, term),
+        ilike(articles.content, term),
+        ilike(authors.name, term),
+        ilike(categories.name, term)
+      )!
     );
   }
 
@@ -522,7 +529,6 @@ export async function incrementArticleViews(slug: string, context?: ArticleViewC
       .where(eq(articles.slug, slug))
       .limit(1);
     if (article) await recordArticleView(article.id, context);
-    revalidateTag("trending", "max");
     void invalidateRedisPattern("cache:articles:trending:*");
   } catch (error) {
     console.error("Failed to increment view count:", error);

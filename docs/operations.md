@@ -5,20 +5,20 @@
 Use the development environment file. It uses local-only credentials, skips production email validation, creates the MinIO bucket, and runs repeatable database migrations automatically:
 
 ```powershell
-docker compose --env-file .env.docker up -d --build
-docker compose --env-file .env.docker ps
+docker compose --env-file .env.docker --profile vps up -d --build
+docker compose --env-file .env.docker --profile vps ps
 ```
 
 Open `http://localhost`. Caddy is the only published application entrypoint; PostgreSQL, Redis, MinIO, and the Next.js port stay on the internal Docker network. The app waits for PostgreSQL, Redis, MinIO, the bucket initializer, and the migration runner. View logs with:
 
 ```powershell
-docker compose --env-file .env.docker logs -f app db-migrate
+docker compose --env-file .env.docker --profile vps logs -f app db-migrate
 ```
 
 Stop the local stack with:
 
 ```powershell
-docker compose --env-file .env.docker down
+docker compose --env-file .env.docker --profile vps down
 ```
 
 Do not use `.env.docker` for production. Production requires `NODE_ENV=production`, unique secrets, and SMTP or Resend configuration.
@@ -43,3 +43,24 @@ Set `TRUST_PROXY_HEADERS=true` only when the app is reachable exclusively throug
 Back up PostgreSQL daily with `POSTGRES_URL=... BACKUP_DIR=/secure/backups/postgres ./scripts/backup-postgres.sh` and MinIO with `MINIO_ALIAS=... MINIO_ACCESS_KEY=... MINIO_SECRET_KEY=... MINIO_BUCKET=... BACKUP_DIR=/secure/backups/minio ./scripts/backup-minio.sh`. Retain daily backups for 30 days and test a restore monthly. Store backups outside the application host. Schedule `/api/cron/publish-scheduled` with an authenticated `CRON_SECRET` bearer token.
 
 For PostgreSQL restore, use `pg_restore --clean --if-exists --dbname="$POSTGRES_URL" backup.dump` against a maintenance database after taking a safety snapshot. For MinIO restore, use `mc mirror backup-directory alias/bucket` and verify object counts before switching traffic.
+
+The production Compose stack bootstraps access control and the configured admin
+account only; it does not insert demo articles. Demo fixtures are opt-in and
+must never be enabled on a production database:
+
+```bash
+docker compose --env-file .env --profile demo run --rm db-demo-seed
+```
+
+After deployment, verify `/api/health/live` for process health and `/api/health`
+for database/Redis readiness. A successful image build alone is not a production
+readiness signal.
+
+## Coolify
+
+For Coolify, use `docker-compose.yml` without the `vps`, `demo`, or `tools`
+profiles. Coolify routes the `app` service on port `3000` and the `minio`
+service on port `9000`; set `MINIO_PUBLIC_URL` to the public MinIO domain.
+Coolify terminates TLS, so keep `TRUST_PROXY_HEADERS=true` and do not start the
+Caddy profile. See `docs/coolify-deployment.md` for the required environment,
+persistent volumes, and smoke checks.

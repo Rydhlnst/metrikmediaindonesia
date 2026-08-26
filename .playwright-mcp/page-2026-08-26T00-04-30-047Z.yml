@@ -1,0 +1,47 @@
+- generic [active] [ref=f13e1]:
+  - generic [ref=f13e2]:
+    - generic [ref=f13e4]:
+      - link "Metrik Media Indonesia METRIK MEDIA INDONESIA" [ref=f13e6] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f13e7]:
+          - img "Metrik Media Indonesia" [ref=f13e9]
+          - generic [ref=f13e10]:
+            - generic [ref=f13e11]: METRIK MEDIA
+            - generic [ref=f13e12]: INDONESIA
+      - generic [ref=f13e13]:
+        - heading "Welcome back" [level=1] [ref=f13e14]
+        - paragraph [ref=f13e15]: Masuk untuk mengakses ruang redaksi dan manajemen artikel.
+      - generic [ref=f13e16]:
+        - button "Google" [ref=f13e17]
+        - button "Facebook" [ref=f13e20]
+      - generic [ref=f13e23]: atau gunakan email
+      - generic [ref=f13e27]:
+        - generic [ref=f13e28]:
+          - text: Alamat Email
+          - textbox "Alamat Email" [ref=f13e32]:
+            - /placeholder: nama@domain.com
+        - generic [ref=f13e33]:
+          - generic [ref=f13e34]:
+            - generic [ref=f13e35]: Kata Sandi
+            - link "Lupa kata sandi?" [ref=f13e36] [cursor=pointer]:
+              - /url: /forgot-password
+          - generic [ref=f13e37]:
+            - textbox "Kata Sandi" [ref=f13e40]:
+              - /placeholder: ••••••••••
+            - button [ref=f13e41]
+        - generic [ref=f13e44]:
+          - checkbox "Ingat sesi login saya" [ref=f13e45]
+          - generic [ref=f13e46] [cursor=pointer]: Ingat sesi login saya
+        - button "Masuk ke Dashboard" [ref=f13e47]
+      - paragraph [ref=f13e50]:
+        - text: Belum memiliki akun kontributor?
+        - link "Daftar sekarang gratis" [ref=f13e51] [cursor=pointer]:
+          - /url: /signup
+    - generic [ref=f13e550]:
+      - heading "Metrik Media Indonesia METRIK MEDIA INDONESIA" [level=2] [ref=f13e551]:
+        - img "Metrik Media Indonesia" [ref=f13e553]
+        - generic [ref=f13e554]:
+          - generic [ref=f13e555]: METRIK MEDIA
+          - generic [ref=f13e556]: INDONESIA
+      - paragraph [ref=f13e557]: Portal Berita Terpercaya
+  - alert [ref=f13e558]

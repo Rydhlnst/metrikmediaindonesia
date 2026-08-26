@@ -1,0 +1,374 @@
+- generic [active] [ref=f6e1]:
+  - generic [ref=f6e2]:
+    - banner [ref=f6e3]:
+      - generic [ref=f6e5]:
+        - link "Metrik Media Indonesia METRIK MEDIA INDONESIA" [ref=f6e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=f6e8]:
+            - img "Metrik Media Indonesia" [ref=f6e10]
+            - generic [ref=f6e11]:
+              - generic [ref=f6e12]: METRIK MEDIA
+              - generic [ref=f6e13]: INDONESIA
+        - generic [ref=f6e15]:
+          - textbox "Cari topik, berita, atau daerah..." [ref=f6e19]: kecerdasan buatan
+          - button "Bersihkan pencarian" [ref=f6e386]
+          - button "Cari" [ref=f6e20] [cursor=pointer]
+        - generic [ref=f6e24]:
+          - link "Disimpan" [ref=f6e25] [cursor=pointer]:
+            - /url: /saved
+          - link "Masuk" [ref=f6e29] [cursor=pointer]:
+            - /url: /login
+      - navigation [ref=f6e35]:
+        - link "Beranda" [ref=f6e36] [cursor=pointer]:
+          - /url: /
+        - link "Nasional" [ref=f6e37] [cursor=pointer]:
+          - /url: /nasional
+        - link "Politik" [ref=f6e38] [cursor=pointer]:
+          - /url: /politik
+        - link "Bisnis" [ref=f6e39] [cursor=pointer]:
+          - /url: /bisnis
+        - link "Teknologi" [ref=f6e40] [cursor=pointer]:
+          - /url: /teknologi
+        - link "Lifestyle" [ref=f6e41] [cursor=pointer]:
+          - /url: /lifestyle
+        - link "Entertainment" [ref=f6e42] [cursor=pointer]:
+          - /url: /entertainment
+        - link "Sports" [ref=f6e43] [cursor=pointer]:
+          - /url: /sports
+        - link "Daerah" [ref=f6e44] [cursor=pointer]:
+          - /url: /daerah
+        - link "Video HD" [ref=f6e45] [cursor=pointer]:
+          - /url: /video
+          - text: Video
+          - generic [ref=f6e46]: HD
+        - link "Foto" [ref=f6e47] [cursor=pointer]:
+          - /url: /foto
+        - link "Publish Business" [ref=f6e48] [cursor=pointer]:
+          - /url: /business-publication
+    - main [ref=f6e49]:
+      - generic [ref=f6e428]:
+        - link "Politik" [ref=f6e429] [cursor=pointer]:
+          - /url: /politik
+        - article [ref=f6e432]:
+          - generic [ref=f6e433]:
+            - img "Kecerdasan Buatan Mulai Mengubah Percakapan Kampanye Politik — No image available" [ref=f6e435]
+            - generic [ref=f6e438]:
+              - link "Politik" [ref=f6e439] [cursor=pointer]:
+                - /url: /politik
+              - heading "Kecerdasan Buatan Mulai Mengubah Percakapan Kampanye Politik" [level=1] [ref=f6e441]
+              - paragraph [ref=f6e442]: Penggunaan kecerdasan buatan dalam kampanye politik menuntut aturan transparansi, literasi digital, dan perlindungan pemilih dari manipulasi informasi.
+              - generic [ref=f6e443]:
+                - generic [ref=f6e444]:
+                  - generic [ref=f6e445]: RM
+                  - generic [ref=f6e447]:
+                    - generic [ref=f6e448]: Redaksi Metrik Media
+                    - text: Redaksi
+                - generic [ref=f6e449]: "|"
+                - generic [ref=f6e450]: 24 Agustus 2026, 02:15 WIB
+                - generic [ref=f6e453]: 3 menit baca
+                - generic [ref=f6e456]: 1.761 dibaca
+            - generic [ref=f6e460]:
+              - paragraph [ref=f6e461]: Perkembangan kecerdasan buatan membuat produksi pesan politik menjadi lebih cepat dan terukur. Di sisi lain, kemampuan menghasilkan konten sintetis menambah tantangan dalam membedakan informasi resmi, opini, dan materi manipulatif.
+              - paragraph [ref=f6e462]: Praktik kampanye yang bertanggung jawab membutuhkan penandaan konten buatan AI, pengungkapan sumber pembiayaan, dan mekanisme koreksi yang dapat diakses publik.
+            - generic [ref=f6e463]:
+              - generic [ref=f6e464] [cursor=pointer]: "#Tempo.co"
+              - generic [ref=f6e465] [cursor=pointer]: "#Indonesia"
+              - generic [ref=f6e466] [cursor=pointer]: "#Kebijakan"
+              - generic [ref=f6e467] [cursor=pointer]: "#Kecerdasan Buatan"
+            - generic [ref=f6e468]:
+              - generic [ref=f6e469]: Bagikan
+              - generic [ref=f6e472]:
+                - link "Bagikan ke Facebook" [ref=f6e473] [cursor=pointer]:
+                  - /url: https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fmetrikmediaindonesia.beres.io%2Fpolitik%2Fkecerdasan-buatan-mulai-mengubah-percakapan-kampanye-politik
+                - link "Bagikan ke Twitter" [ref=f6e476] [cursor=pointer]:
+                  - /url: https://twitter.com/intent/tweet?url=https%3A%2F%2Fmetrikmediaindonesia.beres.io%2Fpolitik%2Fkecerdasan-buatan-mulai-mengubah-percakapan-kampanye-politik&text=Kecerdasan%20Buatan%20Mulai%20Mengubah%20Percakapan%20Kampanye%20Politik
+                - link "Bagikan ke WhatsApp" [ref=f6e479] [cursor=pointer]:
+                  - /url: https://wa.me/?text=Kecerdasan%20Buatan%20Mulai%20Mengubah%20Percakapan%20Kampanye%20Politik%20https%3A%2F%2Fmetrikmediaindonesia.beres.io%2Fpolitik%2Fkecerdasan-buatan-mulai-mengubah-percakapan-kampanye-politik
+                  - generic [ref=f6e480]: WA
+                - link "Bagikan ke LinkedIn" [ref=f6e481] [cursor=pointer]:
+                  - /url: https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fmetrikmediaindonesia.beres.io%2Fpolitik%2Fkecerdasan-buatan-mulai-mengubah-percakapan-kampanye-politik
+                - button "Salin tautan" [ref=f6e484]
+                - button "Save article" [ref=f6e487]
+            - generic [ref=f6e491]:
+              - generic [ref=f6e492]: RM
+              - generic [ref=f6e494]:
+                - text: Penulis
+                - heading "Redaksi Metrik Media" [level=3] [ref=f6e495]
+                - paragraph [ref=f6e496]: Tim editorial Metrik Media Indonesia.
+          - complementary [ref=f6e497]:
+            - generic [ref=f6e498]:
+              - heading "Berita Terkait" [level=2] [ref=f6e504]
+              - generic [ref=f6e505]:
+                - link "Tren Kriminalitas dan Tantangan Keamanan Ruang Publik — No image available Nasional Tren Kriminalitas dan Tantangan Keamanan Ruang Publik Redaksi Metrik Media · 23 jam lalu" [ref=f6e506] [cursor=pointer]:
+                  - /url: /nasional/tren-kriminalitas-dan-tantangan-keamanan-ruang-publik
+                  - img "Tren Kriminalitas dan Tantangan Keamanan Ruang Publik — No image available" [ref=f6e508]
+                  - generic [ref=f6e511]:
+                    - generic [ref=f6e512]: Nasional
+                    - heading "Tren Kriminalitas dan Tantangan Keamanan Ruang Publik" [level=3] [ref=f6e513]
+                    - generic [ref=f6e514]:
+                      - generic [ref=f6e515]: Redaksi Metrik Media
+                      - generic [ref=f6e516]: ·
+                      - generic [ref=f6e517]: 23 jam lalu
+                - link "Survei Tempat Kerja Menyoroti Standar Baru Pengalaman Karyawan — No image available Bisnis Survei Tempat Kerja Menyoroti Standar Baru Pengalaman Karyawan Redaksi Metrik Media · 2 hari lalu" [ref=f6e520] [cursor=pointer]:
+                  - /url: /bisnis/survei-tempat-kerja-menyoroti-standar-baru-pengalaman-karyawan
+                  - img "Survei Tempat Kerja Menyoroti Standar Baru Pengalaman Karyawan — No image available" [ref=f6e522]
+                  - generic [ref=f6e525]:
+                    - generic [ref=f6e526]: Bisnis
+                    - heading "Survei Tempat Kerja Menyoroti Standar Baru Pengalaman Karyawan" [level=3] [ref=f6e527]
+                    - generic [ref=f6e528]:
+                      - generic [ref=f6e529]: Redaksi Metrik Media
+                      - generic [ref=f6e530]: ·
+                      - generic [ref=f6e531]: 2 hari lalu
+                - link "Infrastruktur Digital dan AI Menjadi Pengungkit Ekonomi Indonesia — No image available Teknologi Infrastruktur Digital dan AI Menjadi Pengungkit Ekonomi Indonesia Redaksi Metrik Media · 3 hari lalu" [ref=f6e534] [cursor=pointer]:
+                  - /url: /teknologi/infrastruktur-digital-dan-ai-menjadi-pengungkit-ekonomi-indonesia
+                  - img "Infrastruktur Digital dan AI Menjadi Pengungkit Ekonomi Indonesia — No image available" [ref=f6e536]
+                  - generic [ref=f6e539]:
+                    - generic [ref=f6e540]: Teknologi
+                    - heading "Infrastruktur Digital dan AI Menjadi Pengungkit Ekonomi Indonesia" [level=3] [ref=f6e541]
+                    - generic [ref=f6e542]:
+                      - generic [ref=f6e543]: Redaksi Metrik Media
+                      - generic [ref=f6e544]: ·
+                      - generic [ref=f6e545]: 3 hari lalu
+                - link "Selera Musik Indonesia Tumbuh di Tengah Perubahan Platform Digital — No image available Lifestyle Selera Musik Indonesia Tumbuh di Tengah Perubahan Platform Digital Redaksi Metrik Media · 4 hari lalu" [ref=f6e548] [cursor=pointer]:
+                  - /url: /lifestyle/selera-musik-indonesia-tumbuh-di-tengah-perubahan-platform-digital
+                  - img "Selera Musik Indonesia Tumbuh di Tengah Perubahan Platform Digital — No image available" [ref=f6e550]
+                  - generic [ref=f6e553]:
+                    - generic [ref=f6e554]: Lifestyle
+                    - heading "Selera Musik Indonesia Tumbuh di Tengah Perubahan Platform Digital" [level=3] [ref=f6e555]
+                    - generic [ref=f6e556]:
+                      - generic [ref=f6e557]: Redaksi Metrik Media
+                      - generic [ref=f6e558]: ·
+                      - generic [ref=f6e559]: 4 hari lalu
+            - generic [ref=f6e562]:
+              - heading "Berita Terkini" [level=2] [ref=f6e568]
+              - generic [ref=f6e569]:
+                - link "Tren Kriminalitas dan Tantangan Keamanan Ruang Publik — No image available Nasional Tren Kriminalitas dan Tantangan Keamanan Ruang Publik Redaksi Metrik Media · 23 jam lalu" [ref=f6e570] [cursor=pointer]:
+                  - /url: /nasional/tren-kriminalitas-dan-tantangan-keamanan-ruang-publik
+                  - img "Tren Kriminalitas dan Tantangan Keamanan Ruang Publik — No image available" [ref=f6e572]
+                  - generic [ref=f6e575]:
+                    - generic [ref=f6e576]: Nasional
+                    - heading "Tren Kriminalitas dan Tantangan Keamanan Ruang Publik" [level=3] [ref=f6e577]
+                    - generic [ref=f6e578]:
+                      - generic [ref=f6e579]: Redaksi Metrik Media
+                      - generic [ref=f6e580]: ·
+                      - generic [ref=f6e581]: 23 jam lalu
+                - link "Survei Tempat Kerja Menyoroti Standar Baru Pengalaman Karyawan — No image available Bisnis Survei Tempat Kerja Menyoroti Standar Baru Pengalaman Karyawan Redaksi Metrik Media · 2 hari lalu" [ref=f6e584] [cursor=pointer]:
+                  - /url: /bisnis/survei-tempat-kerja-menyoroti-standar-baru-pengalaman-karyawan
+                  - img "Survei Tempat Kerja Menyoroti Standar Baru Pengalaman Karyawan — No image available" [ref=f6e586]
+                  - generic [ref=f6e589]:
+                    - generic [ref=f6e590]: Bisnis
+                    - heading "Survei Tempat Kerja Menyoroti Standar Baru Pengalaman Karyawan" [level=3] [ref=f6e591]
+                    - generic [ref=f6e592]:
+                      - generic [ref=f6e593]: Redaksi Metrik Media
+                      - generic [ref=f6e594]: ·
+                      - generic [ref=f6e595]: 2 hari lalu
+                - link "Infrastruktur Digital dan AI Menjadi Pengungkit Ekonomi Indonesia — No image available Teknologi Infrastruktur Digital dan AI Menjadi Pengungkit Ekonomi Indonesia Redaksi Metrik Media · 3 hari lalu" [ref=f6e598] [cursor=pointer]:
+                  - /url: /teknologi/infrastruktur-digital-dan-ai-menjadi-pengungkit-ekonomi-indonesia
+                  - img "Infrastruktur Digital dan AI Menjadi Pengungkit Ekonomi Indonesia — No image available" [ref=f6e600]
+                  - generic [ref=f6e603]:
+                    - generic [ref=f6e604]: Teknologi
+                    - heading "Infrastruktur Digital dan AI Menjadi Pengungkit Ekonomi Indonesia" [level=3] [ref=f6e605]
+                    - generic [ref=f6e606]:
+                      - generic [ref=f6e607]: Redaksi Metrik Media
+                      - generic [ref=f6e608]: ·
+                      - generic [ref=f6e609]: 3 hari lalu
+                - link "Selera Musik Indonesia Tumbuh di Tengah Perubahan Platform Digital — No image available Lifestyle Selera Musik Indonesia Tumbuh di Tengah Perubahan Platform Digital Redaksi Metrik Media · 4 hari lalu" [ref=f6e612] [cursor=pointer]:
+                  - /url: /lifestyle/selera-musik-indonesia-tumbuh-di-tengah-perubahan-platform-digital
+                  - img "Selera Musik Indonesia Tumbuh di Tengah Perubahan Platform Digital — No image available" [ref=f6e614]
+                  - generic [ref=f6e617]:
+                    - generic [ref=f6e618]: Lifestyle
+                    - heading "Selera Musik Indonesia Tumbuh di Tengah Perubahan Platform Digital" [level=3] [ref=f6e619]
+                    - generic [ref=f6e620]:
+                      - generic [ref=f6e621]: Redaksi Metrik Media
+                      - generic [ref=f6e622]: ·
+                      - generic [ref=f6e623]: 4 hari lalu
+                - link "Panggung Pertunjukan Beradaptasi ke Ekosistem Digital — No image available Entertainment Panggung Pertunjukan Beradaptasi ke Ekosistem Digital Redaksi Metrik Media · 5 hari lalu" [ref=f6e626] [cursor=pointer]:
+                  - /url: /entertainment/panggung-pertunjukan-beradaptasi-ke-ekosistem-digital
+                  - img "Panggung Pertunjukan Beradaptasi ke Ekosistem Digital — No image available" [ref=f6e628]
+                  - generic [ref=f6e631]:
+                    - generic [ref=f6e632]: Entertainment
+                    - heading "Panggung Pertunjukan Beradaptasi ke Ekosistem Digital" [level=3] [ref=f6e633]
+                    - generic [ref=f6e634]:
+                      - generic [ref=f6e635]: Redaksi Metrik Media
+                      - generic [ref=f6e636]: ·
+                      - generic [ref=f6e637]: 5 hari lalu
+            - generic [ref=f6e640]:
+              - heading "Terpopuler" [level=2] [ref=f6e646]
+              - generic [ref=f6e647]:
+                - link "01 Tren Kriminalitas dan Tantangan Keamanan Ruang Publik — No image available Nasional Tren Kriminalitas dan Tantangan Keamanan Ruang Publik Redaksi Metrik Media · 23 jam lalu · 1.9k" [ref=f6e648] [cursor=pointer]:
+                  - /url: /nasional/tren-kriminalitas-dan-tantangan-keamanan-ruang-publik
+                  - generic [ref=f6e649]: "01"
+                  - img "Tren Kriminalitas dan Tantangan Keamanan Ruang Publik — No image available" [ref=f6e651]
+                  - generic [ref=f6e654]:
+                    - generic [ref=f6e655]: Nasional
+                    - heading "Tren Kriminalitas dan Tantangan Keamanan Ruang Publik" [level=3] [ref=f6e656]
+                    - generic [ref=f6e657]:
+                      - generic [ref=f6e658]: Redaksi Metrik Media
+                      - generic [ref=f6e659]: ·
+                      - generic [ref=f6e660]: 23 jam lalu
+                      - generic [ref=f6e663]: ·
+                      - generic [ref=f6e664]: 1.9k
+                - link "02 Infrastruktur Digital dan AI Menjadi Pengungkit Ekonomi Indonesia — No image available Teknologi Infrastruktur Digital dan AI Menjadi Pengungkit Ekonomi Indonesia Redaksi Metrik Media · 3 hari lalu · 1.5k" [ref=f6e667] [cursor=pointer]:
+                  - /url: /teknologi/infrastruktur-digital-dan-ai-menjadi-pengungkit-ekonomi-indonesia
+                  - generic [ref=f6e668]: "02"
+                  - img "Infrastruktur Digital dan AI Menjadi Pengungkit Ekonomi Indonesia — No image available" [ref=f6e670]
+                  - generic [ref=f6e673]:
+                    - generic [ref=f6e674]: Teknologi
+                    - heading "Infrastruktur Digital dan AI Menjadi Pengungkit Ekonomi Indonesia" [level=3] [ref=f6e675]
+                    - generic [ref=f6e676]:
+                      - generic [ref=f6e677]: Redaksi Metrik Media
+                      - generic [ref=f6e678]: ·
+                      - generic [ref=f6e679]: 3 hari lalu
+                      - generic [ref=f6e682]: ·
+                      - generic [ref=f6e683]: 1.5k
+                - link "03 Selera Musik Indonesia Tumbuh di Tengah Perubahan Platform Digital — No image available Lifestyle Selera Musik Indonesia Tumbuh di Tengah Perubahan Platform Digital Redaksi Metrik Media · 4 hari lalu · 1.4k" [ref=f6e686] [cursor=pointer]:
+                  - /url: /lifestyle/selera-musik-indonesia-tumbuh-di-tengah-perubahan-platform-digital
+                  - generic [ref=f6e687]: "03"
+                  - img "Selera Musik Indonesia Tumbuh di Tengah Perubahan Platform Digital — No image available" [ref=f6e689]
+                  - generic [ref=f6e692]:
+                    - generic [ref=f6e693]: Lifestyle
+                    - heading "Selera Musik Indonesia Tumbuh di Tengah Perubahan Platform Digital" [level=3] [ref=f6e694]
+                    - generic [ref=f6e695]:
+                      - generic [ref=f6e696]: Redaksi Metrik Media
+                      - generic [ref=f6e697]: ·
+                      - generic [ref=f6e698]: 4 hari lalu
+                      - generic [ref=f6e701]: ·
+                      - generic [ref=f6e702]: 1.4k
+                - link "04 Survei Tempat Kerja Menyoroti Standar Baru Pengalaman Karyawan — No image available Bisnis Survei Tempat Kerja Menyoroti Standar Baru Pengalaman Karyawan Redaksi Metrik Media · 2 hari lalu · 1.6k" [ref=f6e705] [cursor=pointer]:
+                  - /url: /bisnis/survei-tempat-kerja-menyoroti-standar-baru-pengalaman-karyawan
+                  - generic [ref=f6e706]: "04"
+                  - img "Survei Tempat Kerja Menyoroti Standar Baru Pengalaman Karyawan — No image available" [ref=f6e708]
+                  - generic [ref=f6e711]:
+                    - generic [ref=f6e712]: Bisnis
+                    - heading "Survei Tempat Kerja Menyoroti Standar Baru Pengalaman Karyawan" [level=3] [ref=f6e713]
+                    - generic [ref=f6e714]:
+                      - generic [ref=f6e715]: Redaksi Metrik Media
+                      - generic [ref=f6e716]: ·
+                      - generic [ref=f6e717]: 2 hari lalu
+                      - generic [ref=f6e720]: ·
+                      - generic [ref=f6e721]: 1.6k
+            - generic [ref=f6e724]:
+              - heading "Jelajahi Kategori" [level=3] [ref=f6e728]
+              - generic [ref=f6e729]:
+                - link "Nasional" [ref=f6e730] [cursor=pointer]:
+                  - /url: /nasional
+                - link "Politik" [ref=f6e731] [cursor=pointer]:
+                  - /url: /politik
+                - link "Bisnis" [ref=f6e732] [cursor=pointer]:
+                  - /url: /bisnis
+                - link "Teknologi" [ref=f6e733] [cursor=pointer]:
+                  - /url: /teknologi
+                - link "Lifestyle" [ref=f6e734] [cursor=pointer]:
+                  - /url: /lifestyle
+                - link "Entertainment" [ref=f6e735] [cursor=pointer]:
+                  - /url: /entertainment
+                - link "Sports" [ref=f6e736] [cursor=pointer]:
+                  - /url: /sports
+                - link "Daerah" [ref=f6e737] [cursor=pointer]:
+                  - /url: /daerah
+    - contentinfo [ref=f6e288]:
+      - generic [ref=f6e289]:
+        - generic [ref=f6e290]:
+          - generic [ref=f6e291]:
+            - link "Metrik Media Indonesia METRIK MEDIA INDONESIA" [ref=f6e292] [cursor=pointer]:
+              - /url: /
+              - generic [ref=f6e293]:
+                - img "Metrik Media Indonesia" [ref=f6e295]
+                - generic [ref=f6e296]:
+                  - generic [ref=f6e297]: METRIK MEDIA
+                  - generic [ref=f6e298]: INDONESIA
+            - paragraph [ref=f6e299]: Metrik Media Indonesia adalah portal berita digital profesional yang menyajikan jurnalisme terpercaya di bidang Ekonomi, Politik, Teknologi, dan Isu Nasional.
+            - generic [ref=f6e300]:
+              - link "Twitter" [ref=f6e301] [cursor=pointer]:
+                - /url: https://twitter.com
+              - link "Facebook" [ref=f6e304] [cursor=pointer]:
+                - /url: https://facebook.com
+              - link "Instagram" [ref=f6e307] [cursor=pointer]:
+                - /url: https://instagram.com
+              - link "YouTube" [ref=f6e310] [cursor=pointer]:
+                - /url: https://youtube.com
+              - link "LinkedIn" [ref=f6e313] [cursor=pointer]:
+                - /url: https://linkedin.com
+          - generic [ref=f6e316]:
+            - generic [ref=f6e317]:
+              - heading "Kanal Berita" [level=4] [ref=f6e318]
+              - list [ref=f6e319]:
+                - listitem [ref=f6e320]:
+                  - link "Nasional" [ref=f6e321] [cursor=pointer]:
+                    - /url: /nasional
+                - listitem [ref=f6e322]:
+                  - link "Politik" [ref=f6e323] [cursor=pointer]:
+                    - /url: /politik
+                - listitem [ref=f6e324]:
+                  - link "Bisnis" [ref=f6e325] [cursor=pointer]:
+                    - /url: /bisnis
+                - listitem [ref=f6e326]:
+                  - link "Teknologi" [ref=f6e327] [cursor=pointer]:
+                    - /url: /teknologi
+                - listitem [ref=f6e328]:
+                  - link "Lifestyle" [ref=f6e329] [cursor=pointer]:
+                    - /url: /lifestyle
+                - listitem [ref=f6e330]:
+                  - link "Entertainment" [ref=f6e331] [cursor=pointer]:
+                    - /url: /entertainment
+                - listitem [ref=f6e332]:
+                  - link "Olahraga" [ref=f6e333] [cursor=pointer]:
+                    - /url: /sports
+                - listitem [ref=f6e334]:
+                  - link "Daerah" [ref=f6e335] [cursor=pointer]:
+                    - /url: /daerah
+            - generic [ref=f6e336]:
+              - heading "Portal Media" [level=4] [ref=f6e337]
+              - list [ref=f6e338]:
+                - listitem [ref=f6e339]:
+                  - link "Metrik Video HD" [ref=f6e340] [cursor=pointer]:
+                    - /url: /video
+                - listitem [ref=f6e341]:
+                  - link "Galeri Foto" [ref=f6e342] [cursor=pointer]:
+                    - /url: /foto
+                - listitem [ref=f6e343]:
+                  - link "Topik Trending" [ref=f6e344] [cursor=pointer]:
+                    - /url: /pencarian
+                - listitem [ref=f6e345]:
+                  - link "Indeks Berita" [ref=f6e346] [cursor=pointer]:
+                    - /url: /pencarian
+                - listitem [ref=f6e347]:
+                  - link "Publish Business" [ref=f6e348] [cursor=pointer]:
+                    - /url: /business-publication
+            - generic [ref=f6e349]:
+              - heading "Redaksi & Legal" [level=4] [ref=f6e350]
+              - list [ref=f6e351]:
+                - listitem [ref=f6e352]:
+                  - link "Tentang Kami" [ref=f6e353] [cursor=pointer]:
+                    - /url: /tentang-kami
+                - listitem [ref=f6e354]:
+                  - link "Tim Editorial" [ref=f6e355] [cursor=pointer]:
+                    - /url: /tim-editorial
+                - listitem [ref=f6e356]:
+                  - link "Hubungi Kami" [ref=f6e357] [cursor=pointer]:
+                    - /url: /hubungi-kami
+                - listitem [ref=f6e358]:
+                  - link "Pedoman Siber" [ref=f6e359] [cursor=pointer]:
+                    - /url: /tentang-kami
+                - listitem [ref=f6e360]:
+                  - link "Privasi & Syarat" [ref=f6e361] [cursor=pointer]:
+                    - /url: /tentang-kami
+        - generic [ref=f6e362]:
+          - generic [ref=f6e363]: Gedung Press Center Jakarta, Jl. Jend. Sudirman No. 45, Jakarta Pusat
+          - generic [ref=f6e367]: "Redaksi: redaksi@metrikmediaindonesia.id"
+          - generic [ref=f6e371]: Tunduk pada Pedoman Media Siber Dewan Pers Indonesia
+      - generic [ref=f6e376]:
+        - generic [ref=f6e377]:
+          - text: © 2026
+          - strong [ref=f6e378]: METRIK MEDIA INDONESIA
+          - text: . All rights reserved.
+        - generic [ref=f6e379]:
+          - link "Pedoman Siber" [ref=f6e380] [cursor=pointer]:
+            - /url: /tentang-kami
+          - generic [ref=f6e381]: •
+          - link "Privasi" [ref=f6e382] [cursor=pointer]:
+            - /url: /tentang-kami
+          - generic [ref=f6e383]: •
+          - link "Kontak Redaksi" [ref=f6e384] [cursor=pointer]:
+            - /url: /hubungi-kami
+  - alert [ref=f6e385]: Kecerdasan Buatan Mulai Mengubah Percakapan Kampanye Politik | Metrik Media

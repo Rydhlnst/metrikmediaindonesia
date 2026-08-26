@@ -1,0 +1,47 @@
+- generic [active] [ref=f3e1]:
+  - generic [ref=f3e2]:
+    - generic [ref=f3e4]:
+      - link "Metrik Media Indonesia METRIK MEDIA INDONESIA" [ref=f3e6] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f3e7]:
+          - img "Metrik Media Indonesia" [ref=f3e9]
+          - generic [ref=f3e10]:
+            - generic [ref=f3e11]: METRIK MEDIA
+            - generic [ref=f3e12]: INDONESIA
+      - generic [ref=f3e13]:
+        - heading "Welcome back" [level=1] [ref=f3e14]
+        - paragraph [ref=f3e15]: Masuk untuk mengakses ruang redaksi dan manajemen artikel.
+      - generic [ref=f3e16]:
+        - button "Google" [ref=f3e17]
+        - button "Facebook" [ref=f3e20]
+      - generic [ref=f3e23]: atau gunakan email
+      - generic [ref=f3e27]:
+        - generic [ref=f3e28]:
+          - text: Alamat Email
+          - textbox "Alamat Email" [ref=f3e32]:
+            - /placeholder: nama@domain.com
+        - generic [ref=f3e33]:
+          - generic [ref=f3e34]:
+            - generic [ref=f3e35]: Kata Sandi
+            - link "Lupa kata sandi?" [ref=f3e36] [cursor=pointer]:
+              - /url: /forgot-password
+          - generic [ref=f3e37]:
+            - textbox "Kata Sandi" [ref=f3e40]:
+              - /placeholder: ••••••••••
+            - button [ref=f3e41]
+        - generic [ref=f3e44]:
+          - checkbox "Ingat sesi login saya" [ref=f3e45]
+          - generic [ref=f3e46] [cursor=pointer]: Ingat sesi login saya
+        - button "Masuk ke Dashboard" [ref=f3e47]
+      - paragraph [ref=f3e50]:
+        - text: Belum memiliki akun kontributor?
+        - link "Daftar sekarang gratis" [ref=f3e51] [cursor=pointer]:
+          - /url: /signup
+    - generic [ref=f3e550]:
+      - heading "Metrik Media Indonesia METRIK MEDIA INDONESIA" [level=2] [ref=f3e551]:
+        - img "Metrik Media Indonesia" [ref=f3e553]
+        - generic [ref=f3e554]:
+          - generic [ref=f3e555]: METRIK MEDIA
+          - generic [ref=f3e556]: INDONESIA
+      - paragraph [ref=f3e557]: Portal Berita Terpercaya
+  - alert [ref=f3e558]

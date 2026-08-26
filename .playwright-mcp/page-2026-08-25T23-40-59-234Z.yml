@@ -1,0 +1,47 @@
+- generic [active] [ref=f12e1]:
+  - generic [ref=f12e2]:
+    - generic [ref=f12e4]:
+      - link "Metrik Media Indonesia METRIK MEDIA INDONESIA" [ref=f12e6] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f12e7]:
+          - img "Metrik Media Indonesia" [ref=f12e9]
+          - generic [ref=f12e10]:
+            - generic [ref=f12e11]: METRIK MEDIA
+            - generic [ref=f12e12]: INDONESIA
+      - generic [ref=f12e13]:
+        - heading "Welcome back" [level=1] [ref=f12e14]
+        - paragraph [ref=f12e15]: Masuk untuk mengakses ruang redaksi dan manajemen artikel.
+      - generic [ref=f12e16]:
+        - button "Google" [ref=f12e17]
+        - button "Facebook" [ref=f12e20]
+      - generic [ref=f12e23]: atau gunakan email
+      - generic [ref=f12e27]:
+        - generic [ref=f12e28]:
+          - text: Alamat Email
+          - textbox "Alamat Email" [ref=f12e32]:
+            - /placeholder: nama@domain.com
+        - generic [ref=f12e33]:
+          - generic [ref=f12e34]:
+            - generic [ref=f12e35]: Kata Sandi
+            - link "Lupa kata sandi?" [ref=f12e36] [cursor=pointer]:
+              - /url: /forgot-password
+          - generic [ref=f12e37]:
+            - textbox "Kata Sandi" [ref=f12e40]:
+              - /placeholder: ••••••••••
+            - button [ref=f12e41]
+        - generic [ref=f12e44]:
+          - checkbox "Ingat sesi login saya" [ref=f12e45]
+          - generic [ref=f12e46] [cursor=pointer]: Ingat sesi login saya
+        - button "Masuk ke Dashboard" [ref=f12e47]
+      - paragraph [ref=f12e50]:
+        - text: Belum memiliki akun kontributor?
+        - link "Daftar sekarang gratis" [ref=f12e51] [cursor=pointer]:
+          - /url: /signup
+    - generic [ref=f12e54]:
+      - heading "Metrik Media Indonesia METRIK MEDIA INDONESIA" [level=2] [ref=f12e55]:
+        - img "Metrik Media Indonesia" [ref=f12e57]
+        - generic [ref=f12e58]:
+          - generic [ref=f12e59]: METRIK MEDIA
+          - generic [ref=f12e60]: INDONESIA
+      - paragraph [ref=f12e61]: Portal Berita Terpercaya
+  - alert [ref=f12e62]

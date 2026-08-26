@@ -3,6 +3,7 @@ import { getDb } from "@/db/index";
 import { notifications } from "@/db/schema/index";
 import { eq, desc, and, count, inArray } from "drizzle-orm";
 import { canManageEditorial, getSessionFromRequest } from "@/lib/server-session";
+import { getEditorialRecipientIds } from "@/lib/notifications";
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,7 +14,9 @@ export async function GET(request: NextRequest) {
 
     const db = await getDb();
     const recipientIds = [sessionUser.id];
-    if (canManageEditorial(sessionUser)) recipientIds.push("admin");
+    if (canManageEditorial(sessionUser)) {
+      recipientIds.push(...(await getEditorialRecipientIds()));
+    }
 
     // Get unread count
     const [unreadResult] = await db

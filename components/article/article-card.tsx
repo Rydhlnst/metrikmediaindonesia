@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { getCategorySlug, getCategoryName, getAuthorName, getTimeAgo, formatViews } from "@/lib/article-helpers";
-import { Clock, Eye, BookmarkSimple } from "@phosphor-icons/react/dist/ssr";
+import { Clock, Eye } from "@phosphor-icons/react/dist/ssr";
 import { CategoryBadge } from "@/components/shared/category-badge";
 import { ArticleImage } from "@/components/shared/article-image";
 
@@ -25,7 +25,6 @@ interface ArticleCardProps {
   size?: "sm" | "md" | "lg";
   showExcerpt?: boolean;
   showViews?: boolean;
-  showBookmark?: boolean;
   priority?: boolean;
   rank?: number;
 }
@@ -37,7 +36,6 @@ export function ArticleCard({
   size = "md",
   showExcerpt = false,
   showViews = false,
-  showBookmark = false,
   priority = false,
   rank,
 }: ArticleCardProps) {
@@ -117,11 +115,6 @@ export function ArticleCard({
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
           <div className="absolute top-3 left-3 flex items-center gap-2">
             <CategoryBadge variant="pill">{categoryName}</CategoryBadge>
-            {showBookmark && (
-              <button className="flex size-8 items-center justify-center bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-gold hover:text-white">
-                <BookmarkSimple className="size-4" />
-              </button>
-            )}
           </div>
           <div className="absolute bottom-0 left-0 right-0 p-4">
             <h3
@@ -162,11 +155,6 @@ export function ArticleCard({
           className="object-cover card-image-zoom"
           priority={priority}
         />
-        {showBookmark && (
-          <button className="absolute right-2 top-2 flex size-8 items-center justify-center bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-gold hover:text-white">
-            <BookmarkSimple className="size-4" />
-          </button>
-        )}
       </div>
       <div className="flex flex-1 flex-col gap-1.5 p-4">
         <CategoryBadge>{categoryName}</CategoryBadge>

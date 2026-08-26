@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { and, count, desc, eq, inArray, like, or } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, ilike, inArray, lte, or } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/index";
 import { articleTags, articles, authors, categories, notifications, tags } from "@/db/schema/index";
@@ -15,6 +15,7 @@ import { sanitizeRichHtml } from "@/lib/content-sanitizer";
 import { articleRevisions } from "@/db/schema/index";
 import { assertSameOrigin } from "@/lib/request-security";
 import { writeAuditLog } from "@/lib/audit-log";
+import { getEditorialRecipientIds } from "@/lib/notifications";
 
 const articleStatusSchema = z.enum([
   "draft",
@@ -56,6 +57,22 @@ const articleInputSchema = z.object({
   tags: z.array(z.string().trim().min(1).max(100)).max(20).optional(),
 });
 
+const articleQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).max(10_000).default(1),
+  limit: z.coerce.number().int().min(1).max(50).default(10),
+  search: z.string().trim().max(200).optional(),
+  category: z.string().trim().min(1).max(150).optional(),
+  status: articleStatusSchema.optional(),
+  authorId: z.coerce.number().int().positive().optional(),
+  slug: z.string().trim().min(1).max(255).optional(),
+  sort: z.enum(["newest", "oldest", "popular", "relevance"]).default("newest"),
+  dateFrom: z.string().datetime().optional(),
+  dateTo: z.string().datetime().optional(),
+}).refine((value) => !value.dateFrom || !value.dateTo || new Date(value.dateFrom) <= new Date(value.dateTo), {
+  message: "dateTo must be after dateFrom",
+  path: ["dateTo"],
+});
+
 function createTagSlug(value: string) {
   return value.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]+/g, "");
 }
@@ -63,22 +80,24 @@ function createTagSlug(value: string) {
 export async function GET(request: NextRequest) {
   try {
     const db = await getDb();
-    const { searchParams } = new URL(request.url);
-    const page = Math.max(1, Number.parseInt(searchParams.get("page") || "1", 10) || 1);
-    const limit = Math.min(50, Math.max(1, Number.parseInt(searchParams.get("limit") || "10", 10) || 10));
-    const search = searchParams.get("search")?.trim() || "";
-    const categorySlug = searchParams.get("category");
-    const statusValue = searchParams.get("status");
-    const authorIdValue = searchParams.get("authorId");
-    const slug = searchParams.get("slug")?.trim();
+    const parsedQuery = articleQuerySchema.safeParse(Object.fromEntries(request.nextUrl.searchParams));
+    if (!parsedQuery.success) return zodError(parsedQuery.error);
+    const {
+      page,
+      limit,
+      search,
+      category: categorySlug,
+      status: statusValue,
+      authorId: authorIdValue,
+      slug,
+      sort,
+      dateFrom,
+      dateTo,
+    } = parsedQuery.data;
     const sessionUser = await getSessionFromRequest(request);
     const editorialUser = canManageEditorial(sessionUser);
     const contributor = isContributor(sessionUser);
     const ownAuthorId = sessionUser?.authorId;
-
-    if (statusValue && !articleStatusSchema.safeParse(statusValue).success) {
-      return NextResponse.json({ message: "Status artikel tidak valid" }, { status: 400 });
-    }
 
     if (slug) {
       const [article] = await db
@@ -94,7 +113,7 @@ export async function GET(request: NextRequest) {
 
     const conditions = [];
     const privateContributorQuery = contributor && ownAuthorId && (
-      Boolean(authorIdValue) || (statusValue !== null && statusValue !== "published")
+      Boolean(authorIdValue) || (statusValue !== undefined && statusValue !== "published")
     );
 
     if (!editorialUser) {
@@ -107,12 +126,21 @@ export async function GET(request: NextRequest) {
     if (statusValue) conditions.push(eq(articles.status, statusValue));
     if (search) {
       const term = `%${search}%`;
-      conditions.push(or(like(articles.title, term), like(articles.excerpt, term)));
+      conditions.push(
+        or(
+          ilike(articles.title, term),
+          ilike(articles.subtitle, term),
+          ilike(articles.excerpt, term),
+          ilike(articles.content, term),
+          ilike(authors.name, term),
+          ilike(categories.name, term)
+        )!
+      );
     }
     if (contributor && ownAuthorId && authorIdValue) {
       conditions.push(eq(articles.authorId, ownAuthorId));
-    } else if (authorIdValue && /^\d+$/.test(authorIdValue)) {
-      conditions.push(eq(articles.authorId, Number.parseInt(authorIdValue, 10)));
+    } else if (authorIdValue) {
+      conditions.push(eq(articles.authorId, authorIdValue));
     }
     if (categorySlug) {
       const [category] = await db
@@ -123,6 +151,8 @@ export async function GET(request: NextRequest) {
       if (!category) return NextResponse.json({ data: [], pagination: { page, limit, total: 0, totalPages: 0 } });
       conditions.push(eq(articles.categoryId, category.id));
     }
+    if (dateFrom) conditions.push(gte(articles.publishedAt, new Date(dateFrom)));
+    if (dateTo) conditions.push(lte(articles.publishedAt, new Date(dateTo)));
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
     const items = await db
@@ -157,7 +187,13 @@ export async function GET(request: NextRequest) {
       .leftJoin(categories, eq(articles.categoryId, categories.id))
       .leftJoin(authors, eq(articles.authorId, authors.id))
       .where(whereClause)
-      .orderBy(desc(articles.createdAt))
+      .orderBy(
+        sort === "oldest"
+          ? asc(articles.publishedAt)
+          : sort === "popular"
+            ? desc(articles.viewCount)
+            : desc(articles.publishedAt)
+      )
       .limit(limit)
       .offset((page - 1) * limit);
 
@@ -285,14 +321,19 @@ export async function POST(request: NextRequest) {
     }
 
     if (finalStatus === "submitted" && contributor) {
-      await db.insert(notifications).values({
-        userId: "admin",
-        type: "article_submitted",
-        title: "Artikel baru menunggu review",
-        message: `${sessionUser.name} mengirimkan "${input.title}" untuk ditinjau redaksi.`,
-        articleId: newArticle.id,
-        link: "/dashboard/editorial",
-      });
+      const editorialRecipients = await getEditorialRecipientIds();
+      if (editorialRecipients.length > 0) {
+        await db.insert(notifications).values(
+          editorialRecipients.map((userId) => ({
+            userId,
+            type: "article_submitted",
+            title: "Artikel baru menunggu review",
+            message: `${sessionUser.name} mengirimkan "${input.title}" untuk ditinjau redaksi.`,
+            articleId: newArticle.id,
+            link: "/dashboard/editorial",
+          }))
+        );
+      }
     }
 
     revalidateAllArticles();

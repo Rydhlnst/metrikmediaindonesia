@@ -8,7 +8,8 @@ set -Eeuo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
 ENV_FILE="${ENV_FILE:-.env}"
-COMPOSE=(docker compose --env-file "$ENV_FILE")
+COMPOSE_PROFILE="${COMPOSE_PROFILE:-vps}"
+COMPOSE=(docker compose --env-file "$ENV_FILE" --profile "$COMPOSE_PROFILE")
 
 echo "🚀 Starting Metrik Media Indonesia Deployment..."
 

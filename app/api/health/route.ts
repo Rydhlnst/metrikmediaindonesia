@@ -46,7 +46,7 @@ export async function GET() {
     {
       status: errors.length === 0 ? "ok" : "unhealthy",
       checks,
-      errors,
+      ...(process.env.NODE_ENV === "production" ? {} : { errors }),
       timestamp: new Date().toISOString(),
     },
     { status: errors.length === 0 ? 200 : 503 },

@@ -8,6 +8,7 @@ import { enforceRateLimit } from "@/lib/rate-limit";
 import { sendEmail } from "@/lib/email";
 import { zodError } from "@/lib/api-response";
 import { assertSameOrigin } from "@/lib/request-security";
+import { getEditorialRecipientIds } from "@/lib/notifications";
 
 export async function GET(request: NextRequest) {
   const authGuard = await requireAdmin(request);
@@ -53,13 +54,18 @@ export async function POST(request: NextRequest) {
     })
     .returning({ id: businessPublications.id, articleTitle: businessPublications.articleTitle });
 
-  await db.insert(notifications).values({
-    userId: "admin",
-    type: "business_publication_received",
-    title: "New business publication request",
-    message: `${parsed.data.companyName} submitted “${parsed.data.articleTitle}”.`,
-    link: `/dashboard/business-publications/${publication.id}`,
-  });
+  const editorialRecipients = await getEditorialRecipientIds();
+  if (editorialRecipients.length > 0) {
+    await db.insert(notifications).values(
+      editorialRecipients.map((userId) => ({
+        userId,
+        type: "business_publication_received",
+        title: "New business publication request",
+        message: `${parsed.data.companyName} submitted “${parsed.data.articleTitle}”.`,
+        link: `/dashboard/business-publications/${publication.id}`,
+      }))
+    );
+  }
 
   const recipient = process.env.BUSINESS_PUBLICATION_RECIPIENT || process.env.EDITORIAL_EMAIL;
   if (recipient) {
