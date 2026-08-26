@@ -7,11 +7,11 @@ import { recordArticleView } from "@/lib/article-views";
 import { invalidateRedisPattern } from "@/lib/redis";
 
 type ArticleViewRouteContext = {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ id: string }>;
 };
 
 export async function POST(request: NextRequest, { params }: ArticleViewRouteContext) {
-  const { slug } = await params;
+  const { id: slug } = await params;
   const db = await getDb();
   const [article] = await db
     .select({ id: articles.id })
