@@ -111,6 +111,8 @@ export function TiptapEditor({
     extensions: [
       StarterKit.configure({
         codeBlock: false,
+        link: false,
+        underline: false,
       }),
       Image.configure({
         HTMLAttributes: { class: "max-w-full h-auto" },

@@ -1,19 +1,38 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { requestJson, toastApiError } from "@/lib/api-client";
+import { ApiClientError, requestJson, toastApiError } from "@/lib/api-client";
 
 type Publication = { id: number; companyName: string; contactName: string | null; contactEmail: string; contactPhone: string; articleTitle: string; articleContent: string; status: string; reviewNote: string | null; attachments: string[] | null };
 
 export default function BusinessPublicationDetailPage({ params }: { params: { id: string } }) {
+  const router = useRouter();
   const [item, setItem] = useState<Publication | null>(null);
   const [status, setStatus] = useState("under_review");
   const [reviewNote, setReviewNote] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  useEffect(() => { const timer = window.setTimeout(() => { void requestJson<{ data: Publication }>(`/api/business-publications/${params.id}`).then((payload) => { setItem(payload.data); setStatus(payload.data.status); setReviewNote(payload.data.reviewNote ?? ""); }).catch(toastApiError).finally(() => setLoading(false)); }, 0); return () => window.clearTimeout(timer); }, [params.id]);
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      void requestJson<{ data: Publication }>(`/api/business-publications/${params.id}`)
+        .then((payload) => {
+          setItem(payload.data);
+          setStatus(payload.data.status);
+          setReviewNote(payload.data.reviewNote ?? "");
+        })
+        .catch((error: unknown) => {
+          toastApiError(error);
+          if (error instanceof ApiClientError && error.status === 404) {
+            router.replace("/dashboard/business-publications");
+          }
+        })
+        .finally(() => setLoading(false));
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [params.id, router]);
   const save = async () => { setSaving(true); try { const payload = await requestJson<{ data: Publication }>(`/api/business-publications/${params.id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status, reviewNote: reviewNote || null }) }); setItem(payload.data); toast.success("Business publication review updated"); } catch (error) { toastApiError(error); } finally { setSaving(false); } };
   if (loading) return <p>Loading…</p>;
   if (!item) return <p>Publication not found.</p>;
