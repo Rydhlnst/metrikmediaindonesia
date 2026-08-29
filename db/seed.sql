@@ -6,7 +6,8 @@ INSERT INTO categories (name, slug, color, description) VALUES
 ('Lifestyle', 'lifestyle', '#DB2777', 'Gaya hidup, kesehatan, dan tren masyarakat.'),
 ('Entertainment', 'entertainment', '#9333EA', 'Dunia hiburan, seni, dan perfilman.'),
 ('Sports', 'sports', '#059669', 'Berita olahraga nasional dan internasional.'),
-('Daerah', 'daerah', '#D97706', 'Kabar regional dan dinamika kabupaten/kota.')
+('Daerah', 'daerah', '#D97706', 'Kabar regional dan dinamika kabupaten/kota.'),
+('Pendidikan', 'pendidikan', '#0F766E', 'Berita pendidikan, sekolah, perguruan tinggi, dan kebijakan pembelajaran.')
 ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO authors (name, slug, bio, role) VALUES

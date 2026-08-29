@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import { hashPassword, verifyPassword } from "better-auth/crypto";
 import { and, eq } from "drizzle-orm";
 import { getDb } from "../db/index";
-import { account, user, users } from "../db/schema/index";
+import { account, categories, user, users } from "../db/schema/index";
 import { getAdminSeedConfig } from "./admin-seed-config";
 import { seedAccessControl } from "./seed-access";
 
@@ -17,6 +17,14 @@ export async function seedAdminUser() {
 
   const db = await getDb();
   const superAdminRole = await seedAccessControl(db);
+
+  await db.insert(categories).values({
+    name: "Pendidikan",
+    slug: "pendidikan",
+    color: "#0F766E",
+    description: "Berita pendidikan, sekolah, perguruan tinggi, dan kebijakan pembelajaran.",
+    isActive: true,
+  }).onConflictDoNothing({ target: categories.slug });
 
   const [existingAuthUser] = await db
     .select()

@@ -16,6 +16,7 @@ const KANAL_BERITA = [
   { label: "Politik", href: "/politik" },
   { label: "Bisnis", href: "/bisnis" },
   { label: "Teknologi", href: "/teknologi" },
+  { label: "Pendidikan", href: "/pendidikan" },
   { label: "Lifestyle", href: "/lifestyle" },
   { label: "Entertainment", href: "/entertainment" },
   { label: "Olahraga", href: "/sports" },

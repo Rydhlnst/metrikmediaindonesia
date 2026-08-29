@@ -35,8 +35,9 @@ describe("NAVIGATION", () => {
 });
 
 describe("CATEGORIES", () => {
-  it("has 8 default categories", () => {
-    expect(CATEGORIES).toHaveLength(8);
+  it("has 9 default categories", () => {
+    expect(CATEGORIES).toHaveLength(9);
+    expect(CATEGORIES.some((category) => category.slug === "pendidikan")).toBe(true);
   });
 
   it("all have required fields", () => {

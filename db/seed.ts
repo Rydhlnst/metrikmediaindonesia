@@ -90,6 +90,7 @@ async function seed() {
     { name: "Politik", slug: "politik", color: "#B91C1C", description: "Kabar politik, parlemen, dan pemilu." },
     { name: "Bisnis", slug: "bisnis", color: "#2563EB", description: "Berita ekonomi, keuangan, bursa efek, dan bisnis." },
     { name: "Teknologi", slug: "teknologi", color: "#DC2626", description: "Berita teknologi, AI, digitalisasi, dan startup." },
+    { name: "Pendidikan", slug: "pendidikan", color: "#0F766E", description: "Berita pendidikan, sekolah, perguruan tinggi, dan kebijakan pembelajaran." },
     { name: "Lifestyle", slug: "lifestyle", color: "#DB2777", description: "Gaya hidup, kesehatan, dan tren masyarakat." },
     { name: "Entertainment", slug: "entertainment", color: "#9333EA", description: "Dunia hiburan, seni, dan perfilman." },
     { name: "Sports", slug: "sports", color: "#059669", description: "Berita olahraga nasional dan internasional." },

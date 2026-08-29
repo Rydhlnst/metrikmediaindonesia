@@ -22,6 +22,7 @@ const categories = [
   { name: "Politik", slug: "politik", color: "#B91C1C", description: "Kabar politik, parlemen, dan kebijakan publik." },
   { name: "Bisnis", slug: "bisnis", color: "#2563EB", description: "Berita ekonomi, keuangan, bursa, dan dunia usaha." },
   { name: "Teknologi", slug: "teknologi", color: "#DC2626", description: "Perkembangan teknologi, AI, dan ekonomi digital." },
+  { name: "Pendidikan", slug: "pendidikan", color: "#0F766E", description: "Berita pendidikan, sekolah, perguruan tinggi, dan kebijakan pembelajaran." },
   { name: "Lifestyle", slug: "lifestyle", color: "#DB2777", description: "Gaya hidup, budaya, kesehatan, dan tren masyarakat." },
   { name: "Entertainment", slug: "entertainment", color: "#9333EA", description: "Dunia hiburan, musik, seni, dan perfilman." },
   { name: "Sports", slug: "sports", color: "#059669", description: "Berita olahraga nasional dan internasional." },
