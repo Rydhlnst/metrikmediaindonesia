@@ -9,7 +9,7 @@ docker compose --env-file .env.docker --profile vps up -d --build
 docker compose --env-file .env.docker --profile vps ps
 ```
 
-Open `http://localhost`. Caddy is the only published application entrypoint; PostgreSQL, Redis, MinIO, and the Next.js port stay on the internal Docker network. The app waits for PostgreSQL, Redis, MinIO, the bucket initializer, and the migration runner. View logs with:
+Open `http://localhost`. Caddy is the only published application entrypoint; PostgreSQL, Redis, MinIO, and the Next.js port stay on the internal Docker network. The app starts after dependency containers are started and reports dependency failures through readiness, so the runtime remains inspectable during diagnosis. View logs with:
 
 ```powershell
 docker compose --env-file .env.docker --profile vps logs -f app db-migrate
@@ -25,7 +25,7 @@ Do not use `.env.docker` for production. Production requires `NODE_ENV=productio
 
 ## Production Operations
 
-Create a VPS-only `.env` from `.env.example`; never use `.env.docker` in production. It must contain production values for `NODE_ENV`, `DOMAIN`, `NEXT_PUBLIC_APP_URL`, `BETTER_AUTH_SECRET`, `CRON_SECRET`, `POSTGRES_URL` (using the Docker service name `postgres`), `REDIS_URL` (using `redis`), `MINIO_PUBLIC_URL`, database credentials, MinIO credentials, and either SMTP or Resend. The production container runs dependency validation before starting Next.js and fails closed when required services are unavailable.
+Create a VPS-only `.env` from `.env.example`; never use `.env.docker` in production. It must contain production values for `NODE_ENV`, `DOMAIN`, `NEXT_PUBLIC_APP_URL`, `BETTER_AUTH_SECRET`, `CRON_SECRET`, `POSTGRES_URL` (using the Docker service name `postgres`), `REDIS_URL` (using `redis`), `MINIO_PUBLIC_URL`, database credentials, MinIO credentials, and either SMTP or Resend. The production container validates its configuration before starting Next.js; invalid configuration keeps the process running in degraded mode so the container remains inspectable while readiness reports HTTP 503.
 
 Deploy from the repository root:
 
@@ -34,7 +34,7 @@ chmod +x deploy.sh
 ENV_FILE=.env ./deploy.sh
 ```
 
-The script validates the rendered Compose configuration, builds the app and migration images, starts the dependency services, runs the migration service through Compose, and waits for all healthchecks. It fails if the migration or application startup fails. Do not expose ports `3000`, `5432`, `6379`, `9000`, or `9001` publicly; only `80` and `443` are published.
+The script validates the rendered Compose configuration, builds the app and migration images, starts the dependency services, and runs the migration service through Compose. Failed startup tasks remain running for diagnosis and the app reports readiness failures through HTTP 503. Do not expose ports `3000`, `5432`, `6379`, `9000`, or `9001` publicly; only `80` and `443` are published.
 
 Use Docker Compose for PostgreSQL, Redis, MinIO, and the application. Caddy terminates HTTPS; point Cloudflare DNS to the server and keep SSL mode set to Full (strict). Set `DOMAIN`, `NEXT_PUBLIC_APP_URL`, `MINIO_PUBLIC_URL`, SMTP/Resend credentials, and unique secrets in the deployment environment.
 
@@ -53,8 +53,10 @@ docker compose --env-file .env --profile demo run --rm db-demo-seed
 ```
 
 After deployment, verify `/api/health/live` for process health and `/api/health`
-for database/Redis readiness. A successful image build alone is not a production
-readiness signal.
+for database, Redis, storage, and configuration readiness. A successful image
+build alone is not a production readiness signal. If readiness is degraded, use
+`docker compose logs --tail=200 app db-migrate db-seed minio-init cron` while the
+containers remain available.
 
 ## Coolify
 

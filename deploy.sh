@@ -89,13 +89,14 @@ echo "🔨 Building application and migration containers..."
 
 # 5. Start Core Services
 echo "🌐 Starting services, migrations, application, proxy, and cron..."
-"${COMPOSE[@]}" up -d --build --remove-orphans --wait
+"${COMPOSE[@]}" up -d --build --remove-orphans
 
 echo "📋 Service status:"
 "${COMPOSE[@]}" ps
 
 echo "✅ ====================================================================="
-echo "🎉 Metrik Media Indonesia is successfully running with Docker Compose!"
+echo "🎉 Metrik Media Indonesia containers are running."
+echo "⚠️  Check /api/health: HTTP 503 with status=degraded means the process is alive but a dependency or startup check is failing."
 echo "👉 Check status with: ${COMPOSE[*]} ps"
 echo "👉 Check logs with  : ${COMPOSE[*]} logs -f"
 echo "======================================================================="

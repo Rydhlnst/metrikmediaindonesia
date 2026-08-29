@@ -1,12 +1,14 @@
 #!/bin/sh
-set -eu
+set -u
 
 APP_URL="${APP_URL:-http://app:3000}"
 CRON_SECRET="${CRON_SECRET:-}"
 
 if [ -z "$CRON_SECRET" ]; then
-  echo "[cron] CRON_SECRET not set, skipping cron jobs"
-  exit 0
+  echo "[cron] CRON_SECRET not set; scheduler is degraded and will keep running for diagnosis"
+  while true; do
+    sleep 60
+  done
 fi
 
 echo "[cron] Cron scheduler started"

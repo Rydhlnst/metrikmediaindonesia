@@ -34,9 +34,12 @@ Attach persistent storage to the named Compose volumes:
 - `redis_data` → Redis data
 - `minio_data` → uploaded media
 
-The `db-migrate` and `db-seed` services are one-shot jobs and must finish with
-exit code 0 before `app` starts. `db-seed` is idempotent and preserves the
-existing admin password on subsequent deployments.
+The `db-migrate` and `db-seed` services are one-shot jobs. They exit normally
+after success; if a migration fails, its container stays running with the
+failure in its logs, while seed jobs retry until dependencies are available.
+The app can remain running during this diagnosis window, but readiness stays
+degraded until the required checks pass. `db-seed` is idempotent and preserves
+the existing admin password on subsequent deployments.
 
 After deployment, verify:
 
@@ -45,8 +48,11 @@ https://your-domain.example/api/health/live
 https://your-domain.example/api/health
 ```
 
-The first endpoint checks process health. The second must report database and
-Redis as healthy. Run the public smoke checks with the deployed URL:
+The first endpoint checks process health. The second checks configuration,
+PostgreSQL, Redis, and MinIO readiness. A dependency or startup failure returns
+HTTP 503 with `status: "degraded"`; the app and failed migration/seed task
+containers remain running so their logs can be inspected in Coolify. Run the
+public smoke checks with the deployed URL:
 
 ```powershell
 $env:SMOKE_BASE_URL="https://your-domain.example"

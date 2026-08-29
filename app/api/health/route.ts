@@ -5,6 +5,8 @@ import { sql } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
+type CheckStatus = "ok" | "failed";
+
 function safeErrorMessage(error: unknown): string {
   const message = error instanceof Error ? error.message : String(error);
   return message
@@ -13,11 +15,17 @@ function safeErrorMessage(error: unknown): string {
 }
 
 export async function GET() {
-  const checks: Record<string, "ok" | "failed"> = {
+  const checks: Record<string, CheckStatus> = {
+    configuration: process.env.APP_STARTUP_DEGRADED === "true" ? "failed" : "ok",
     database: "failed",
     redis: "failed",
+    storage: "failed",
   };
   const errors: Array<{ service: string; message: string }> = [];
+
+  if (checks.configuration === "failed") {
+    errors.push({ service: "configuration", message: "Startup validation failed; inspect the app container logs." });
+  }
 
   try {
     const db = await getDb();
@@ -42,10 +50,27 @@ export async function GET() {
 
   checks.redis = errors.some((error) => error.service === "redis") ? "failed" : "ok";
 
+  try {
+    const endpoint = process.env.MINIO_ENDPOINT;
+    if (!endpoint) throw new Error("MINIO_ENDPOINT is not configured");
+    const protocol = process.env.MINIO_USE_SSL === "true" ? "https" : "http";
+    const response = await fetch(`${protocol}://${endpoint}:${process.env.MINIO_PORT || "9000"}/minio/health/live`, {
+      signal: AbortSignal.timeout(3_000),
+    });
+    if (!response.ok) throw new Error(`MinIO health check returned ${response.status}`);
+    checks.storage = "ok";
+  } catch (error) {
+    const message = safeErrorMessage(error);
+    errors.push({ service: "storage", message });
+    console.error("Health check failed [storage]", message);
+  }
+
   return NextResponse.json(
     {
-      status: errors.length === 0 ? "ok" : "unhealthy",
+      status: errors.length === 0 ? "ok" : "degraded",
+      degraded: errors.length > 0,
       checks,
+      failedChecks: errors.map((error) => error.service),
       ...(process.env.NODE_ENV === "production" ? {} : { errors }),
       timestamp: new Date().toISOString(),
     },
