@@ -1,34 +1,10 @@
-import NextImage, { type ImageProps } from "next/image";
-import { ImageBroken } from "@phosphor-icons/react/dist/ssr";
-import { cn, getImageUrl } from "@/lib/utils";
+import { type ImageProps } from "next/image";
+import { MediaImage } from "@/components/shared/media-image";
 
 type ArticleImageProps = Pick<ImageProps, "alt" | "fill" | "sizes" | "priority" | "className"> & {
   src: unknown;
 };
 
 export function ArticleImage({ src, alt, fill = true, sizes, priority, className }: ArticleImageProps) {
-  const imageUrl = getImageUrl(src);
-
-  if (imageUrl === "/placeholder.png") {
-    return (
-      <div
-        role="img"
-        aria-label={`${alt} — No image available`}
-        className="absolute inset-0 flex min-w-0 max-w-full items-center justify-center overflow-hidden bg-surface-container text-muted-foreground"
-      >
-        <ImageBroken className="size-10" weight="thin" aria-hidden="true" />
-      </div>
-    );
-  }
-
-  return (
-    <NextImage
-      src={imageUrl}
-      alt={alt}
-      fill={fill}
-      sizes={sizes}
-      priority={priority}
-      className={cn("max-w-full", className)}
-    />
-  );
+  return <MediaImage src={src} alt={alt} fill={fill} sizes={sizes} priority={priority} className={className} />;
 }

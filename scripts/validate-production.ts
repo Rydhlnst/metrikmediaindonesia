@@ -8,9 +8,10 @@ const demoMode = process.env.DEMO_MODE === "true";
 const isPlaceholder = (value?: string) => !value || /your_real|generate_|change_in_production|super_secret|replace_with|local_/i.test(value);
 const hasSmtp = !isPlaceholder(process.env.SMTP_HOST) && !isPlaceholder(process.env.SMTP_USER) && !isPlaceholder(process.env.SMTP_PASS);
 const hasResend = !isPlaceholder(process.env.RESEND_API_KEY);
+const invalidProductionDemoMode = process.env.NODE_ENV === "production" && demoMode;
 
-if (missing.length || (!demoMode && !hasSmtp && !hasResend)) {
-  console.error(`Invalid production configuration: ${[...missing, !demoMode && !hasSmtp && !hasResend ? "SMTP_* or RESEND_API_KEY" : ""].filter(Boolean).join(", ")}`);
+if (missing.length || invalidProductionDemoMode || (!demoMode && !hasSmtp && !hasResend)) {
+  console.error(`Invalid production configuration: ${[...missing, invalidProductionDemoMode ? "DEMO_MODE must be false" : "", !demoMode && !hasSmtp && !hasResend ? "SMTP_* or RESEND_API_KEY" : ""].filter(Boolean).join(", ")}`);
   process.exit(1);
 }
 

@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema/index";
+import { IMAGE_PLACEHOLDER } from "../lib/utils";
 
 config({ path: resolve(process.cwd(), ".env.local") });
 config({ path: resolve(process.cwd(), ".env") });
@@ -239,7 +240,7 @@ async function seed() {
       excerpt: article.excerpt,
       content: htmlContent(article.paragraphs),
       // Keep demo media self-contained so production never depends on an external image host.
-      thumbnail: "/placeholder.png",
+      thumbnail: IMAGE_PLACEHOLDER,
       imageCaption: "Ilustrasi editorial",
       imageCredit: "Metrik Media Indonesia — demo fixture",
       status: "published",

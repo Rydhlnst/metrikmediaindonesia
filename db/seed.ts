@@ -3,6 +3,7 @@ import { resolve } from "path";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema/index";
+import { IMAGE_PLACEHOLDER } from "../lib/utils";
 
 config({ path: resolve(process.cwd(), ".env.local") });
 
@@ -244,7 +245,7 @@ async function seed() {
         subtitle: a.subtitle,
         excerpt: a.excerpt,
         content: a.content,
-        thumbnail: "/placeholder.png",
+        thumbnail: IMAGE_PLACEHOLDER,
         status: "published",
         publishedAt: new Date(now.getTime() - i * 7200 * 1000),
         categoryId: cat.id,

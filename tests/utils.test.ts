@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { cn, getInitials, getImageUrl } from "@/lib/utils";
+import { cn, getInitials, getImageUrl, IMAGE_PLACEHOLDER } from "@/lib/utils";
 
 describe("cn", () => {
   it("merges class names", () => {
@@ -42,8 +42,8 @@ describe("getInitials", () => {
 
 describe("getImageUrl", () => {
   it("returns placeholder for null/undefined", () => {
-    expect(getImageUrl(null)).toBe("/placeholder.png");
-    expect(getImageUrl(undefined)).toBe("/placeholder.png");
+    expect(getImageUrl(null)).toBe(IMAGE_PLACEHOLDER);
+    expect(getImageUrl(undefined)).toBe(IMAGE_PLACEHOLDER);
   });
 
   it("returns string image directly", () => {
@@ -51,7 +51,12 @@ describe("getImageUrl", () => {
   });
 
   it("returns placeholder for empty string", () => {
-    expect(getImageUrl("")).toBe("/placeholder.png");
+    expect(getImageUrl("")).toBe(IMAGE_PLACEHOLDER);
+  });
+
+  it("normalizes legacy and demo image placeholders", () => {
+    expect(getImageUrl("/placeholder.png")).toBe(IMAGE_PLACEHOLDER);
+    expect(getImageUrl("https://picsum.photos/seed/demo/800/450")).toBe(IMAGE_PLACEHOLDER);
   });
 
   it("extracts thumbnail from object", () => {
@@ -70,6 +75,6 @@ describe("getImageUrl", () => {
   });
 
   it("returns placeholder for unknown object shape", () => {
-    expect(getImageUrl({ foo: "bar" })).toBe("/placeholder.png");
+    expect(getImageUrl({ foo: "bar" })).toBe(IMAGE_PLACEHOLDER);
   });
 });

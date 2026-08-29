@@ -1,6 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
-import { getImageUrl } from "@/lib/utils";
+import { MediaImage } from "@/components/shared/media-image";
 import { Clock, ArrowRight } from "@phosphor-icons/react/dist/ssr";
 
 interface EntityProfileArticle {
@@ -62,8 +61,8 @@ export function EntityProfile({
               className="group flex flex-col border border-black/10 bg-white transition-colors hover:border-gold/50"
             >
               <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
-                <Image
-                  src={getImageUrl(item.thumbnail)}
+                <MediaImage
+                  src={item.thumbnail}
                   alt={item.title}
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

@@ -10,8 +10,9 @@ const hasEmail = !isPlaceholder(process.env.RESEND_API_KEY) || (
   !isPlaceholder(process.env.SMTP_USER) &&
   !isPlaceholder(process.env.SMTP_PASS)
 );
-if (missing.length || (!demoMode && !hasEmail)) {
-  console.error(`Invalid production configuration: ${[...missing, !demoMode && !hasEmail ? "SMTP_* or RESEND_API_KEY" : ""].filter(Boolean).join(", ")}`);
+const invalidProductionDemoMode = process.env.NODE_ENV === "production" && demoMode;
+if (missing.length || invalidProductionDemoMode || (!demoMode && !hasEmail)) {
+  console.error(`Invalid production configuration: ${[...missing, invalidProductionDemoMode ? "DEMO_MODE must be false" : "", !demoMode && !hasEmail ? "SMTP_* or RESEND_API_KEY" : ""].filter(Boolean).join(", ")}`);
   process.exit(1);
 }
 

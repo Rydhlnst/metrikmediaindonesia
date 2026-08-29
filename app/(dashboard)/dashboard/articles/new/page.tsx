@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import NextImage from "next/image";
+import { MediaImage } from "@/components/shared/media-image";
 import dynamic from "next/dynamic";
 import { DashboardTopbar } from "@/components/dashboard/topbar";
 const TiptapEditor = dynamic(
@@ -615,9 +615,10 @@ export default function NewArticlePage() {
                 />
                 {thumbnailUrl ? (
                   <div className="relative aspect-video overflow-hidden border border-black/10 bg-muted">
-                    <NextImage
+                    <MediaImage
                       src={thumbnailUrl}
                       alt="Gambar Utama"
+                      fill={false}
                       width={800}
                       height={450}
                       className="h-full w-full object-cover"

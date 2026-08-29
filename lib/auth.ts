@@ -83,11 +83,6 @@ export const auth = betterAuth({
       },
     },
   },
-  advanced: {
-    database: {
-      generateId: false,
-    },
-  },
   basePath: "/api/auth",
   baseURL,
   trustedOrigins: [baseURL],

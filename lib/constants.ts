@@ -1,10 +1,12 @@
+import { IMAGE_PLACEHOLDER } from "./utils";
+
 export const SITE_CONFIG = {
   name: "Metrik Media Indonesia",
   shortName: "Metrik Media",
   tagline: "Media Berita Digital Terpercaya Indonesia",
   description: "Platform media berita digital profesional yang menyediakan berita aktual, informatif, dan terstruktur berdasarkan kategori, topik, wilayah, serta entitas di Indonesia.",
   url: process.env.NEXT_PUBLIC_APP_URL || "https://metrikmediaindonesia.id",
-  ogImage: "/placeholder.png",
+  ogImage: IMAGE_PLACEHOLDER,
   twitterHandle: "@metrikmediaid",
   company: "PT Metrik Media Indonesia",
 } as const;

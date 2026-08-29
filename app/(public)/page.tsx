@@ -1,8 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
 import { getArticles, getTrendingArticles } from "@/lib/queries";
 import type { Article } from "@/lib/types";
-import { getImageUrl } from "@/lib/utils";
+import { MediaImage } from "@/components/shared/media-image";
 import {
   getCategorySlug,
   getCategoryName,
@@ -122,8 +121,8 @@ export default async function HomePage() {
               {/* Right Column: Hero Image (5 cols) */}
               <div className="relative min-h-[220px] w-full min-w-0 max-w-full overflow-hidden border border-black/10 rounded-none bg-muted aspect-[16/10] lg:col-span-5 lg:h-full lg:min-h-0 lg:aspect-auto">
                 <Link href={`/${getCategorySlug(heroArticle)}/${heroArticle.slug}`} className="absolute inset-0 block">
-                  <Image
-                    src={getImageUrl(heroArticle.thumbnail || heroArticle.featuredImage)}
+                  <MediaImage
+                    src={heroArticle.thumbnail || heroArticle.featuredImage}
                     alt={heroArticle.title}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
@@ -184,8 +183,8 @@ export default async function HomePage() {
                     <div>
                       <div className="relative aspect-[16/9] w-full overflow-hidden border border-black/10 rounded-none mb-3 bg-muted">
                         <Link href={`/${getCategorySlug(article)}/${article.slug}`}>
-                          <Image
-                            src={getImageUrl(article.thumbnail || article.featuredImage)}
+                          <MediaImage
+                            src={article.thumbnail || article.featuredImage}
                             alt={article.title}
                             fill
                             sizes="(max-width: 768px) 100vw, 50vw"

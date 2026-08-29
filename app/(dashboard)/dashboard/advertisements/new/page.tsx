@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/lib/error-message";
-import NextImage from "next/image";
+import { MediaImage } from "@/components/shared/media-image";
 
 export default function NewAdvertisementPage() {
   const router = useRouter();
@@ -172,7 +172,7 @@ export default function NewAdvertisementPage() {
                 />
                 {image ? (
                   <div className="relative border border-black/10 bg-muted overflow-hidden">
-                    <NextImage src={image} alt="Banner Preview" width={640} height={360} className="max-h-48 w-full object-contain" />
+                    <MediaImage src={image} alt="Banner Preview" fill={false} width={640} height={360} className="max-h-48 w-full object-contain" />
                     <Button
                       type="button"
                       variant="destructive"

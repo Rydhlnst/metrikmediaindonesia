@@ -1,10 +1,9 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { getArticlesWithMedia } from "@/lib/article-media";
 import { generateMetadata } from "@/lib/seo";
 import { SITE_CONFIG } from "@/lib/constants";
-import { getImageUrl } from "@/lib/utils";
+import { MediaImage } from "@/components/shared/media-image";
 import { Camera, Clock, ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { PublicPageHeader } from "@/components/shared/public-page-header";
 import { SectionHeader } from "@/components/shared/section-header";
@@ -44,8 +43,8 @@ export default async function PhotoIndexPage() {
             className="group rounded-none border border-black/10 bg-white hover:border-gold/50 transition-colors duration-200 flex flex-col"
           >
             <div className="relative aspect-[4/3] w-full bg-muted overflow-hidden">
-              <Image
-                src={getImageUrl(item.thumbnail)}
+              <MediaImage
+                src={item.thumbnail}
                 alt={item.title}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

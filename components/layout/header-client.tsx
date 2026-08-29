@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useSession } from "@/lib/use-session";
-import Image from "next/image";
 import {
   List,
   X,
@@ -19,6 +18,7 @@ import {
   TrendUp,
 } from "@phosphor-icons/react/dist/ssr";
 import { BrandName } from "@/components/shared/brand-name";
+import { MediaImage } from "@/components/shared/media-image";
 import { Divider } from "@/components/shared/divider";
 import {
   Sheet,
@@ -330,7 +330,7 @@ function PremiumMobileSheet({ onClose }: { onClose: () => void }) {
               <div className="flex items-center gap-3">
                 {user.avatar ? (
                   <div className="relative size-10 overflow-hidden rounded-none bg-surface-container">
-                    <Image src={user.avatar} alt={user.name} fill className="object-cover" />
+                    <MediaImage src={user.avatar} alt={user.name} fill className="object-cover" />
                   </div>
                 ) : (
                   <div className="flex size-10 items-center justify-center bg-black text-white text-sm font-bold rounded-none uppercase">

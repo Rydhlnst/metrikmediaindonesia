@@ -13,6 +13,7 @@ import {
 import { recordArticleView, type ArticleViewContext } from "@/lib/article-views";
 import type { Article, Author, Category, GetArticlesOptions } from "@/lib/types";
 import { withRedisCache, invalidateRedisPattern } from "@/lib/redis";
+import { IMAGE_PLACEHOLDER } from "@/lib/utils";
 
 const REVALIDATE_SECONDS = 300;
 
@@ -67,7 +68,7 @@ type ArticleJoinRow = {
 };
 
 function mapRowToArticle(row: ArticleJoinRow, tagList: string[]): Article {
-  const thumbnail = row.thumbnail?.includes("picsum.photos") ? "/placeholder.png" : row.thumbnail;
+  const thumbnail = row.thumbnail?.includes("picsum.photos") ? IMAGE_PLACEHOLDER : row.thumbnail;
 
   return {
     id: row.id,

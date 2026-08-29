@@ -27,7 +27,7 @@ import { Plus, PencilSimple, Trash, CircleNotch, Image as ImageIcon } from "@pho
 import Link from "next/link";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/lib/error-message";
-import NextImage from "next/image";
+import { MediaImage } from "@/components/shared/media-image";
 
 interface Advertisement {
   id: number;
@@ -132,7 +132,7 @@ export default function AdvertisementsPage() {
                         <TableCell className="py-3">
                           <div className="size-10 overflow-hidden border border-black/10 bg-muted flex items-center justify-center">
                             {ad.image ? (
-                              <NextImage src={ad.image} alt={ad.title} width={80} height={80} className="h-full w-full object-cover" />
+                              <MediaImage src={ad.image} alt={ad.title} fill={false} width={80} height={80} className="h-full w-full object-cover" />
                             ) : (
                               <ImageIcon className="size-5 text-muted-foreground/50" />
                             )}

@@ -12,17 +12,19 @@ export function getInitials(name: string): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-const PLACEHOLDER = "/placeholder.png";
+export const IMAGE_PLACEHOLDER = "/image-placeholder.svg";
 
 export type ImageSize = "thumbnail" | "card" | "hero" | "og" | "original";
 
 export function getImageUrl(image: unknown, _size: ImageSize = "original"): string {
   void _size;
-  if (!image) return PLACEHOLDER;
+  if (!image) return IMAGE_PLACEHOLDER;
 
   if (typeof image === "string") {
     const value = image.trim();
-    return !value || value.includes("picsum.photos") ? PLACEHOLDER : value;
+    return !value || value.includes("picsum.photos") || value.endsWith("/placeholder.png")
+      ? IMAGE_PLACEHOLDER
+      : value;
   }
 
   if (typeof image === "object" && image !== null) {
@@ -32,5 +34,5 @@ export function getImageUrl(image: unknown, _size: ImageSize = "original"): stri
     if (typeof candidate.url === "string") return getImageUrl(candidate.url);
   }
 
-  return PLACEHOLDER;
+  return IMAGE_PLACEHOLDER;
 }

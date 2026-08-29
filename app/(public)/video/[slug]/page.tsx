@@ -5,6 +5,7 @@ import { getArticleBySlug } from "@/lib/queries";
 import { getArticleMedia } from "@/lib/article-media";
 import { generateMetadata as createSeoMetadata } from "@/lib/seo";
 import { SITE_CONFIG } from "@/lib/constants";
+import { getImageUrl } from "@/lib/utils";
 import { CalendarBlank, Eye, ArrowLeft } from "@phosphor-icons/react/dist/ssr";
 
 export const dynamic = "force-dynamic";
@@ -71,7 +72,7 @@ export default async function VideoDetailPage({ params }: VideoPageProps) {
             {video ? <video
               className="w-full h-full object-cover"
               controls
-              poster={article.thumbnail || undefined}
+              poster={getImageUrl(article.thumbnail)}
             >
               <source src={video.url} />
               Browser Anda tidak mendukung pemutar video HTML5.
