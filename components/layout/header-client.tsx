@@ -331,7 +331,7 @@ function PremiumMobileSheet({ onClose }: { onClose: () => void }) {
               <div className="flex items-center gap-3">
                 {user.avatar ? (
                   <div className="relative size-10 overflow-hidden rounded-none bg-surface-container">
-                    <MediaImage src={user.avatar} alt={user.name} fill className="object-cover" />
+                    <MediaImage src={user.avatar} alt={user.name} fill sizes="40px" className="object-cover" />
                   </div>
                 ) : (
                   <div className="flex size-10 items-center justify-center bg-black text-white text-sm font-bold rounded-none uppercase">

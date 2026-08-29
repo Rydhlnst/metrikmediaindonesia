@@ -47,6 +47,7 @@ export function BrandName({
             src="/metrikmedialogo.png"
             alt="Metrik Media Indonesia"
             fill
+            sizes="56px"
             className="object-contain"
             priority
           />

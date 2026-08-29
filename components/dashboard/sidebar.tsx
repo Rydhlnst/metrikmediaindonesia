@@ -18,9 +18,16 @@ import {
   SidebarSeparator,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { adminNavSections, contributorNavSections } from "./data";
 import { cn } from "@/lib/utils";
-import { CaretDown } from "@phosphor-icons/react/dist/ssr";
+import { CaretDown, SignOut, User } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "@/lib/use-session";
 
 function isAdminRole(role?: string | null) {
@@ -30,7 +37,7 @@ function isAdminRole(role?: string | null) {
 
 export function DashboardSidebar() {
   const pathname = usePathname();
-  const { user, isLoading } = useSession();
+  const { user, isLoading, signOut } = useSession();
 
   const isAdmin = isAdminRole(user?.role);
   const navSections = isLoading ? adminNavSections : isAdmin ? adminNavSections : contributorNavSections;
@@ -135,24 +142,38 @@ export function DashboardSidebar() {
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
-          <SidebarMenuItem className="flex items-center gap-0">
-            <SidebarMenuButton
-              asChild
-              tooltip={displayName}
-              className="h-11 flex-1 gap-3 px-3"
-            >
-              <Link href={isAdmin ? "/dashboard/settings" : "/dashboard/profile"}>
-                <Avatar className="size-6 shrink-0 bg-muted">
-                  <AvatarFallback className="text-[10px]">
-                    {initials}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="flex-1 truncate text-sm font-medium">
-                  {displayName}
-                </span>
-                <CaretDown className="size-4 shrink-0 text-muted-foreground" />
-              </Link>
-            </SidebarMenuButton>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton
+                  tooltip={displayName}
+                  className="h-11 w-full gap-3 px-3"
+                >
+                  <Avatar className="size-6 shrink-0 bg-muted">
+                    <AvatarFallback className="text-[10px]">
+                      {initials}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="flex-1 truncate text-left text-sm font-medium">
+                    {displayName}
+                  </span>
+                  <CaretDown className="size-4 shrink-0 text-muted-foreground" />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent side="right" align="end" className="w-56 rounded-none border border-black/10 bg-white p-1 shadow-md">
+                <DropdownMenuItem asChild>
+                  <Link href={isAdmin ? "/dashboard/settings" : "/dashboard/profile"} className="flex cursor-pointer items-center gap-2 rounded-none px-3 py-2 text-xs font-medium">
+                    <User className="size-4 text-muted-foreground" />
+                    Profil Saya
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="my-1 bg-black/10" />
+                <DropdownMenuItem onClick={() => void signOut()} className="flex cursor-pointer items-center gap-2 rounded-none px-3 py-2 text-xs font-medium text-destructive focus:text-destructive">
+                  <SignOut className="size-4" />
+                  Keluar
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
