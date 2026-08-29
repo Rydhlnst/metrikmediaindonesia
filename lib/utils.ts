@@ -12,7 +12,8 @@ export function getInitials(name: string): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-export const IMAGE_PLACEHOLDER = "/image-placeholder.svg";
+// One real brand asset is reused for missing, invalid, and failed media.
+export const IMAGE_PLACEHOLDER = "/metrikmedialogo.png";
 
 export type ImageSize = "thumbnail" | "card" | "hero" | "og" | "original";
 
@@ -22,7 +23,7 @@ export function getImageUrl(image: unknown, _size: ImageSize = "original"): stri
 
   if (typeof image === "string") {
     const value = image.trim();
-    return !value || value.includes("picsum.photos") || value.endsWith("/placeholder.png")
+    return !value || value.includes("picsum.photos") || value.endsWith("/placeholder.png") || value.endsWith("/image-placeholder.svg")
       ? IMAGE_PLACEHOLDER
       : value;
   }

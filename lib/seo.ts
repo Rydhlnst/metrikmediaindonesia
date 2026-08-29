@@ -109,7 +109,7 @@ export function generateNewsArticleSchema(article: {
       url: SITE_CONFIG.url,
       logo: {
         "@type": "ImageObject",
-        url: article.publisherLogo || `${SITE_CONFIG.url}/logo.png`,
+        url: article.publisherLogo || `${SITE_CONFIG.url}/metrikmedialogo.png`,
       },
     },
   };
@@ -135,7 +135,7 @@ export function generateOrganizationSchema() {
     name: SITE_CONFIG.name,
     legalName: SITE_CONFIG.company,
     url: SITE_CONFIG.url,
-    logo: `${SITE_CONFIG.url}/logo.png`,
+    logo: `${SITE_CONFIG.url}/metrikmedialogo.png`,
     sameAs: [
       "https://facebook.com/metrikmediaid",
       "https://twitter.com/metrikmediaid",

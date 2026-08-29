@@ -44,7 +44,7 @@ export function BrandName({
       {showLogo && (
         <div className={cn("relative shrink-0 overflow-hidden", logoSizeClasses[size])}>
           <Image
-            src="/logo.png"
+            src="/metrikmedialogo.png"
             alt="Metrik Media Indonesia"
             fill
             className="object-contain"

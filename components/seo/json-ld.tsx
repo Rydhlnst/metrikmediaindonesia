@@ -30,7 +30,7 @@ export function JsonLd({ type, data }: JsonLdProps) {
       "@type": "NewsMediaOrganization",
       name: SITE_CONFIG.name,
       url: SITE_CONFIG.url,
-      logo: `${SITE_CONFIG.url}/logo.png`,
+      logo: `${SITE_CONFIG.url}/metrikmedialogo.png`,
       sameAs: [
         "https://facebook.com/metrikmediaid",
         "https://twitter.com/metrikmediaid",
@@ -50,7 +50,7 @@ export function JsonLd({ type, data }: JsonLdProps) {
         name: SITE_CONFIG.name,
         logo: {
           "@type": "ImageObject",
-          url: `${SITE_CONFIG.url}/logo.png`,
+          url: `${SITE_CONFIG.url}/metrikmedialogo.png`,
         },
       },
       ...data,
