@@ -33,6 +33,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useSession } from "@/lib/use-session";
 import { requestJson, toastApiError } from "@/lib/api-client";
+import { toIndonesianErrorMessage } from "@/lib/error-message";
 
 type AuthorOption = { id: number; name: string; role: string | null };
 type CategoryOption = { id: number; name: string; slug: string; isActive?: boolean };
@@ -112,7 +113,7 @@ export default function NewArticlePage() {
       setThumbnailUrl(result.data.url);
       toast.success("Gambar utama berhasil diunggah (WebP)", { id: toastId });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Gagal mengunggah gambar", { id: toastId });
+      toast.error(toIndonesianErrorMessage(error instanceof Error ? error.message : undefined, "Gagal mengunggah gambar"), { id: toastId });
     } finally {
       setIsUploadingThumbnail(false);
       if (thumbnailInputRef.current) thumbnailInputRef.current.value = "";
@@ -214,7 +215,7 @@ export default function NewArticlePage() {
       );
       router.push(isContributor ? "/dashboard/my-articles" : "/dashboard/articles");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Gagal menyimpan artikel", { id: toastId });
+      toast.error(toIndonesianErrorMessage(error instanceof Error ? error.message : undefined, "Gagal menyimpan artikel"), { id: toastId });
     } finally {
       setIsSaving(false);
     }

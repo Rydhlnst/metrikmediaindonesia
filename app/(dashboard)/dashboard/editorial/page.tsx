@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { toIndonesianErrorMessage } from "@/lib/error-message";
 
 interface Article {
   id: number;
@@ -115,7 +116,7 @@ export default function EditorialWorkflowPage() {
         toast.success(`Artikel berhasil dipindahkan ke "${WORKFLOW_STAGES.find(s => s.id === newStatus)?.label || newStatus}"`);
         fetchArticles();
       } else {
-        toast.error(data.message || "Gagal memperbarui status");
+        toast.error(toIndonesianErrorMessage(data.message, "Gagal memperbarui status"));
       }
     } catch {
       toast.error("Gagal memperbarui status");

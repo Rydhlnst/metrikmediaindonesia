@@ -50,7 +50,7 @@ export default function EditAuthorPage({
             setLinkedin(data.socialLinks.linkedin || "");
           }
         } else {
-          toast.error(data.message || "Penulis tidak ditemukan");
+          toast.error(getErrorMessage(new Error(data.message || ""), "Penulis tidak ditemukan"));
           router.push("/dashboard/authors");
         }
       } catch {

@@ -33,7 +33,7 @@ export default function EditTagPage({
           setName(data.name || "");
           setSlug(data.slug || "");
         } else {
-          toast.error(data.message || "Tag tidak ditemukan");
+          toast.error(getErrorMessage(new Error(data.message || ""), "Tag tidak ditemukan"));
           router.push("/dashboard/tags");
         }
       } catch {

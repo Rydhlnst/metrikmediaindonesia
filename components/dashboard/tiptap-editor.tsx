@@ -57,6 +57,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { toast } from "sonner";
+import { toIndonesianErrorMessage } from "@/lib/error-message";
 
 const lowlight = createLowlight(common);
 
@@ -248,7 +249,7 @@ export function TiptapEditor({
         editor.chain().focus().setImage({ src: data.data.url }).run();
         toast.success("Gambar berhasil diunggah");
       } catch (error: unknown) {
-        toast.error(error instanceof Error ? error.message : "Gagal mengunggah gambar");
+        toast.error(toIndonesianErrorMessage(error instanceof Error ? error.message : undefined, "Gagal mengunggah gambar"));
       } finally {
         setIsUploading(false);
         if (fileInputRef.current) {

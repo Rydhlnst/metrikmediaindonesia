@@ -43,7 +43,7 @@ export default function EditAdvertisementPage({
           setPosition(data.position || "header");
           setStatus(data.status || "active");
         } else {
-          toast.error(data.message || "Iklan tidak ditemukan");
+          toast.error(getErrorMessage(new Error(data.message || ""), "Iklan tidak ditemukan"));
           router.push("/dashboard/advertisements");
         }
       } catch {

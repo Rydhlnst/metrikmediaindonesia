@@ -49,7 +49,7 @@ export default function CategoriesPage() {
       if (res.ok) {
         setCategories(data || []);
       } else {
-        toast.error(data.message || "Gagal mengambil data kategori");
+        toast.error(getErrorMessage(new Error(data.message || ""), "Gagal mengambil data kategori"));
       }
     } catch {
       toast.error("Gagal terhubung ke server");

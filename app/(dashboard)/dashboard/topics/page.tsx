@@ -62,7 +62,7 @@ export default function TopicsManagementPage() {
       const res = await fetch("/api/topics");
       const data = await res.json();
       if (res.ok) setTopics(data || []);
-      else toast.error(data.message || "Gagal mengambil data topik");
+      else toast.error(getErrorMessage(new Error(data.message || ""), "Gagal mengambil data topik"));
     } catch {
       toast.error("Gagal terhubung ke server");
     } finally {

@@ -79,7 +79,7 @@ export default function EntitiesManagementPage() {
       const res = await fetch(url);
       const data = await res.json();
       if (res.ok) setEntities(data || []);
-      else toast.error(data.message || "Gagal mengambil data entitas");
+      else toast.error(getErrorMessage(new Error(data.message || ""), "Gagal mengambil data entitas"));
     } catch {
       toast.error("Gagal terhubung ke server");
     } finally {

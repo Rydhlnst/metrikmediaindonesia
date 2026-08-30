@@ -35,6 +35,7 @@ import { useSession } from "@/lib/use-session";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { WarningCircle } from "@phosphor-icons/react/dist/ssr";
 import { requestJson, toastApiError } from "@/lib/api-client";
+import { toIndonesianErrorMessage } from "@/lib/error-message";
 
 type AuthorOption = { id: number; name: string; role: string | null };
 type CategoryOption = { id: number; name: string; slug: string; isActive?: boolean };
@@ -129,7 +130,7 @@ export default function EditArticlePage({
           setSeoScore(data.seoScore || 0);
           setTags(data.tags?.map((tag: { name: string }) => tag.name) || []);
         } else {
-          toast.error(data.message || "Artikel tidak ditemukan");
+          toast.error(toIndonesianErrorMessage(data.message, "Artikel tidak ditemukan"));
           router.push(isContributor ? "/dashboard/my-articles" : "/dashboard/articles");
         }
       } catch {
@@ -167,7 +168,7 @@ export default function EditArticlePage({
       setThumbnailUrl(result.data.url);
       toast.success("Gambar utama berhasil diunggah (WebP)", { id: toastId });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Gagal mengunggah gambar", { id: toastId });
+      toast.error(toIndonesianErrorMessage(error instanceof Error ? error.message : undefined, "Gagal mengunggah gambar"), { id: toastId });
     } finally {
       setIsUploadingThumbnail(false);
       if (thumbnailInputRef.current) thumbnailInputRef.current.value = "";
@@ -239,7 +240,7 @@ export default function EditArticlePage({
       );
       router.push(isContributor ? "/dashboard/my-articles" : "/dashboard/articles");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Gagal memperbarui artikel", { id: toastId });
+      toast.error(toIndonesianErrorMessage(error instanceof Error ? error.message : undefined, "Gagal memperbarui artikel"), { id: toastId });
     } finally {
       setIsSaving(false);
     }

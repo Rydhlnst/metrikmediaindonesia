@@ -153,7 +153,7 @@ export default function ArticlesPage() {
   const submittedCount = articles.filter((a) => a.status === "submitted").length;
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-[#f4f3f0]">
+    <div className="flex min-h-screen w-full flex-col bg-[#f8f9fa]">
       <DashboardTopbar />
       <div className="w-full flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
         

@@ -48,7 +48,7 @@ export default function EditStaticPage({
           setSeoTitle(data.seoTitle || "");
           setSeoDescription(data.seoDescription || "");
         } else {
-          toast.error(data.message || "Halaman tidak ditemukan");
+          toast.error(getErrorMessage(new Error(data.message || ""), "Halaman tidak ditemukan"));
           router.push("/dashboard/pages");
         }
       } catch {

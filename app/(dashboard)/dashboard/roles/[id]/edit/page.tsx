@@ -33,7 +33,7 @@ export default function EditRolePage({
           setName(data.name || "");
           setDescription(data.description || "");
         } else {
-          toast.error(data.message || "Role tidak ditemukan");
+          toast.error(getErrorMessage(new Error(data.message || ""), "Role tidak ditemukan"));
           router.push("/dashboard/roles");
         }
       } catch {

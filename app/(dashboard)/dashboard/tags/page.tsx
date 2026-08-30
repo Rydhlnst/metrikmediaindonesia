@@ -47,7 +47,7 @@ export default function TagsPage() {
       if (res.ok) {
         setTags(data || []);
       } else {
-        toast.error(data.message || "Gagal mengambil data tags");
+        toast.error(getErrorMessage(new Error(data.message || ""), "Gagal mengambil data tags"));
       }
     } catch {
       toast.error("Gagal terhubung ke server");

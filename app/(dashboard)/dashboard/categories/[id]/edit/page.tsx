@@ -41,7 +41,7 @@ export default function EditCategoryPage({
           setSeoTitle(data.seoTitle || "");
           setSeoDescription(data.seoDescription || "");
         } else {
-          toast.error(data.message || "Kategori tidak ditemukan");
+          toast.error(getErrorMessage(new Error(data.message || ""), "Kategori tidak ditemukan"));
           router.push("/dashboard/categories");
         }
       } catch {

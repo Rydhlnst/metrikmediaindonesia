@@ -63,7 +63,7 @@ export default function RedirectsManagementPage() {
       const res = await fetch("/api/redirects");
       const data = await res.json();
       if (res.ok) setRedirects(data || []);
-      else toast.error(data.message || "Gagal mengambil data redirect");
+      else toast.error(getErrorMessage(new Error(data.message || ""), "Gagal mengambil data redirect"));
     } catch {
       toast.error("Gagal terhubung ke server");
     } finally {

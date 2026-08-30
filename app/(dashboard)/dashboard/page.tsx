@@ -18,11 +18,11 @@ export default function DashboardPage() {
           <CircleNotch className="size-8 animate-spin text-[#b8860b]" />
         </div>
       ) : isContributor ? (
-        <div className="w-full flex-1 p-6 lg:p-10">
+        <div className="w-full flex-1 p-4 sm:p-6 lg:p-8">
           <ContributorOverview user={user} />
         </div>
       ) : (
-        <div className="w-full flex-1 p-6 lg:p-10">
+        <div className="w-full flex-1 p-4 sm:p-6 lg:p-8">
           <AdminOverview />
         </div>
       )}

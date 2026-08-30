@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { toIndonesianErrorMessage } from "@/lib/error-message";
 import { User, Calendar, ArrowLeft, FloppyDisk } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 
@@ -60,7 +61,7 @@ export default function ProfilePage() {
           setLinkedin(data.socialLinks?.linkedin || "");
           setFacebook(data.socialLinks?.facebook || "");
         } else {
-          toast.error(data.message || "Gagal memuat profil");
+          toast.error(toIndonesianErrorMessage(data.message, "Gagal memuat profil"));
         }
       } catch {
         toast.error("Gagal memuat profil");
@@ -93,7 +94,7 @@ export default function ProfilePage() {
       if (res.ok) {
         toast.success("Profil berhasil diperbarui!");
       } else {
-        toast.error(data.message || "Gagal memperbarui profil");
+        toast.error(toIndonesianErrorMessage(data.message, "Gagal memperbarui profil"));
       }
     } catch {
       toast.error("Gagal memperbarui profil");

@@ -78,7 +78,7 @@ export default function LocationsManagementPage() {
       const res = await fetch("/api/locations");
       const data = await res.json();
       if (res.ok) setLocations(data || []);
-      else toast.error(data.message || "Gagal mengambil data wilayah");
+      else toast.error(getErrorMessage(new Error(data.message || ""), "Gagal mengambil data wilayah"));
     } catch {
       toast.error("Gagal terhubung ke server");
     } finally {

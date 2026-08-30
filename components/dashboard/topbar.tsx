@@ -13,6 +13,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { User, Gear, SignOut, ArrowSquareOut } from "@phosphor-icons/react/dist/ssr";
 import { useSession } from "@/lib/use-session";
 import { NotificationBell } from "@/components/dashboard/notification-bell";
+import { toast } from "sonner";
 
 export function DashboardTopbar() {
   const { user } = useSession();
@@ -22,10 +23,13 @@ export function DashboardTopbar() {
 
   const handleSignOut = async () => {
     try {
-      await fetch("/api/auth/sign-out", { method: "POST" });
+      const response = await fetch("/api/auth/sign-out", { method: "POST" });
+      if (!response.ok) throw new Error("Gagal keluar dari akun");
       window.location.href = "/";
     } catch (err) {
-      console.error("Sign out error:", err);
+      toast.error(err instanceof Error ? err.message : "Gagal keluar dari akun", {
+        description: "Sesi masih aktif. Coba lagi beberapa saat.",
+      });
     }
   };
 
